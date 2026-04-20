@@ -1,0 +1,90 @@
+---
+title: "Regentra FAQ: billing, API limits, security, and workflows"
+description: "Answers to common questions about Regentra's pricing, rate limits, security compliance, integrations, and workflow automation capabilities."
+---
+
+Find answers to the most frequently asked questions about Regentra. If your question isn't covered here, reach out to our support team at [support@regentra.io](mailto:support@regentra.io).
+
+## Account & Billing
+
+<AccordionGroup>
+  <Accordion title="Is there a free trial?">
+    Yes. Regentra offers a 14-day free trial with full feature access. No credit card is required to start — just sign up and begin exploring the platform.
+  </Accordion>
+
+  <Accordion title="What plans are available?">
+    Regentra offers three plans: **Starter**, **Growth**, and **Enterprise**. Each plan includes a different set of workflow limits, team seats, and support options. Visit the [pricing page](https://regentra.io/pricing) for a full breakdown.
+  </Accordion>
+
+  <Accordion title="How do I upgrade or downgrade my plan?">
+    Go to **Settings → Billing → Change Plan** and select the plan you want. Upgrades take effect immediately; downgrades apply at the end of your current billing period.
+  </Accordion>
+
+  <Accordion title="Can I export my data?">
+    Yes. You can export resources and workflow run history as CSV or JSON directly from the dashboard. Go to the relevant section and look for the **Export** option in the action menu.
+  </Accordion>
+</AccordionGroup>
+
+## API & Integrations
+
+<AccordionGroup>
+  <Accordion title="Is there an API rate limit?">
+    Yes. The default rate limit is **1,000 requests per minute** per API key. If you exceed the limit, you'll receive a `429 Too Many Requests` response. Enterprise customers can request higher limits by contacting support.
+
+    <Tip>
+      Implement exponential backoff in your client to handle rate limit responses gracefully. See the [troubleshooting guide](/troubleshooting) for an example.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Which integrations are supported?">
+    Regentra integrates with **Slack**, **GitHub**, **Jira**, and email out of the box. You can also connect to any external service using webhooks for custom integrations. See the [integrations guide](/guides/integrations) for setup instructions.
+  </Accordion>
+
+  <Accordion title="Do you have a sandbox or test environment?">
+    Yes. Create a **Staging** environment in **Settings → Environments** and use the API keys from that environment for testing. Data in staging environments is isolated from production.
+  </Accordion>
+</AccordionGroup>
+
+## Security
+
+<AccordionGroup>
+  <Accordion title="Where is my data stored?">
+    All data is stored in SOC 2 compliant infrastructure located in the United States. EU data residency is available on Enterprise plans — contact support to enable it for your account.
+  </Accordion>
+
+  <Accordion title="Is Regentra SOC 2 certified?">
+    Yes. Regentra maintains SOC 2 Type II certification. If you need a copy of the report for your security review, contact [support@regentra.io](mailto:support@regentra.io).
+  </Accordion>
+
+  <Accordion title="How do I report a security vulnerability?">
+    Email [security@regentra.io](mailto:security@regentra.io) with a description of the vulnerability, steps to reproduce, and any relevant details. We aim to respond within 24 hours and will keep you updated on our progress.
+
+    <Note>
+      Please do not disclose vulnerabilities publicly until we've had a chance to investigate and issue a fix.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Workflows & Automation
+
+<AccordionGroup>
+  <Accordion title="How many workflows can I create?">
+    Workflow limits depend on your plan:
+
+    | Plan       | Workflow limit |
+    | ---------- | -------------- |
+    | Starter    | 10             |
+    | Growth     | 100            |
+    | Enterprise | Unlimited      |
+
+    To increase your limit, upgrade your plan in **Settings → Billing**.
+  </Accordion>
+
+  <Accordion title="Can workflows run on a schedule?">
+    Yes. Regentra supports cron-based scheduling for workflows. You can set a cron expression directly in the workflow trigger configuration. See the [workflows guide](/guides/workflows) for details and examples.
+  </Accordion>
+
+  <Accordion title="What happens if a workflow fails?">
+    Failed runs are logged with full error details, including which action failed and why. You can view this in **Workflows → [workflow name] → Run History**. You can also configure notifications to alert your team when a workflow fails — see the [notifications guide](/guides/notifications).
+  </Accordion>
+</AccordionGroup>

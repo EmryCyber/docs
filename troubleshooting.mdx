@@ -1,0 +1,135 @@
+---
+title: "Troubleshoot authentication, workflow, and API issues"
+description: "Diagnose and resolve common Regentra problems — authentication errors, workflow failures, integration issues, and API rate limiting."
+---
+
+If you're running into issues with Regentra, this guide covers the most common problems and how to resolve them. For issues not listed here, contact support.
+
+## Authentication errors
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized">
+    Your API key is missing or invalid. Check that you're passing the key in the `Authorization` header using the Bearer scheme:
+
+    ```http
+    Authorization: Bearer YOUR_API_KEY
+    ```
+
+    Verify that the key exists and is active in **Settings → API Keys**.
+  </Accordion>
+
+  <Accordion title="403 Forbidden">
+    Your API key lacks permission for this action. Each key has a defined set of scopes that control what it can access.
+
+    Go to **Settings → API Keys**, select your key, and confirm that the required scopes are enabled.
+  </Accordion>
+
+  <Accordion title="Key expired">
+    API keys can be rotated at any time. If your key has expired or been revoked, generate a new one in **Settings → API Keys** and update your integration.
+  </Accordion>
+</AccordionGroup>
+
+## Workflow issues
+
+<AccordionGroup>
+  <Accordion title="Workflow not triggering">
+    Check that the workflow is active — use the toggle on the Workflows dashboard to enable it. Also verify that the trigger event is configured correctly and matches the event your integration is sending.
+  </Accordion>
+
+  <Accordion title="Workflow failing mid-run">
+    View the run log to identify where the failure occurred. Navigate to **Workflows → [workflow name] → Run History** and open the failed run. The failed action will show error details that describe what went wrong.
+  </Accordion>
+
+  <Accordion title="Action timeout">
+    If an action is timing out, you have two options: increase the timeout setting on the action in the workflow editor, or optimize the target endpoint to respond faster.
+
+    <Tip>
+      For external HTTP actions, check that the target service is healthy and within its own SLA.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Integration issues
+
+<AccordionGroup>
+  <Accordion title="Integration disconnected">
+    Re-authorize the integration in **Settings → Integrations**. OAuth tokens expire after periods of inactivity and must be refreshed by reconnecting the integration.
+  </Accordion>
+
+  <Accordion title="Slack notifications not arriving">
+    Verify the Slack channel name is correct, including any `#` prefix conventions used by your workspace. Also ensure the Regentra Slack app has permission to post messages to that channel. You may need to invite the app to private channels manually.
+  </Accordion>
+</AccordionGroup>
+
+## API issues
+
+<AccordionGroup>
+  <Accordion title="Rate limit exceeded (429)">
+    Regentra enforces rate limits to ensure service stability. If you receive a `429 Too Many Requests` response, slow down your request rate and implement exponential backoff in your client.
+
+    ```javascript
+    async function requestWithBackoff(fn, retries = 5) {
+      for (let i = 0; i < retries; i++) {
+        try {
+          return await fn();
+        } catch (err) {
+          if (err.status !== 429 || i === retries - 1) throw err;
+          await new Promise((res) => setTimeout(res, 2 ** i * 500));
+        }
+      }
+    }
+    ```
+
+    Enterprise customers can request a higher rate limit. See the [FAQ](/faq) for details.
+  </Accordion>
+
+  <Accordion title="Unexpected 500 errors">
+    A `500 Internal Server Error` indicates a server-side issue. Retry the request after a short delay. If the error persists, contact support and include the `X-Request-ID` header value from the failed response so we can investigate.
+  </Accordion>
+
+  <Accordion title="Request body not parsed">
+    Ensure you're sending the `Content-Type: application/json` header and that the request body is valid JSON. Omitting this header causes the server to reject or misparse the body.
+
+    ```http
+    POST /v1/resources HTTP/1.1
+    Content-Type: application/json
+
+    {"name": "my-resource", "type": "compute"}
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Webhook delivery issues
+
+<AccordionGroup>
+  <Accordion title="Webhooks not received">
+    Confirm that your endpoint URL is publicly accessible from the internet — local development URLs (such as `localhost`) will not work without a tunnel. Your endpoint must also return a `2xx` HTTP status code within the timeout window, or Regentra will treat the delivery as failed and retry.
+
+    <Warning>
+      Regentra retries failed webhook deliveries with exponential backoff. Check your run history in the dashboard to see delivery attempts and response codes.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Signature verification failing">
+    Every webhook request includes an `X-Regentra-Signature` header so you can verify the payload came from Regentra. If verification is failing, confirm you're using the correct signing secret and that you're computing the HMAC over the raw request body before parsing it.
+
+    See the [webhooks reference](/api-reference/webhooks) for the full verification algorithm.
+  </Accordion>
+</AccordionGroup>
+
+## Getting more help
+
+<CardGroup cols={2}>
+  <Card title="Frequently asked questions" icon="circle-question" href="/faq">
+    Find answers to common questions about pricing, limits, security, and features.
+  </Card>
+  <Card title="Authentication guide" icon="key" href="/guides/authentication">
+    Learn how to generate API keys, set scopes, and authenticate your requests.
+  </Card>
+  <Card title="API error reference" icon="triangle-exclamation" href="/api-reference/errors">
+    Browse the full list of Regentra error codes and what each one means.
+  </Card>
+  <Card title="Contact support" icon="envelope" href="mailto:support@regentra.io">
+    Reach our support team directly for issues not covered in the documentation.
+  </Card>
+</CardGroup>

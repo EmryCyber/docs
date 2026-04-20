@@ -1,0 +1,104 @@
+---
+title: "Get started with Regentra in under five minutes"
+description: "Sign up for Regentra, generate your first API key, authenticate your first request, and create an automated workflow — all in under five minutes."
+---
+
+Regentra is designed to get you productive quickly. This guide walks you through signing up, authenticating with the API, and creating your first workflow — everything you need to start automating your team's processes.
+
+<Steps>
+  <Step title="Sign up and access your dashboard">
+    Go to [regentra.io](https://regentra.io) and create a free account. No credit card is required. Once you confirm your email, you're taken directly to the Regentra dashboard where you can manage workflows, resources, and integrations.
+  </Step>
+
+  <Step title="Generate an API key">
+    Navigate to **Settings → API Keys** in the dashboard. Click **New API Key**, give it a name (for example, `dev-local`), and copy the key immediately — it won't be shown again.
+
+    <Warning>
+      Store your API key in a secure location such as an environment variable or secrets manager. Never commit it to source control.
+    </Warning>
+  </Step>
+
+  <Step title="Make your first API call">
+    Use your API key as a Bearer token to authenticate requests. The example below lists your resources to verify the connection is working.
+
+    <CodeGroup>
+
+    ```bash cURL
+    curl https://api.regentra.io/v1/resources \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+
+    ```python Python
+    import requests
+
+    response = requests.get(
+        "https://api.regentra.io/v1/resources",
+        headers={"Authorization": "Bearer YOUR_API_KEY"},
+    )
+    print(response.json())
+    ```
+
+    </CodeGroup>
+
+    A successful response returns a paginated list of your resources:
+
+    ```json
+    {
+      "data": [],
+      "meta": {
+        "total": 0,
+        "page": 1,
+        "per_page": 20
+      }
+    }
+    ```
+
+    <Tip>
+      Replace `YOUR_API_KEY` with the key you copied in the previous step. If you see a `401 Unauthorized` error, double-check that the key is correct and that you've included the `Bearer` prefix.
+    </Tip>
+  </Step>
+
+  <Step title="Create your first workflow">
+    You can create a workflow from the dashboard or via the API.
+
+    **From the dashboard:** Go to **Workflows → New Workflow**, choose a trigger (such as a webhook event or a schedule), and add one or more actions. Save and enable the workflow.
+
+    **Via the API:** Send a POST request with your workflow definition:
+
+    ```bash cURL
+    curl -X POST https://api.regentra.io/v1/workflows \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "My first workflow",
+        "trigger": { "type": "webhook" },
+        "actions": [
+          { "type": "notification", "channel": "slack", "message": "Workflow triggered!" }
+        ]
+      }'
+    ```
+
+    A successful response includes the new workflow's `id` and its current status:
+
+    ```json
+    {
+      "id": "wf_01hxyz1234abcd",
+      "name": "My first workflow",
+      "status": "active",
+      "trigger": { "type": "webhook" },
+      "created_at": "2026-04-20T10:00:00Z"
+    }
+    ```
+  </Step>
+</Steps>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Authentication guide" icon="key" href="/guides/authentication">
+    Learn about API key scopes, token rotation, and best practices for keeping your credentials secure.
+  </Card>
+  <Card title="Core concepts" icon="lightbulb" href="/concepts">
+    Understand resources, workflows, integrations, and other building blocks before going deeper.
+  </Card>
+</CardGroup>

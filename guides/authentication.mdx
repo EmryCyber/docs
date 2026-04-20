@@ -1,0 +1,94 @@
+---
+title: "Authenticate API requests with Regentra API keys"
+description: "Learn how to generate a Regentra API key, choose the right scope, and pass it in every request to authenticate securely with the REST API."
+---
+
+Regentra authenticates requests using API keys. Every request you make to the API must include your key in the `Authorization` header. Without a valid key, the API returns a `401 Unauthorized` error.
+
+## Getting your API key
+
+<Steps>
+  <Step title="Log in to your dashboard">
+    Go to [regentra.io](https://regentra.io) and sign in to your account.
+  </Step>
+  <Step title="Open Settings">
+    Click your avatar or workspace name in the top-right corner, then select **Settings**.
+  </Step>
+  <Step title="Navigate to API Keys">
+    In the left sidebar, select **API Keys**.
+  </Step>
+  <Step title="Generate a new key">
+    Click **Generate new key**, give it a descriptive name (for example, `production-backend`), and choose a scope.
+  </Step>
+  <Step title="Copy and store your key">
+    Copy the key immediately — Regentra only shows it once. Store it in a secrets manager or environment variable.
+  </Step>
+</Steps>
+
+<Warning>
+  Never commit your API key to version control. Use environment variables or a secrets manager to keep it out of your source code.
+</Warning>
+
+## Using your API key
+
+Pass your key as a Bearer token in the `Authorization` header on every request.
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.regentra.io/v1/resources \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```javascript fetch
+const response = await fetch('https://api.regentra.io/v1/resources', {
+  headers: {
+    Authorization: 'Bearer YOUR_API_KEY',
+  },
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+Replace `YOUR_API_KEY` with the key you copied from the dashboard.
+
+## API key scopes
+
+When you generate a key, you choose its scope to limit what the key can do.
+
+| Scope | Description |
+|-------|-------------|
+| **Read-only** | Can list and retrieve resources, workflows, and configuration. Cannot create, update, or delete anything. |
+| **Read-write** | Full access to create, update, delete, and read all resources and workflows in your workspace. |
+
+Use read-only keys for dashboards, monitoring tools, or any integration that only needs to observe data. Reserve read-write keys for services that actively manage resources.
+
+## Rotating keys
+
+If a key is compromised or you want to cycle credentials, revoke the old key and generate a replacement.
+
+<Steps>
+  <Step title="Open API Keys in Settings">
+    Go to **Settings → API Keys** in your dashboard.
+  </Step>
+  <Step title="Revoke the existing key">
+    Find the key you want to retire, click the overflow menu (`⋯`), and select **Revoke**. The key stops working immediately.
+  </Step>
+  <Step title="Generate a new key">
+    Click **Generate new key**, name it, and choose a scope. Update your application or secrets manager with the new value.
+  </Step>
+</Steps>
+
+## Authentication errors
+
+| Status | Error | Cause |
+|--------|-------|-------|
+| `401 Unauthorized` | `invalid_api_key` | The key is missing, malformed, or has been revoked. Check that you included the `Authorization: Bearer` prefix and that the key is valid. |
+| `403 Forbidden` | `insufficient_scope` | The key exists but does not have permission for the requested operation. Use a read-write key or generate a key with the correct scope. |
+
+<Note>
+  For a full list of error codes and their meanings, see the [API errors reference](/api-reference/errors).
+</Note>

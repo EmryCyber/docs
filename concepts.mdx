@@ -1,0 +1,72 @@
+---
+title: "Regentra core concepts: resources, workflows, and more"
+description: "Learn the building blocks of Regentra — resources, workflows, integrations, webhooks, environments, and API keys — and how they fit together."
+---
+
+Before you build with Regentra, it helps to understand the core objects and how they relate to each other. This page covers the key concepts you'll encounter throughout the platform and the documentation.
+
+## Resources
+
+Resources are the primary objects you manage in Regentra. A resource can represent a data record, a task, a ticket, or any item your team tracks. Resources have attributes, belong to environments, and can be created, updated, queried, and deleted through the dashboard or the API.
+
+Think of resources as the "nouns" in Regentra — workflows and integrations act on them.
+
+## Workflows
+
+Workflows are automated sequences of actions that run in response to a trigger. A trigger can be an incoming webhook event, a schedule (for example, daily at 9 AM), or a manual invocation via the API. Each step in a workflow performs an action: creating a resource, calling an external service, sending a notification, and so on.
+
+Workflows are scoped to an environment, so you can test them in staging before promoting to production.
+
+## Integrations
+
+Integrations connect Regentra to external services such as Slack, GitHub, Jira, and others. Once an integration is configured, you can use it as a workflow action or as a data source. Integrations are set up from **Settings → Integrations** in the dashboard.
+
+## Webhooks
+
+Webhooks are HTTP callbacks that Regentra sends to a URL you specify when a particular event occurs — for example, when a resource is created or a workflow completes. Your server receives a POST request with a JSON payload describing the event.
+
+You can register webhook endpoints from the dashboard or via the API. See the [Webhooks API reference](/api-reference/webhooks) for payload schemas and retry behavior.
+
+## Environments
+
+Environments give you separate, isolated contexts within your Regentra account. A typical setup has at least two environments: `staging` and `production`. Resources, workflows, and configurations in one environment are independent from those in another, so you can develop and test without affecting live data.
+
+API keys are scoped to a specific environment. See [Environments](/configuration/environments) for setup instructions.
+
+## API keys
+
+API keys are the credentials your application uses to authenticate requests to the Regentra REST API. Each key is tied to an environment and can be granted specific permission scopes (read-only, read-write, or admin). You generate and manage keys from **Settings → API Keys**.
+
+## How the concepts relate
+
+The table below shows the typical relationships between Regentra's building blocks:
+
+| Concept      | Relationship                                                                 |
+| ------------ | ---------------------------------------------------------------------------- |
+| Resources    | Acted on by workflows; scoped to an environment                              |
+| Workflows    | Triggered by events or schedules; use integrations and act on resources      |
+| Integrations | Used by workflow actions; configured per account                             |
+| Webhooks     | Deliver event notifications to external URLs; emitted by resource changes    |
+| Environments | Isolate resources, workflows, and API keys (staging vs. production)          |
+| API keys     | Authenticate API requests; scoped to an environment with defined permissions |
+
+<Note>
+  For full technical details on each object — including request/response schemas, error codes, and rate limits — see the [API Reference](/api-reference/introduction).
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/quickstart">
+    Put these concepts into practice: generate an API key and make your first API call.
+  </Card>
+  <Card title="Workflows guide" icon="git-branch" href="/guides/workflows">
+    Learn how to build, test, and deploy workflows step by step.
+  </Card>
+  <Card title="Environments" icon="layers" href="/configuration/environments">
+    Set up staging and production environments to safely manage your configurations.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore the full REST API for resources, webhooks, and more.
+  </Card>
+</CardGroup>

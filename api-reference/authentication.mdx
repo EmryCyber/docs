@@ -1,0 +1,87 @@
+---
+title: "Regentra API key authentication: scopes and key types"
+description: "Authenticate every Regentra API request using your API key in the Authorization header. Learn how to create keys, assign scopes, and handle auth errors."
+---
+
+Regentra uses API keys to authenticate requests. You must include your API key in the `Authorization` header of every request using the Bearer scheme. Requests without a valid key are rejected with a `401 Unauthorized` response.
+
+## Getting your API key
+
+<Steps>
+  <Step title="Log in to the dashboard">
+    Go to [regentra.io](https://regentra.io) and log in to your account.
+  </Step>
+  <Step title="Open API key settings">
+    Navigate to **Settings → API Keys**.
+  </Step>
+  <Step title="Create a new key">
+    Click **New API Key**, enter a descriptive name (for example, `production-backend`), and select the scopes your integration needs.
+  </Step>
+  <Step title="Copy your key">
+    Copy the key immediately after creation. For security reasons, Regentra will not show the full key again after you leave the page.
+  </Step>
+</Steps>
+
+<Warning>
+  Store your API key in a secure location such as an environment variable or a secrets manager. Never expose keys in client-side code or commit them to version control.
+</Warning>
+
+## Using your API key
+
+Add your key to the `Authorization` header as a Bearer token on every request:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.regentra.io/v1/resources \
+  -H "Authorization: Bearer rg_live_xxxxxxxxxxxxxxxx"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.regentra.io/v1/resources', {
+  headers: {
+    'Authorization': 'Bearer rg_live_xxxxxxxxxxxxxxxx',
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+</CodeGroup>
+
+## API key types
+
+Regentra issues two types of API keys depending on your environment:
+
+| Type | Prefix | Usage |
+|---|---|---|
+| Test key | `rg_test_...` | Use in development and staging environments. Does not affect live data. |
+| Live key | `rg_live_...` | Use in production. Operates on real account data. |
+
+Always use test keys during development to avoid unintended changes to your production data.
+
+## Key scopes
+
+When you create an API key, you assign it one or more scopes. A key can only perform actions covered by its scopes. Follow the principle of least privilege — grant only the scopes your integration needs.
+
+| Scope | What it allows |
+|---|---|
+| `resources:read` | List and retrieve resources |
+| `resources:write` | Create, update, and delete resources |
+| `workflows:read` | List and retrieve workflows |
+| `workflows:write` | Create, update, and delete workflows |
+| `webhooks:manage` | Create, list, and delete webhooks |
+
+## Authentication errors
+
+| Status | Error code | Meaning | How to fix |
+|---|---|---|---|
+| `401` | `unauthorized` | The API key is missing, malformed, or invalid | Check that the `Authorization` header is present and uses the `Bearer YOUR_API_KEY` format |
+| `403` | `forbidden` | The API key is valid but lacks the required scope for this action | Create a new key with the necessary scope, or update the existing key's permissions in **Settings → API Keys** |
+
+<Tip>
+  If you are unsure which scope an endpoint requires, check the endpoint's documentation in the [Resources](/api-reference/resources) or [Webhooks](/api-reference/webhooks) reference pages.
+</Tip>

@@ -1,0 +1,259 @@
+---
+title: "Webhooks API — receive real-time Regentra events"
+description: "Configure Regentra webhooks to receive HTTP event notifications when workflows complete, resources change, and other account events occur."
+---
+
+Regentra webhooks let you receive real-time HTTP notifications when events occur in your account — a workflow completes, a resource changes state, and more. When an event fires, Regentra sends an HTTP `POST` request with a JSON payload to the URL you register.
+
+## Webhook object
+
+A webhook registration has the following shape:
+
+```json
+{
+  "id": "wh_abc123",
+  "url": "https://your-app.com/webhooks/regentra",
+  "events": ["workflow.completed", "resource.created"],
+  "active": true,
+  "created_at": "2024-01-15T10:00:00Z"
+}
+```
+
+### Fields
+
+<ResponseField name="id" type="string">
+  Unique identifier for the webhook, assigned on creation.
+</ResponseField>
+
+<ResponseField name="url" type="string" required>
+  The HTTPS endpoint Regentra sends event payloads to.
+</ResponseField>
+
+<ResponseField name="events" type="string[]" required>
+  List of event types this webhook subscribes to.
+</ResponseField>
+
+<ResponseField name="active" type="boolean">
+  Whether the webhook is currently receiving events. Defaults to `true`.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the webhook was created.
+</ResponseField>
+
+## Supported events
+
+| Event | Description |
+|---|---|
+| `resource.created` | A new resource was created |
+| `resource.updated` | A resource was modified |
+| `resource.deleted` | A resource was deleted |
+| `workflow.started` | A workflow run began |
+| `workflow.completed` | A workflow run finished successfully |
+| `workflow.failed` | A workflow run failed |
+
+<Tip>
+  Subscribe only to the events your integration needs. This keeps your endpoint focused and reduces unnecessary traffic.
+</Tip>
+
+---
+
+## Endpoints
+
+### POST /webhooks
+
+Creates a new webhook registration.
+
+#### Request body
+
+<ParamField body="url" type="string" required>
+  The HTTPS URL Regentra will POST event payloads to.
+</ParamField>
+
+<ParamField body="events" type="string[]" required>
+  Array of event types to subscribe to. See the supported events table above.
+</ParamField>
+
+<ParamField body="secret" type="string">
+  Optional secret used to sign payloads. If provided, Regentra includes an `X-Regentra-Signature` header on every delivery so you can verify authenticity.
+</ParamField>
+
+#### Example request
+
+```bash
+curl -X POST https://api.regentra.io/v1/webhooks \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-app.com/webhooks/regentra",
+    "events": ["workflow.completed", "resource.created"],
+    "secret": "your_webhook_secret"
+  }'
+```
+
+#### Example response
+
+```json
+{
+  "data": {
+    "id": "wh_abc123",
+    "url": "https://your-app.com/webhooks/regentra",
+    "events": ["workflow.completed", "resource.created"],
+    "active": true,
+    "created_at": "2024-01-15T10:00:00Z"
+  },
+  "meta": {
+    "request_id": "req_abc123",
+    "timestamp": "2024-01-15T10:00:00Z"
+  }
+}
+```
+
+---
+
+### GET /webhooks
+
+Lists all webhook registrations in your account.
+
+#### Example request
+
+```bash
+curl https://api.regentra.io/v1/webhooks \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Example response
+
+```json
+{
+  "data": [
+    {
+      "id": "wh_abc123",
+      "url": "https://your-app.com/webhooks/regentra",
+      "events": ["workflow.completed"],
+      "active": true,
+      "created_at": "2024-01-15T10:00:00Z"
+    }
+  ],
+  "meta": {
+    "request_id": "req_def456",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "pagination": {
+      "total": 1,
+      "page": 1,
+      "per_page": 20,
+      "total_pages": 1
+    }
+  }
+}
+```
+
+---
+
+### DELETE /webhooks/{id}
+
+Deletes a webhook registration. Regentra immediately stops sending events to the associated URL.
+
+#### Path parameters
+
+<ParamField path="id" type="string" required>
+  The ID of the webhook to delete (for example, `wh_abc123`).
+</ParamField>
+
+#### Example request
+
+```bash
+curl -X DELETE https://api.regentra.io/v1/webhooks/wh_abc123 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Returns `204 No Content` on success with no response body.
+
+---
+
+## Webhook payload
+
+When a subscribed event fires, Regentra sends a `POST` request to your endpoint with the following payload structure:
+
+```json
+{
+  "id": "evt_xyz789",
+  "event": "workflow.completed",
+  "data": {
+    "workflow_id": "wf_abc123",
+    "workflow_name": "Daily sync",
+    "run_id": "run_def456",
+    "duration_ms": 1234
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for this event delivery.
+</ResponseField>
+
+<ResponseField name="event" type="string">
+  The event type that triggered this delivery (for example, `workflow.completed`).
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Event-specific payload. The fields vary depending on the event type.
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of when the event occurred.
+</ResponseField>
+
+---
+
+## Verifying webhook signatures
+
+Regentra signs every webhook payload using HMAC-SHA256 with the secret you provided when creating the webhook. The signature is sent in the `X-Regentra-Signature` header in the format:
+
+```
+X-Regentra-Signature: sha256=<hmac_hex>
+```
+
+Verify this signature on your server before processing the payload to confirm the request genuinely came from Regentra.
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhook(payload, signature, secret) {
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expected)
+  );
+}
+```
+
+Pass the raw request body (as a `Buffer` or string), the value of the `X-Regentra-Signature` header, and your webhook secret to this function. It returns `true` if the signature matches.
+
+<Warning>
+  Always verify webhook signatures before processing payloads. Skipping this step allows anyone to send forged requests to your endpoint.
+</Warning>
+
+---
+
+## Retry policy
+
+If your endpoint does not return a `2xx` HTTP status within **30 seconds**, Regentra treats the delivery as failed and retries it automatically. Regentra retries failed deliveries up to **5 times** using exponential backoff:
+
+| Attempt | Delay |
+|---|---|
+| 1 | 30 seconds |
+| 2 | 5 minutes |
+| 3 | 30 minutes |
+| 4 | 2 hours |
+| 5 | 5 hours |
+
+After 5 failed attempts, the delivery is marked as permanently failed. You can inspect failed deliveries in **Settings → Webhooks** in the dashboard.
+
+<Note>
+  Make your endpoint idempotent — use the `id` field in each payload to detect and safely ignore duplicate deliveries.
+</Note>
