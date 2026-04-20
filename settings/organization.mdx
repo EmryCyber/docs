@@ -1,0 +1,59 @@
+---
+title: "Organization Settings"
+description: "Configure your organization profile, timezone, custom domain, email delivery, and session settings."
+---
+
+Organization settings control your Regentra account's global configuration. These settings apply across all modules — compliance, PSA, and the customer portal.
+
+## Organization profile
+
+Go to **Settings → Organization** to manage your profile:
+
+- **Organization name** — Displayed in the app header, reports, and invoices
+- **Address** — Used on invoices and compliance documentation
+- **Website** — Your company website URL
+- **Logo** — Displayed in the app, reports, portal, and email notifications
+
+<Tip>
+  Upload a high-resolution logo (at least 400x400px) for the best appearance across reports and the portal.
+</Tip>
+
+## Timezone
+
+Set your organization's timezone in **Settings → Organization → Timezone**. This affects:
+
+- SLA business hours calculation
+- Report date ranges
+- Scheduled sync times
+- Dashboard date displays
+
+<Note>
+  Changing the timezone does not retroactively adjust existing SLA calculations. It applies to new tickets and future SLA evaluations.
+</Note>
+
+## Custom domain for support portal
+
+Configure a custom domain so your clients access the portal at your branded URL (e.g., `support.yourcompany.com`). See the [Customer Portal](/psa/portal) documentation for full setup instructions.
+
+## Email configuration
+
+Regentra sends email notifications for ticket updates, SLA alerts, and invoice delivery. Configure your email sending method in **Settings → Organization → Email**:
+
+<Tabs>
+  <Tab title="Azure Communication Services">
+    Use Azure Communication Services for email delivery. Enter your ACS connection string and verified sender domain.
+  </Tab>
+  <Tab title="Microsoft Graph">
+    Send emails through a Microsoft 365 mailbox using Microsoft Graph API. Requires the Entra ID integration with mail send permissions.
+  </Tab>
+</Tabs>
+
+<Warning>
+  Email notifications will not be sent until a valid email configuration is saved. Verify your setup by sending a test email from the settings page.
+</Warning>
+
+## Session duration
+
+Configure how long user sessions remain active before requiring re-authentication. Go to **Settings → Organization → Security** and set the session timeout. Options range from 1 hour to 30 days.
+
+Shorter session durations improve security for shared workstations. Longer durations reduce login friction for trusted environments.

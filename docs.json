@@ -3,17 +3,22 @@
   "theme": "luma",
   "name": "Regentra",
   "colors": {
-    "primary": "#6366F1",
-    "light": "#818CF8",
-    "dark": "#4F46E5"
+    "primary": "#1D9E75",
+    "light": "#2EC4B6",
+    "dark": "#147A5B"
   },
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Getting Started",
             "pages": [
               "introduction",
               "quickstart",
@@ -21,20 +26,53 @@
             ]
           },
           {
-            "group": "Guides",
+            "group": "Compliance Module",
             "pages": [
-              "guides/authentication",
-              "guides/integrations",
-              "guides/workflows",
-              "guides/notifications"
+              "compliance/overview",
+              "compliance/frameworks",
+              "compliance/controls",
+              "compliance/policies",
+              "compliance/risk-assessment",
+              "compliance/evidence-collection",
+              "compliance/reports"
             ]
           },
           {
-            "group": "Configuration",
+            "group": "PSA Module",
             "pages": [
-              "configuration/settings",
-              "configuration/environments",
-              "configuration/security"
+              "psa/overview",
+              "psa/tickets",
+              "psa/sla-policies",
+              "psa/time-tracking",
+              "psa/knowledge-base",
+              "psa/portal",
+              "psa/reports"
+            ]
+          },
+          {
+            "group": "MSP Management",
+            "pages": [
+              "msp/overview",
+              "msp/clients",
+              "msp/billing"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/overview",
+              "integrations/microsoft-entra",
+              "integrations/level-rmm",
+              "integrations/stripe"
+            ]
+          },
+          {
+            "group": "Settings & Security",
+            "pages": [
+              "settings/organization",
+              "settings/team-management",
+              "settings/mfa",
+              "settings/sso"
             ]
           },
           {
@@ -45,37 +83,33 @@
             ]
           }
         ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "api-reference/introduction",
-              "api-reference/authentication"
-            ]
-          },
-          {
-            "group": "Endpoints",
-            "pages": [
-              "api-reference/resources",
-              "api-reference/webhooks",
-              "api-reference/errors"
-            ]
-          }
-        ]
       }
     ]
   },
   "navbar": {
     "primary": {
       "type": "button",
-      "label": "Get Started",
-      "href": "/quickstart"
-    }
+      "label": "Sign Up",
+      "href": "https://app.regentra.io/register"
+    },
+    "links": [
+      {
+        "label": "Discord",
+        "href": "https://discord.gg/DXfwbu5pXN"
+      }
+    ]
   },
   "footer": {
-    "socials": {}
+    "socials": {
+      "discord": "https://discord.gg/DXfwbu5pXN",
+      "website": "https://regentra.io"
+    }
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true
+  },
+  "search": {
+    "prompt": "Search Regentra docs..."
   }
 }

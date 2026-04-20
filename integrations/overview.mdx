@@ -1,0 +1,66 @@
+---
+title: "Integrations Overview"
+description: "Connect Regentra with Microsoft Entra ID, Level.io RMM, Stripe, and cloud providers. All credentials are encrypted with AES-256-GCM."
+---
+
+Regentra integrates with the tools MSPs already use. Each integration runs at the organization level with credentials encrypted using AES-256-GCM before storage.
+
+## Available integrations
+
+<CardGroup cols={2}>
+  <Card title="Microsoft Entra ID" icon="microsoft" href="/integrations/microsoft-entra">
+    SSO authentication, user and device sync, and compliance evidence collection from Azure AD.
+  </Card>
+  <Card title="Level.io RMM" icon="server" href="/integrations/level-rmm">
+    Device and asset sync from RMM agent data with real-time webhook updates.
+  </Card>
+  <Card title="Stripe" icon="stripe" href="/integrations/stripe">
+    Payment collection for PSA invoicing and platform subscription management.
+  </Card>
+  <Card title="AWS" icon="aws">
+    Cloud infrastructure evidence collection for compliance frameworks.
+  </Card>
+  <Card title="Google Cloud" icon="google">
+    GCP resource inventory and configuration evidence for compliance.
+  </Card>
+</CardGroup>
+
+## How integrations work
+
+Each integration stores encrypted credentials at the organization level. Regentra uses **AES-256-GCM** encryption for all stored secrets (API keys, OAuth tokens, client secrets). Credentials are decrypted only at the moment of use and never logged.
+
+Integrations sync data on a schedule (typically every 6 hours) and can also be triggered manually. Some integrations support real-time updates via webhooks.
+
+## Connecting an integration
+
+<Steps>
+  <Step title="Navigate to integrations">
+    Go to **Settings → Integrations** to see all available integrations.
+  </Step>
+  <Step title="Select the integration">
+    Click on the integration you want to connect. Each one has its own setup flow.
+  </Step>
+  <Step title="Enter credentials">
+    Provide the required credentials — API keys, OAuth consent, or connection details depending on the integration.
+  </Step>
+  <Step title="Test the connection">
+    Click **Test Connection** to verify that Regentra can communicate with the external service.
+  </Step>
+  <Step title="Save and enable">
+    Save the configuration. The integration begins syncing data on its next scheduled run, or you can trigger an immediate sync.
+  </Step>
+</Steps>
+
+## Connection status
+
+Each integration shows its current status on the integrations page:
+
+| Status | Meaning |
+| --- | --- |
+| **Connected** | Credentials are valid and the last sync succeeded |
+| **Error** | The last sync failed — check credentials or service availability |
+| **Not configured** | The integration has not been set up yet |
+
+<Tip>
+  If an integration shows an error, click into it to see the error details. Common issues include expired OAuth tokens (re-authorize) and revoked API keys (regenerate).
+</Tip>

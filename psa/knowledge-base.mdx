@@ -1,0 +1,70 @@
+---
+title: "Knowledge Base"
+description: "Create and organize support articles for your team and customers. KB content powers AI-assisted ticket replies."
+---
+
+The knowledge base is a shared article library that serves two purposes: it gives your customers self-service answers through the portal, and it provides context for Regentra's AI-powered ticket draft feature.
+
+## Creating articles
+
+<Steps>
+  <Step title="Navigate to Knowledge Base">
+    Go to **PSA → Knowledge Base** and click **New Article**.
+  </Step>
+  <Step title="Write the article">
+    Use the markdown editor to write your article. Supports headings, lists, code blocks, images, and links.
+  </Step>
+  <Step title="Choose visibility">
+    Set the article as **Public** (visible to customers in the portal) or **Internal** (visible only to your team).
+  </Step>
+  <Step title="Assign to a folder">
+    Organize the article into a folder for easier navigation.
+  </Step>
+  <Step title="Publish">
+    Save and publish. The article is immediately available based on its visibility setting.
+  </Step>
+</Steps>
+
+## Organizing with folders
+
+Folders group related articles into logical categories. Common structures include:
+
+- **Getting Started** — Onboarding and setup guides
+- **Account Management** — Password resets, MFA, user provisioning
+- **Network & Connectivity** — VPN, Wi-Fi, DNS troubleshooting
+- **Applications** — Per-application how-tos and known issues
+
+Folders appear in the portal sidebar, letting customers browse by topic.
+
+## Linking tickets to KB articles
+
+When a technician resolves a ticket, Regentra prompts them to create or link a KB article:
+
+<Info>
+  This prompt appears automatically when a ticket is moved to **Resolved** status. If the resolution involved a common issue, the technician can capture the fix as a new article or link an existing one. This builds your KB organically over time.
+</Info>
+
+Linked articles appear on the ticket detail page, creating a reference between the support interaction and the documented solution.
+
+## Portal-facing KB
+
+Customers access the knowledge base through the [support portal](/psa/portal). They can:
+
+- Browse articles by folder
+- Search across all public articles
+- View articles without opening a ticket
+
+A well-maintained KB reduces ticket volume by enabling self-service resolution.
+
+## AI-powered ticket drafts
+
+Regentra's AI draft feature uses retrieval-augmented generation (RAG) to suggest replies:
+
+1. When a technician opens a ticket, the AI searches your KB for relevant articles
+2. It combines the KB content with the ticket context (subject, description, conversation history)
+3. A draft reply is generated and shown to the technician for review
+4. The technician can edit, send as-is, or discard the draft
+
+<Tip>
+  The quality of AI drafts improves directly with the breadth and accuracy of your knowledge base. Prioritize documenting your most common resolution steps.
+</Tip>

@@ -1,0 +1,100 @@
+---
+title: "Risk Assessment"
+description: "Conduct risk assessments, maintain a risk register, and track treatment plans aligned with your compliance frameworks."
+---
+
+Risk assessment is the process of identifying, analyzing, and evaluating risks to your organization's information assets. Regentra provides structured workflows for conducting assessments and maintaining an ongoing risk register — a requirement across most compliance frameworks.
+
+## Creating a Risk Assessment
+
+<Steps>
+  <Step title="Navigate to Risk Assessment">
+    Open the **Compliance** module and select **Risk Assessment** from the sidebar.
+  </Step>
+  <Step title="Start a new assessment">
+    Click **New Assessment**. Choose the assessment type:
+    - **Security Risk Assessment (SRA)** — required for HIPAA, aligned with HHS guidance
+    - **General Risk Assessment** — suitable for SOC 2, NIST CSF, ISO 27001, and other frameworks
+  </Step>
+  <Step title="Define the scope">
+    Specify which systems, data types, and business processes are in scope. For HIPAA SRAs, this includes all systems that create, receive, maintain, or transmit electronic protected health information (ePHI).
+  </Step>
+  <Step title="Identify threats and vulnerabilities">
+    Work through the assessment questionnaire to identify threats (what could go wrong) and vulnerabilities (weaknesses that could be exploited). Regentra provides a curated threat catalog to guide this process.
+  </Step>
+  <Step title="Score and finalize">
+    Review the calculated risk scores, add any additional context, and finalize the assessment.
+  </Step>
+</Steps>
+
+<Note>
+  For HIPAA-covered entities and business associates, the Security Risk Assessment is not optional. The HHS Office for Civil Rights (OCR) cites failure to conduct an SRA as one of the most common HIPAA violations.
+</Note>
+
+## Risk Scoring Methodology
+
+Regentra uses a **likelihood x impact** matrix to calculate risk scores:
+
+| Factor | Scale | Description |
+|---|---|---|
+| **Likelihood** | 1 (Rare) to 5 (Almost Certain) | How probable is it that this threat will exploit this vulnerability? |
+| **Impact** | 1 (Negligible) to 5 (Severe) | What is the potential damage to the organization if the risk materializes? |
+| **Risk Score** | 1 to 25 | Likelihood multiplied by Impact |
+
+Risk scores map to severity levels:
+
+- **Low (1-6)** — acceptable risk, monitor periodically
+- **Medium (7-12)** — requires a documented treatment plan
+- **High (13-19)** — prioritize remediation, escalate to leadership
+- **Critical (20-25)** — immediate action required
+
+<Tip>
+  When scoring risks, involve the people closest to the systems in question. Technical staff understand vulnerabilities better than anyone, and business stakeholders understand impact more accurately.
+</Tip>
+
+## Risk Register
+
+The **risk register** is your living inventory of identified risks. Every risk from every assessment feeds into the register, creating a centralized view of your organization's risk posture.
+
+Each risk entry includes:
+- **Description** — what the risk is
+- **Threat source** — the actor or event that could cause harm
+- **Vulnerability** — the weakness being exploited
+- **Likelihood and impact scores** — with the calculated risk level
+- **Treatment plan** — how you plan to address the risk
+- **Owner** — the person responsible for treatment
+- **Status** — Open, In Treatment, Accepted, Mitigated, or Closed
+
+### Treatment Plans
+
+For each risk, you must document a treatment approach:
+
+<Tabs>
+  <Tab title="Mitigate">
+    Implement controls to reduce the likelihood or impact. This is the most common approach. Link the risk to specific controls in Regentra to track mitigation progress.
+  </Tab>
+  <Tab title="Accept">
+    Formally acknowledge the risk and decide not to take further action. Document the rationale and ensure leadership sign-off. Acceptance is appropriate for low-severity risks where the cost of mitigation exceeds the potential impact.
+  </Tab>
+  <Tab title="Transfer">
+    Shift the risk to a third party, typically through insurance or contractual agreements. Document the transfer mechanism and any residual risk that remains.
+  </Tab>
+  <Tab title="Avoid">
+    Eliminate the risk entirely by removing the activity or system that creates it. This is appropriate when the risk is unacceptable and cannot be adequately mitigated.
+  </Tab>
+</Tabs>
+
+## Annual Review Requirements
+
+Most compliance frameworks require risk assessments to be reviewed and updated on a regular cadence:
+
+- **HIPAA** — annual SRA review is a best practice and OCR expectation
+- **SOC 2** — risk assessments must be current for each audit period
+- **NIST CSF** — recommends ongoing risk assessment as part of the Identify function
+- **ISO 27001** — requires risk assessment updates when significant changes occur or at planned intervals
+
+<Warning>
+  Regentra tracks when your last assessment was completed and alerts you when a review is due. Do not let assessments go stale — outdated risk assessments are a common audit finding and regulatory citation.
+</Warning>
+
+Regentra sends dashboard notifications and optional email reminders as your review date approaches, so your team can plan the next assessment cycle in advance.

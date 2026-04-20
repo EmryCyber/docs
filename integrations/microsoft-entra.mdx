@@ -1,0 +1,67 @@
+---
+title: "Microsoft Entra ID Integration"
+description: "Connect Entra ID for SSO authentication, user and device sync, and compliance evidence collection."
+---
+
+The Microsoft Entra ID integration connects your Azure AD tenant to Regentra for single sign-on, user and device synchronization, and automated compliance evidence collection.
+
+## What it provides
+
+- **SSO authentication** — Staff and portal users sign in with their Entra credentials
+- **User sync** — Entra users are imported as portal contacts automatically
+- **Device sync** — Intune-managed devices are imported as assets
+- **Compliance evidence** — Conditional access policies, MFA status, and device compliance states are collected as evidence for compliance frameworks
+
+## Setup
+
+<Steps>
+  <Step title="Navigate to integrations">
+    Go to **Settings → Integrations → Microsoft Entra ID**.
+  </Step>
+  <Step title="Start admin consent">
+    Click **Connect** to initiate the Azure AD admin consent flow. You will be redirected to Microsoft's login page.
+  </Step>
+  <Step title="Grant consent">
+    Sign in with a Global Administrator or Privileged Role Administrator account and approve the permissions requested by the Regentra application.
+  </Step>
+  <Step title="Verify connection">
+    After consent, you are redirected back to Regentra. The integration status should show **Connected**.
+  </Step>
+</Steps>
+
+<Note>
+  The admin consent flow grants Regentra read access to users, groups, devices, and directory data. No write permissions are requested.
+</Note>
+
+## What syncs
+
+| Entra object | Regentra object | Details |
+| --- | --- | --- |
+| Users | Portal contacts | Display name, email, department, job title |
+| Devices (Intune) | Assets | Hostname, OS, serial number, compliance state |
+| Groups | Contact groups | Used for portal access control |
+
+## Sync frequency
+
+- **Automatic sync** runs every **6 hours**
+- **Manual sync** can be triggered at any time from the integration settings page
+
+<Info>
+  The initial sync may take several minutes depending on the size of your Entra directory. Subsequent syncs are incremental and faster.
+</Info>
+
+## SSO for staff login
+
+When Entra SSO is enabled, your team members can sign in to [app.regentra.io](https://app.regentra.io) using their Microsoft credentials. This uses the OAuth2 authorization code flow. See [SSO settings](/settings/sso) for configuration details.
+
+## SSO for portal login
+
+Portal SSO is configured separately for each client. When a client's Entra tenant is connected, their end users can sign in to the support portal using their corporate Microsoft accounts. Enable this under **Settings → Portal → Authentication** within the client's context.
+
+## Device sync deduplication
+
+If you also use the [Level.io RMM integration](/integrations/level-rmm), devices may appear from both sources. Regentra deduplicates assets by matching on serial number and hostname. When a match is found, the records are merged — Entra provides compliance state and Intune data, while Level.io provides RMM agent details and warranty information.
+
+<Tip>
+  If you see duplicate assets after enabling both integrations, they will be automatically merged on the next sync cycle.
+</Tip>

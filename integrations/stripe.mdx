@@ -1,0 +1,65 @@
+---
+title: "Stripe Integration"
+description: "Connect Stripe for PSA client invoicing and payment collection. Separate from Regentra platform billing."
+---
+
+Regentra uses Stripe in two distinct ways: platform billing for your Regentra subscription, and per-org billing for invoicing your MSP clients through the PSA module.
+
+## Two modes of Stripe
+
+<Tabs>
+  <Tab title="Platform billing">
+    Handles your Regentra subscription charges — plan fees, per-seat PSA billing, and compliance tenant add-ons. This is managed automatically when you subscribe and requires no additional setup. See [Billing & Subscriptions](/msp/billing) for details.
+  </Tab>
+  <Tab title="Per-org billing (PSA invoicing)">
+    Lets you invoice your clients for billable time and services through Regentra. You connect your own Stripe account so payments from your clients flow directly to you.
+  </Tab>
+</Tabs>
+
+## Setting up per-org Stripe
+
+<Steps>
+  <Step title="Get your Stripe API keys">
+    In the [Stripe Dashboard](https://dashboard.stripe.com), navigate to **Developers → API Keys** and copy your **Publishable key** and **Secret key**.
+  </Step>
+  <Step title="Enter keys in Regentra">
+    Go to **Settings → Integrations → Stripe** and paste both keys.
+  </Step>
+  <Step title="Test the connection">
+    Click **Test Connection** to verify Regentra can communicate with your Stripe account.
+  </Step>
+  <Step title="Save">
+    Save the configuration. You can now generate invoices that accept payment through Stripe.
+  </Step>
+</Steps>
+
+<Warning>
+  Use your **live** API keys for production invoicing. Test keys will not process real payments. Never share your secret key — it is encrypted at rest using AES-256-GCM.
+</Warning>
+
+## Invoice generation and payment
+
+Once Stripe is connected, the invoicing flow works as follows:
+
+1. Technicians log billable time against tickets
+2. Time entries go through the [approval workflow](/psa/time-tracking)
+3. An admin generates an invoice from approved entries
+4. The invoice is sent to the client with a Stripe-hosted payment link
+5. The client pays online via credit card or ACH
+
+Payment status is tracked on the invoice in Regentra:
+
+| Status | Meaning |
+| --- | --- |
+| **Draft** | Invoice created but not yet sent |
+| **Sent** | Invoice delivered to the client |
+| **Paid** | Payment received through Stripe |
+| **Overdue** | Payment deadline has passed without payment |
+
+## Webhook configuration
+
+Regentra uses Stripe webhooks to receive real-time payment events (payment succeeded, payment failed, refund issued). During setup, Regentra automatically configures the necessary webhook endpoint in your Stripe account.
+
+<Info>
+  If you need to manually configure the webhook, the endpoint URL is available in **Settings → Integrations → Stripe → Webhook URL**. Subscribe to `invoice.paid`, `invoice.payment_failed`, and `charge.refunded` events.
+</Info>

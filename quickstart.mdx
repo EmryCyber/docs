@@ -1,104 +1,102 @@
 ---
-title: "Get started with Regentra in under five minutes"
-description: "Sign up for Regentra, generate your first API key, authenticate your first request, and create an automated workflow — all in under five minutes."
+title: "Quickstart — Your First 10 Minutes"
+description: "Go from zero to managing compliance and service tickets in under 10 minutes."
 ---
 
-Regentra is designed to get you productive quickly. This guide walks you through signing up, authenticating with the API, and creating your first workflow — everything you need to start automating your team's processes.
+This guide walks you through the essential setup steps so you can start using Regentra immediately. By the end, you will have an active compliance framework, a support ticket, and your team invited.
 
 <Steps>
-  <Step title="Sign up and access your dashboard">
-    Go to [regentra.io](https://regentra.io) and create a free account. No credit card is required. Once you confirm your email, you're taken directly to the Regentra dashboard where you can manage workflows, resources, and integrations.
+  <Step title="Register your organization">
+    Go to [app.regentra.io](https://app.regentra.io) and click **Get Started**.
+
+    You will need to provide:
+    - **Organization name** — your MSP or company name
+    - **Industry** — healthcare, finance, government, or general
+    - **Admin details** — name, email, and password for the first admin account
+
+    <Note>
+      Your organization is created as an isolated tenant. All data, controls, and configurations are scoped to your org.
+    </Note>
   </Step>
 
-  <Step title="Generate an API key">
-    Navigate to **Settings → API Keys** in the dashboard. Click **New API Key**, give it a name (for example, `dev-local`), and copy the key immediately — it won't be shown again.
+  <Step title="Complete the onboarding wizard">
+    After registration, the onboarding wizard guides you through initial setup.
 
-    <Warning>
-      Store your API key in a secure location such as an environment variable or secrets manager. Never commit it to source control.
-    </Warning>
+    Choose which modules to activate:
+    - **Compliance only** — if you are focused on framework management and audit readiness
+    - **PSA only** — if you need ticketing, SLAs, and service operations
+    - **Both** — the full platform experience (recommended for most MSPs)
+
+    The wizard also prompts you to set your timezone, business hours, and basic branding.
   </Step>
 
-  <Step title="Make your first API call">
-    Use your API key as a Bearer token to authenticate requests. The example below lists your resources to verify the connection is working.
+  <Step title="Adopt your first compliance framework">
+    Navigate to the **Frameworks** page from the sidebar.
 
-    <CodeGroup>
-
-    ```bash cURL
-    curl https://api.regentra.io/v1/resources \
-      -H "Authorization: Bearer YOUR_API_KEY"
-    ```
-
-    ```python Python
-    import requests
-
-    response = requests.get(
-        "https://api.regentra.io/v1/resources",
-        headers={"Authorization": "Bearer YOUR_API_KEY"},
-    )
-    print(response.json())
-    ```
-
-    </CodeGroup>
-
-    A successful response returns a paginated list of your resources:
-
-    ```json
-    {
-      "data": [],
-      "meta": {
-        "total": 0,
-        "page": 1,
-        "per_page": 20
-      }
-    }
-    ```
+    1. Browse the available frameworks (HIPAA, SOC 2, NIST CSF, ISO 27001, CMMC, PCI-DSS, GDPR, FTC Safeguards)
+    2. Click **Adopt** on the framework your client needs
+    3. Regentra seeds the full control set for that framework into your organization
+    4. The compliance dashboard populates with your gap analysis and control status breakdown
 
     <Tip>
-      Replace `YOUR_API_KEY` with the key you copied in the previous step. If you see a `401 Unauthorized` error, double-check that the key is correct and that you've included the `Bearer` prefix.
+      Start with the framework most relevant to your largest client. You can adopt additional frameworks at any time — the Common Control Framework maps overlapping controls automatically.
     </Tip>
   </Step>
 
-  <Step title="Create your first workflow">
-    You can create a workflow from the dashboard or via the API.
+  <Step title="Create your first support ticket">
+    Switch to the **PSA** module and navigate to **Tickets → New Ticket**.
 
-    **From the dashboard:** Go to **Workflows → New Workflow**, choose a trigger (such as a webhook event or a schedule), and add one or more actions. Save and enable the workflow.
+    Fill in the basics:
+    - **Subject** — a short description of the issue
+    - **Priority** — Low, Medium, High, or Critical
+    - **Assignee** — assign to yourself or leave unassigned for now
+    - **Description** — details about the request or incident
 
-    **Via the API:** Send a POST request with your workflow definition:
+    Submit the ticket to see it appear in your queue with SLA timers active.
+  </Step>
 
-    ```bash cURL
-    curl -X POST https://api.regentra.io/v1/workflows \
-      -H "Authorization: Bearer YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "name": "My first workflow",
-        "trigger": { "type": "webhook" },
-        "actions": [
-          { "type": "notification", "channel": "slack", "message": "Workflow triggered!" }
-        ]
-      }'
-    ```
+  <Step title="Invite your team">
+    Go to **Settings → Team → Invite**.
 
-    A successful response includes the new workflow's `id` and its current status:
+    Enter email addresses and assign roles:
+    - **ADMIN** — full access to all modules and settings
+    - **COMPLIANCE_OFFICER** — manages frameworks, controls, and evidence
+    - **MSP_TECHNICIAN** — handles tickets and service operations
+    - **EMPLOYEE** — limited access for policy acknowledgment and basic tasks
 
-    ```json
-    {
-      "id": "wf_01hxyz1234abcd",
-      "name": "My first workflow",
-      "status": "active",
-      "trigger": { "type": "webhook" },
-      "created_at": "2026-04-20T10:00:00Z"
-    }
-    ```
+    <Info>
+      Invited users receive an email with a link to set their password and join your organization.
+    </Info>
+  </Step>
+
+  <Step title="Connect an integration">
+    Go to **Settings → Integrations** and connect your first external service.
+
+    **Microsoft Entra ID** — sync your user directory, pull MFA status, and collect identity-related evidence automatically.
+
+    **Level.io** — import device inventory, patch status, and endpoint compliance signals from your RMM.
+
+    Follow the guided setup for each integration. Most connections take under two minutes to configure.
+
+    <Warning>
+      Integration credentials are encrypted at rest and scoped to your organization. Only admins can configure integrations.
+    </Warning>
   </Step>
 </Steps>
 
-## What's next
+## What to Do Next
 
 <CardGroup cols={2}>
-  <Card title="Authentication guide" icon="key" href="/guides/authentication">
-    Learn about API key scopes, token rotation, and best practices for keeping your credentials secure.
+  <Card title="Learn Core Concepts" icon="lightbulb" href="/concepts">
+    Understand tenants, the Common Control Framework, and how Regentra structures compliance data.
   </Card>
-  <Card title="Core concepts" icon="lightbulb" href="/concepts">
-    Understand resources, workflows, integrations, and other building blocks before going deeper.
+  <Card title="Explore the Compliance Module" icon="shield-check" href="/compliance/overview">
+    Dive into frameworks, controls, policies, and evidence collection.
+  </Card>
+  <Card title="Set Up SLA Policies" icon="clock" href="/psa/sla-policies">
+    Configure response and resolution time targets for your service desk.
+  </Card>
+  <Card title="Configure the Customer Portal" icon="browser" href="/psa/portal">
+    Set up branded ticket submission and live chat for your clients.
   </Card>
 </CardGroup>

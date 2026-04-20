@@ -1,53 +1,73 @@
 ---
-title: "What is Regentra? Workflow automation for teams"
-description: "Regentra is a workflow automation and resource management platform. Connect your tools, automate processes, and manage resources through a single API."
+title: "Welcome to Regentra"
+description: "Multi-framework compliance management and PSA platform built for Managed Service Providers."
 ---
 
-Regentra is a workflow automation and resource management platform designed for teams that need to move fast. With Regentra, you can connect your tools, automate repetitive processes, and manage all your resources — tasks, data objects, and events — through a unified API and intuitive dashboard.
+Regentra is a unified platform that brings **compliance management** and **professional services automation (PSA)** together in one place. Built specifically for MSPs, Regentra lets you manage multi-framework compliance programs and day-to-day service operations for every client tenant from a single dashboard at [app.regentra.io](https://app.regentra.io).
 
-## What you can do with Regentra
+## Two Core Modules
+
+<Tabs>
+  <Tab title="Compliance">
+    Adopt and manage multiple compliance frameworks simultaneously. Regentra's Common Control Framework (CCF) maps your internal controls across frameworks so you implement once and satisfy many.
+
+    **Supported frameworks:** HIPAA, SOC 2, NIST CSF, ISO 27001, CMMC, PCI-DSS, GDPR, and FTC Safeguards.
+  </Tab>
+  <Tab title="PSA">
+    Run your service desk, track time, manage SLAs, invoice clients, and maintain a knowledge base — all integrated with your compliance workflows.
+
+    **Capabilities:** Ticketing, SLA management, time tracking, invoicing, knowledge base, and asset management.
+  </Tab>
+</Tabs>
+
+## Explore the Platform
 
 <CardGroup cols={2}>
-  <Card title="Automate workflows" icon="bolt" href="/guides/workflows">
-    Build event-driven and scheduled automations without code.
+  <Card title="Compliance" icon="shield-check" href="/compliance/overview">
+    Adopt frameworks, manage controls, collect evidence, and generate audit-ready reports across HIPAA, SOC 2, NIST, and more.
   </Card>
-  <Card title="Manage resources" icon="database" href="/api-reference/resources">
-    Create and organize data objects your team works with every day.
+  <Card title="PSA" icon="ticket" href="/psa/overview">
+    Ticketing, SLAs, time tracking, invoicing, and knowledge base — everything you need to run your service desk.
   </Card>
-  <Card title="Connect your tools" icon="plug" href="/guides/integrations">
-    Integrate Slack, GitHub, Jira, and more in minutes.
+  <Card title="Integrations" icon="plug" href="/integrations">
+    Connect Microsoft Entra ID, Level.io, AWS, GCP, and other tools to automate evidence collection and sync user directories.
   </Card>
-  <Card title="Receive real-time alerts" icon="bell" href="/guides/notifications">
-    Webhooks and notifications keep your team in sync.
+  <Card title="MSP Management" icon="building" href="/msp/overview">
+    Manage multiple client tenants, assign technicians, and maintain isolated compliance programs per organization.
   </Card>
 </CardGroup>
 
-## How Regentra works
+## Who Is Regentra For?
 
-Regentra is built around a simple, repeatable loop: connect your data, define what should happen, and let Regentra handle the rest. Here's how it works in practice:
+Regentra is purpose-built for **Managed Service Providers** who handle compliance and IT operations for clients in regulated industries:
 
-1. **Connect your tools and data sources** — Link Regentra to the services your team already uses, such as Slack, GitHub, or Jira, using built-in integrations or the REST API.
-2. **Define workflows that react to events or run on a schedule** — Set up triggers based on incoming events, webhooks, or time-based schedules, then attach the actions you want Regentra to execute.
-3. **Regentra executes actions and notifies your team** — When a trigger fires, Regentra runs your workflow, updates resources, and sends notifications to keep everyone informed.
+- **Healthcare** — HIPAA compliance programs, security risk assessments, BAA tracking
+- **Financial services** — SOC 2 readiness, PCI-DSS controls, FTC Safeguards implementation
+- **Government contractors** — CMMC certification prep, NIST CSF alignment
+- **Any organization** handling sensitive data across GDPR, ISO 27001, or multiple overlapping frameworks
 
-## Who is Regentra for?
+If you manage compliance for more than one client — or across more than one framework — Regentra eliminates the spreadsheet sprawl and manual tracking that slows you down.
 
-Regentra is designed for both developers and non-technical team leads. Developers can interact directly with the REST API to build integrations, manage resources programmatically, and trigger workflows from their own systems. Non-technical team leads can use the dashboard to set up and monitor automations, manage team resources, and review activity — no code required. Whether you prefer to script everything or point-and-click, Regentra works the way your team works.
-
-## Getting started
+## Getting Started
 
 <Steps>
-  <Step title="Sign up at regentra.io">
-    Create a free account at [regentra.io](https://regentra.io). No credit card is required. Once you confirm your email, you'll have access to your dashboard.
+  <Step title="Create your account">
+    Register at [app.regentra.io](https://app.regentra.io) with your organization name, industry, and admin details.
   </Step>
-  <Step title="Generate an API key">
-    In your dashboard, go to **Settings → API Keys** and click **New API Key**. Copy the key immediately — it won't be displayed again.
+  <Step title="Choose your modules">
+    The onboarding wizard walks you through activating Compliance, PSA, or both.
   </Step>
-  <Step title="Follow the quickstart guide">
-    Make your first API call and create your first workflow using the step-by-step guide below.
+  <Step title="Adopt a framework">
+    Head to the Frameworks page and click **Adopt** on your first compliance framework. Controls are seeded automatically.
+  </Step>
+  <Step title="Invite your team">
+    Go to **Settings → Team → Invite** to bring in compliance officers, technicians, and client stakeholders.
+  </Step>
+  <Step title="Connect integrations">
+    Link Microsoft Entra ID, Level.io, or cloud providers to start pulling automated evidence.
   </Step>
 </Steps>
 
-<Card title="Quickstart guide" icon="rocket" href="/quickstart">
-  Make your first API call and create your first workflow in under five minutes.
-</Card>
+<Tip>
+  New to Regentra? Follow the [Quickstart guide](/quickstart) to get up and running in under 10 minutes.
+</Tip>

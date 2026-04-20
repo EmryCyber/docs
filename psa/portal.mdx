@@ -1,0 +1,80 @@
+---
+title: "Customer Support Portal"
+description: "Branded, client-facing portal for ticket submission, live chat, knowledge base access, and asset visibility."
+---
+
+Each client gets a dedicated support portal — a white-label interface where their end users can submit tickets, chat with your team, browse KB articles, and view their assets. The portal runs on your custom domain and carries your branding.
+
+## Portal features
+
+<CardGroup cols={2}>
+  <Card title="Submit tickets" icon="ticket">
+    End users create support requests with subject, description, priority, and file attachments.
+  </Card>
+  <Card title="View ticket status" icon="list-check">
+    Customers see real-time status updates on their open and resolved tickets.
+  </Card>
+  <Card title="Live chat" icon="comments">
+    Real-time messaging with your technicians. Chat sessions convert to tickets when closed.
+  </Card>
+  <Card title="Knowledge base" icon="book">
+    Public KB articles are searchable and browsable from the portal.
+  </Card>
+  <Card title="Asset view" icon="laptop">
+    Customers see devices associated with their account, synced from Entra ID and Level.io.
+  </Card>
+</CardGroup>
+
+## Custom branding
+
+Customize the portal appearance in **Settings → Portal**:
+
+- **Logo** — Displayed in the portal header and login page
+- **Colors** — Primary and accent colors applied to buttons, links, and headers
+- **Custom CSS** — Override any portal style with your own CSS for full control
+
+<Tip>
+  Branding is configured per client, so you can white-label the portal differently for each customer.
+</Tip>
+
+## Custom domain setup
+
+Host the portal on your client's domain (e.g., `support.clientname.com`):
+
+<Steps>
+  <Step title="Add the domain">
+    Go to **Settings → Portal → Custom Domain** and enter the desired subdomain.
+  </Step>
+  <Step title="Configure DNS">
+    Add a CNAME record pointing your subdomain to the Regentra portal endpoint provided in the setup wizard.
+  </Step>
+  <Step title="Verify and activate">
+    Regentra verifies DNS propagation and provisions an SSL certificate automatically.
+  </Step>
+</Steps>
+
+<Warning>
+  DNS propagation can take up to 48 hours. The portal will not be accessible on the custom domain until verification completes.
+</Warning>
+
+## Portal authentication
+
+<Tabs>
+  <Tab title="Email / Password">
+    End users register with their email and set a password. A verification email is sent on first signup.
+  </Tab>
+  <Tab title="Entra SSO">
+    Customers with Microsoft Entra ID can sign in using their existing corporate credentials. Enable this in the portal settings for each client. See [Microsoft Entra ID Integration](/integrations/microsoft-entra) for setup.
+  </Tab>
+</Tabs>
+
+## Contact management
+
+Portal contacts are the end users who can access the portal. Contacts can be:
+
+- **Manually created** in the portal settings
+- **Synced from Microsoft Entra ID** — Users from the client's Entra tenant are automatically imported as portal contacts
+
+<Info>
+  Synced contacts update automatically every 6 hours. Changes to user attributes in Entra (name, email, department) are reflected in the portal on the next sync.
+</Info>

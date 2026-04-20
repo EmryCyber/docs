@@ -1,0 +1,58 @@
+---
+title: "MSP Management"
+description: "Multi-tenant client management for MSPs — manage compliance, service delivery, and billing across all your clients from one platform."
+---
+
+The MSP module is the backbone of Regentra's multi-tenant architecture. It lets you manage multiple client organizations from a single MSP account, with full isolation between clients for compliance, ticketing, and portal access.
+
+## What the MSP module provides
+
+- **Multi-client tenant management** — Each client operates in its own isolated environment with separate compliance controls, policies, and risk assessments.
+- **Centralized oversight** — View compliance scores, ticket volumes, and tenant usage across all clients from the MSP dashboard.
+- **Context switching** — Move between client contexts without logging out. The sidebar switcher gives you instant access to any managed client.
+- **Per-client portals** — Each client's end users access their own branded support portal, isolated from other tenants.
+
+## MSP hierarchy
+
+<Steps>
+  <Step title="MSP organization">
+    Your top-level organization. This is where your team, billing, integrations, and global settings live.
+  </Step>
+  <Step title="Client organizations">
+    Each managed client is a separate compliance tenant under your MSP org. Clients have their own controls, policies, risk assessments, tickets, and portal.
+  </Step>
+</Steps>
+
+<Info>
+  Data isolation is enforced at the database level. One client's compliance data, tickets, and contacts are never visible to another client.
+</Info>
+
+## Context switching
+
+The **ComplianceClientSwitcher** in the sidebar lets you select which client context you are working in. When you switch clients:
+
+- The compliance dashboard shows that client's frameworks, controls, and scores
+- The PSA views filter to that client's tickets, time entries, and invoices
+- The portal settings reflect that client's branding and domain
+
+Your MSP-level settings (team, billing, integrations) remain accessible regardless of the selected client.
+
+## MSP dashboard
+
+The MSP dashboard provides a high-level view across all clients:
+
+| Metric | Description |
+| --- | --- |
+| **Managed clients** | Total number of active client tenants |
+| **Compliance scores** | Per-client compliance posture at a glance |
+| **Tenant usage** | Compliance tenant allocation vs plan limits |
+| **Open tickets** | Aggregate ticket count across all clients |
+
+<CardGroup cols={2}>
+  <Card title="Managing Clients" icon="users" href="/msp/clients">
+    Add clients, switch contexts, and configure per-client compliance and portal settings.
+  </Card>
+  <Card title="Billing & Subscriptions" icon="credit-card" href="/msp/billing">
+    Manage your Regentra subscription, seat counts, and compliance tenant limits.
+  </Card>
+</CardGroup>

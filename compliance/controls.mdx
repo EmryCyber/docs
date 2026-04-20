@@ -1,0 +1,94 @@
+---
+title: "Working with Controls"
+description: "Understand controls, track implementation status, attach evidence, and use gap analysis to prioritize remediation."
+---
+
+Controls are the building blocks of your compliance program. Each control represents a specific security or operational requirement that your organization must implement to satisfy one or more framework requirements.
+
+## What Controls Are
+
+A control in Regentra is an organizational requirement that maps to specific clauses, sections, or criteria within compliance frameworks. For example:
+
+- **"Enforce Multi-Factor Authentication"** might map to HIPAA § 164.312(d), SOC 2 CC6.1, and NIST CSF PR.AC-7
+- **"Maintain an Incident Response Plan"** might map to HIPAA § 164.308(a)(6), SOC 2 CC7.3, and ISO 27001 A.16.1.1
+
+Controls are seeded when you adopt a framework and are linked across frameworks through the Common Control Framework (CCF).
+
+## Control Statuses
+
+Every control has a status that reflects its current implementation state:
+
+| Status | Meaning |
+|---|---|
+| **Not Started** | No work has been done on this control yet |
+| **In Progress** | Implementation is underway but not complete |
+| **Implemented** | The control is fully in place and operational |
+| **Needs Review** | The control was previously implemented but requires review — due to expiring evidence, policy changes, or a scheduled review cycle |
+| **N/A** | The control does not apply to this organization's environment |
+
+<Info>
+  Controls default to **Not Started** when a framework is adopted. Updating statuses is how you track progress toward full compliance.
+</Info>
+
+## The Control Detail Page
+
+Click on any control to open its detail page. This is where you do the actual implementation work.
+
+### How to Satisfy
+
+Each control includes a **How to Satisfy** section with practical guidance on what is required. This section explains:
+- What the framework requirement actually asks for
+- Common implementation approaches
+- What evidence auditors expect to see
+
+### Policy Documentation
+
+Link relevant policies to the control. If you have a "Password Management Policy" that supports an access control requirement, attach it here so auditors can trace the connection.
+
+### Implementation Notes
+
+Free-form text field where you document how your organization specifically implements this control. Be detailed — this is what you will reference during audits.
+
+### Evidence
+
+Attach evidence that proves the control is implemented. Evidence can be:
+- **Files** — screenshots, configuration exports, signed documents
+- **Links** — URLs to dashboards, monitoring tools, or external systems
+- **Automated signals** — evidence pulled automatically from connected integrations
+
+### Assignment
+
+Assign the control to a specific team member who is responsible for implementation and ongoing maintenance.
+
+## Framework Mappings
+
+The right sidebar of the control detail page shows **Framework Mappings** — a list of every framework requirement this control satisfies.
+
+If a control maps to three different frameworks, you will see all three listed with their specific clause or section references. This visibility is key for understanding how a single implementation effort contributes to multiple compliance programs.
+
+## Gap Analysis
+
+The gap analysis view shows you where your compliance program stands and where the gaps are.
+
+<Steps>
+  <Step title="Open gap analysis">
+    Navigate to the **Compliance Dashboard** or select **Gap Analysis** from the sidebar. Choose a framework or view all frameworks.
+  </Step>
+  <Step title="Review gaps by status">
+    Controls are grouped by status. Focus on **Not Started** and **In Progress** controls to understand your remaining work.
+  </Step>
+  <Step title="Prioritize remediation">
+    Sort by risk level or framework criticality. High-risk controls and those that map to multiple frameworks should typically be addressed first.
+  </Step>
+  <Step title="Assign and track">
+    Assign each gap to a team member with a target completion date. Track progress from the dashboard.
+  </Step>
+</Steps>
+
+<Tip>
+  Use the gap analysis before client meetings or audit prep sessions. It gives you a clear picture of what has been done, what remains, and where to focus effort for the biggest compliance impact.
+</Tip>
+
+<Warning>
+  Setting a control to **N/A** removes it from your compliance score calculation. Only mark controls as N/A when the requirement genuinely does not apply to the organization's environment — auditors will ask for justification.
+</Warning>

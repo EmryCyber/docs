@@ -1,0 +1,77 @@
+---
+title: "SLA Policies"
+description: "Define response and resolution time targets by priority level, with business hours, breach detection, and escalation rules."
+---
+
+SLA policies define the service level commitments you make to your clients. Each policy sets response time and resolution time targets based on ticket priority, scoped to your business hours and timezone.
+
+## What SLAs track
+
+Every SLA policy measures two things:
+
+- **Response time** — How long until a technician sends the first reply after a ticket is created.
+- **Resolution time** — How long until the ticket reaches Resolved status.
+
+Both timers respect business hours. Time outside your configured working hours does not count against the SLA.
+
+## Creating an SLA policy
+
+<Steps>
+  <Step title="Navigate to SLA Policies">
+    Go to **PSA → SLA Policies** and click **Create Policy**.
+  </Step>
+  <Step title="Set priority targets">
+    Define response and resolution times for each priority level (Critical, High, Medium, Low). For example: Critical = 15 min response, 4 hour resolution.
+  </Step>
+  <Step title="Configure business hours">
+    Set your working hours and days. SLA timers only run during these hours.
+  </Step>
+  <Step title="Set timezone">
+    Select the timezone used for business hours calculation. This determines when the SLA clock starts and stops each day.
+  </Step>
+  <Step title="Save and assign">
+    Save the policy and assign it to one or more clients. Each client can have a different SLA policy.
+  </Step>
+</Steps>
+
+## SLA statuses
+
+| Status | Meaning |
+| --- | --- |
+| **On Track** | Within the target time window |
+| **At Risk** | Approaching the target deadline (configurable threshold) |
+| **Breached** | Target time has been exceeded |
+| **Met** | Ticket was resolved within the SLA target |
+
+<Warning>
+  A breached SLA cannot be reversed. Even if the ticket is later resolved, the breach is recorded permanently for reporting purposes.
+</Warning>
+
+## SLA pausing
+
+The SLA resolution timer **pauses** when a ticket enters the **Waiting on Customer** status. This prevents time spent waiting for a customer reply from counting against your resolution target. The timer resumes when the customer responds or the technician moves the ticket back to In Progress.
+
+Response time is not paused — it is measured only once (time from creation to first reply).
+
+## Escalation rules
+
+Configure automatic escalation when an SLA is at risk or breached:
+
+- **Reassign** the ticket to a senior technician or team lead
+- **Notify** a manager via email or in-app notification
+- **Change priority** to escalate urgency
+
+Escalation rules are configured per SLA policy under the **Escalation** tab.
+
+## SLA compliance reporting
+
+View SLA performance across clients and time periods in **PSA → Reports**. The Service Desk Overview report includes:
+
+- SLA compliance percentage (met vs breached)
+- Average response and resolution times
+- Breach trends over time
+- Per-client SLA performance breakdown
+
+<Info>
+  SLA data is also visible on individual tickets via the SLA badge, and on the PSA dashboard as an aggregate metric.
+</Info>

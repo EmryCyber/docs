@@ -1,0 +1,79 @@
+---
+title: "Level.io RMM Integration"
+description: "Sync devices and assets from Level.io RMM agent data into Regentra with real-time webhook updates."
+---
+
+The Level.io RMM integration imports device and asset data from your Level.io account into Regentra. Devices managed by the Level agent appear as assets in the PSA module, on tickets, and in the customer portal.
+
+## What it provides
+
+- **Device sync** — RMM-managed devices are imported as Regentra assets
+- **Asset enrichment** — Hostname, serial number, OS, manufacturer, model, and warranty data are populated from agent telemetry
+- **Real-time updates** — Webhook support for immediate asset updates when device state changes
+
+## Setup
+
+<Steps>
+  <Step title="Get your Level API key">
+    In Level.io, navigate to your account settings and generate an API key with read access to devices.
+  </Step>
+  <Step title="Enter the key in Regentra">
+    Go to **Settings → Integrations → Level.io RMM** and paste your API key.
+  </Step>
+  <Step title="Test the connection">
+    Click **Test Connection** to verify Regentra can reach the Level API.
+  </Step>
+  <Step title="Save and sync">
+    Save the configuration. Click **Sync Now** to trigger the initial import, or wait for the next scheduled sync.
+  </Step>
+</Steps>
+
+## What syncs
+
+Each Level.io device maps to a Regentra asset with the following fields:
+
+| Level.io field | Regentra asset field |
+| --- | --- |
+| Hostname | Device name |
+| Serial number | Serial number |
+| Operating system | OS |
+| Manufacturer | Manufacturer |
+| Model | Model |
+| Warranty expiration | Warranty date |
+| Agent status | Online/offline status |
+
+## Sync frequency
+
+- **Scheduled sync** runs every **6 hours**, pulling the full device inventory
+- **Real-time webhooks** push individual device updates as they occur (new device, status change, agent uninstall)
+
+## Webhook setup
+
+To enable real-time updates:
+
+<Steps>
+  <Step title="Copy the webhook URL">
+    In Regentra, go to **Settings → Integrations → Level.io RMM** and copy the webhook endpoint URL.
+  </Step>
+  <Step title="Configure in Level.io">
+    In Level.io, add a webhook pointing to the Regentra endpoint. Select device events (created, updated, deleted) as triggers.
+  </Step>
+  <Step title="Verify delivery">
+    Level.io sends a test event. Regentra confirms receipt and the webhook status shows **Active**.
+  </Step>
+</Steps>
+
+<Note>
+  Webhooks are optional. The 6-hour scheduled sync works without them. Webhooks add near-instant updates for time-sensitive asset tracking.
+</Note>
+
+## Deduplication with Entra/Intune
+
+If you also use the [Microsoft Entra ID integration](/integrations/microsoft-entra), devices may appear from both Level.io and Intune. Regentra deduplicates by matching on serial number and hostname. Merged records combine data from both sources:
+
+- **From Level.io** — Agent status, manufacturer, model, warranty
+- **From Entra/Intune** — Compliance state, Entra device ID, last sign-in
+
+<Warning>
+  Deduplication requires at least one matching field (serial number or hostname). Devices without serial numbers may appear as separate records until manually merged.
+</Warning>

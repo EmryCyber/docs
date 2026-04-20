@@ -1,0 +1,54 @@
+---
+title: "Multi-Factor Authentication"
+description: "Set up TOTP-based MFA, enforce MFA across your organization, and manage recovery for authenticator apps."
+---
+
+Regentra supports TOTP-based multi-factor authentication using any standard authenticator app (Microsoft Authenticator, Google Authenticator, Authy, 1Password, etc.).
+
+## MFA enforcement
+
+MFA is required for all Regentra accounts. New users have a **7-day grace period** after account creation to set up MFA. After the grace period expires, MFA setup is mandatory before accessing the platform.
+
+<Warning>
+  Users who do not configure MFA within the 7-day grace period will be locked out until they complete setup. Encourage your team to set up MFA immediately after joining.
+</Warning>
+
+## Setting up MFA
+
+<Steps>
+  <Step title="Navigate to security settings">
+    Go to **Settings → Security → Multi-Factor Authentication**.
+  </Step>
+  <Step title="Scan the QR code">
+    Open your authenticator app and scan the QR code displayed on screen. This registers Regentra in your app.
+  </Step>
+  <Step title="Enter the verification code">
+    Type the 6-digit code shown in your authenticator app into the verification field. This confirms the setup is working.
+  </Step>
+  <Step title="Save recovery codes">
+    Download or copy the one-time recovery codes. Store them in a secure location — they are the only way to regain access if you lose your authenticator device.
+  </Step>
+</Steps>
+
+<Note>
+  Each recovery code can only be used once. Generate new recovery codes from the security settings page if you run out.
+</Note>
+
+## Recovery procedures
+
+If a user loses access to their authenticator app:
+
+1. **Use a recovery code** — Enter one of the saved recovery codes during the MFA prompt to bypass the authenticator requirement.
+2. **Admin reset** — An organization admin can reset a user's MFA from **Settings → Team Management → [user] → Reset MFA**. The user will need to set up MFA again on their next login.
+
+<Tip>
+  Store recovery codes in a password manager or a secure physical location — not on the same device as your authenticator app.
+</Tip>
+
+## Azure AD users and MFA
+
+If your organization uses [Entra ID SSO](/settings/sso) for authentication, MFA is handled by Azure AD — not by Regentra. Users who sign in through SSO follow their organization's Azure AD conditional access and MFA policies.
+
+<Info>
+  Regentra does not duplicate MFA for SSO users. If Azure AD requires MFA, that satisfies Regentra's MFA requirement. You do not need to configure MFA in both places.
+</Info>

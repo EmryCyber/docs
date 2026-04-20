@@ -1,0 +1,83 @@
+---
+title: "Time Tracking & Billing"
+description: "Log billable and non-billable time against tickets, manage approval workflows, generate invoices, and collect payment via Stripe."
+---
+
+Regentra's time tracking ties technician work directly to tickets and feeds into invoicing. Every time entry flows through an approval workflow before it can be billed to a client.
+
+## Logging time
+
+Technicians log time directly from the ticket detail page. Each time entry includes:
+
+- **Duration** — Hours and minutes spent
+- **Description** — What was done during this time
+- **Billable flag** — Whether the entry should be invoiced to the client
+- **Date** — When the work was performed
+
+<Tip>
+  You can also log time in bulk from **PSA → Time Entries** for work that spans multiple tickets or non-ticket activities.
+</Tip>
+
+## Billable vs non-billable
+
+Mark entries as **billable** when the work should be invoiced to the client. Use **non-billable** for internal tasks, training, or work covered under a flat-rate agreement. Non-billable time still appears in reports for utilization tracking.
+
+## Approval workflow
+
+Time entries follow a three-stage workflow:
+
+<Steps>
+  <Step title="Draft">
+    Technician creates the entry. It is visible but not yet submitted for review.
+  </Step>
+  <Step title="Submitted">
+    Technician submits the entry for approval. A manager or admin reviews it.
+  </Step>
+  <Step title="Approved or Rejected">
+    The reviewer approves the entry (making it eligible for invoicing) or rejects it with a reason. Rejected entries can be edited and resubmitted.
+  </Step>
+</Steps>
+
+<Note>
+  Only **approved** and **billable** time entries are included when generating invoices.
+</Note>
+
+## Service agreements
+
+Service agreements define the billing structure for each client:
+
+<Tabs>
+  <Tab title="Monthly recurring">
+    A fixed monthly fee covering a defined scope of services. Time is tracked for utilization reporting but is not individually invoiced.
+  </Tab>
+  <Tab title="Hourly rate">
+    An hourly rate applied to billable time entries. Each approved entry is billed at the client's configured rate when an invoice is generated.
+  </Tab>
+</Tabs>
+
+Service agreements are configured per client under **PSA → Clients → [client name] → Service Agreement**.
+
+## Invoice generation
+
+<Steps>
+  <Step title="Select time period">
+    Choose the billing period (e.g., last month) to include approved time entries.
+  </Step>
+  <Step title="Review line items">
+    Preview the invoice with all approved billable entries, rates, and totals.
+  </Step>
+  <Step title="Generate invoice">
+    Create the invoice. It is saved and can be sent to the client.
+  </Step>
+  <Step title="Collect payment">
+    Clients pay through Stripe. Payment status is tracked on the invoice.
+  </Step>
+</Steps>
+
+## Stripe integration
+
+Connect your Stripe account in **Settings → Integrations → Stripe** to enable payment collection on invoices. See the [Stripe integration guide](/integrations/stripe) for setup details.
+
+<Warning>
+  Invoices with $0 totals typically mean the included time entries are either not approved or not marked as billable. Check entry status before generating.
+</Warning>

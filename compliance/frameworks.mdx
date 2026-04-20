@@ -1,0 +1,84 @@
+---
+title: "Managing Compliance Frameworks"
+description: "Adopt compliance frameworks, understand control seeding, and manage multi-framework programs with the Common Control Framework."
+---
+
+Frameworks are the foundation of your compliance program in Regentra. Each framework represents a compliance standard — HIPAA, SOC 2, NIST CSF, ISO 27001, CMMC, PCI-DSS, GDPR, or FTC Safeguards — with its own set of controls, requirements, and structure.
+
+## Adopting a Framework
+
+<Steps>
+  <Step title="Navigate to the Frameworks page">
+    Open the **Compliance** module and click **Frameworks** in the sidebar.
+  </Step>
+  <Step title="Browse available frameworks">
+    Each framework card shows the standard name, a brief description, and the number of controls it contains.
+  </Step>
+  <Step title="Click Adopt">
+    Click the **Adopt** button on the framework you want to activate. A confirmation dialog explains what will be created.
+  </Step>
+  <Step title="Review the seeded controls">
+    After adoption, navigate to the Controls page to see the full control set that was created for your organization.
+  </Step>
+</Steps>
+
+## What Happens When You Adopt
+
+When you adopt a framework, Regentra performs several actions automatically:
+
+1. **Controls are seeded** — the complete control set for that framework is created in your organization, each mapped to the relevant framework requirements
+2. **CCF mappings are applied** — controls that overlap with previously adopted frameworks are linked through the Common Control Framework
+3. **Gap analysis activates** — your compliance dashboard populates with a gap analysis showing which controls are Not Started, In Progress, or Implemented
+4. **Framework-specific features unlock** — depending on the framework, additional tools become available
+
+<Info>
+  Controls seeded by framework adoption belong to your organization. You can edit their descriptions, add implementation notes, and customize them to fit your environment.
+</Info>
+
+## Switching Between Frameworks
+
+If you have adopted multiple frameworks, use the **framework dropdown** in the sidebar to switch your view. This filters the Controls page, dashboard metrics, and reports to show only the selected framework.
+
+You can also select **All Frameworks** to see a unified view of every control across your compliance program.
+
+## Framework-Specific Features
+
+Some frameworks unlock additional capabilities beyond standard controls:
+
+<Tabs>
+  <Tab title="HIPAA">
+    - **BAA Tracking** — maintain a register of Business Associate Agreements with vendors and partners
+    - **Privacy Rule controls** — dedicated controls for patient data handling, minimum necessary standard, and individual rights
+    - **Security Risk Assessment** — structured SRA workflow aligned with HHS guidance
+  </Tab>
+  <Tab title="SOC 2">
+    - **Trust Service Criteria** — controls organized by Security, Availability, Processing Integrity, Confidentiality, and Privacy
+    - **Control activity mapping** — link controls to specific TSC points for auditor readability
+    - **Type I vs. Type II tracking** — differentiate between point-in-time and period-of-time assessments
+  </Tab>
+  <Tab title="CMMC">
+    - **Maturity levels** — controls tagged by CMMC level (1 through 3) so you can focus on your target certification
+    - **Practice mapping** — each control maps to specific CMMC practices and domains
+  </Tab>
+  <Tab title="NIST CSF">
+    - **Function-based organization** — controls grouped under Identify, Protect, Detect, Respond, and Recover
+    - **Subcategory mapping** — granular mapping to NIST CSF subcategories and informative references
+  </Tab>
+</Tabs>
+
+## Multi-Framework Compliance
+
+Regentra is designed for organizations that need to satisfy more than one framework simultaneously. Here is how multi-framework compliance works in practice:
+
+- **Adopt as many frameworks as you need** — there is no limit on the number of active frameworks per organization
+- **The CCF consolidates overlapping controls** — when two frameworks require the same security measure, you manage it as one control with mappings to both
+- **Status and evidence propagate** — marking a shared control as Implemented updates its status across every mapped framework
+- **Reports can be generated per framework** — even though controls are shared internally, reports are scoped to a single framework for auditor consumption
+
+<Warning>
+  Unadopting a framework removes it from your active view and dashboard but does not delete the underlying controls or evidence. You can re-adopt at any time to restore the framework view.
+</Warning>
+
+<Tip>
+  If your client is preparing for both HIPAA and SOC 2, adopt both frameworks early. The CCF will show you exactly how much overlap exists, and you can prioritize shared controls to maximize progress across both standards at once.
+</Tip>

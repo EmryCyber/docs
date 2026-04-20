@@ -1,0 +1,68 @@
+---
+title: "Managing Clients"
+description: "Add new clients, switch between client contexts, and configure per-client compliance and portal settings."
+---
+
+Each client you manage in Regentra operates as an independent tenant with its own compliance controls, tickets, portal, and contacts. This page covers how to onboard clients and work within their context.
+
+## Adding a new client
+
+<Steps>
+  <Step title="Start the onboarding wizard">
+    Navigate to **MSP → Clients** and click **Add Client**. The onboarding wizard walks you through the setup.
+  </Step>
+  <Step title="Enter client details">
+    Provide the client's organization name, primary contact email, industry, and address.
+  </Step>
+  <Step title="Select compliance frameworks">
+    Choose which frameworks this client needs (e.g., SOC 2, HIPAA, CMMC). Each framework creates a set of controls within the client's tenant.
+  </Step>
+  <Step title="Configure portal">
+    Set up the client's support portal with branding, domain, and authentication method.
+  </Step>
+  <Step title="Complete setup">
+    The client tenant is created. You can now switch into their context and begin managing compliance and tickets.
+  </Step>
+</Steps>
+
+## Context switching
+
+Use the **ComplianceClientSwitcher** in the sidebar to move between client contexts. The switcher lists all your managed clients and shows which one is currently selected.
+
+<Tip>
+  You can search the client list by name to quickly find the right tenant. The switcher is available on every page.
+</Tip>
+
+When you switch clients, all compliance and PSA views update to show that client's data. Your MSP-level settings (team management, billing, integrations) are not affected by client selection.
+
+## Per-client compliance
+
+Each client tenant includes:
+
+- **Controls** — Framework-specific controls with status tracking (Not Started, In Progress, Implemented, Not Applicable)
+- **Policies** — Document policies mapped to controls
+- **Risk assessments** — Risk register with likelihood, impact, and mitigation tracking
+- **Evidence collection** — Upload and link evidence to controls for audit readiness
+
+Compliance data is fully isolated between clients. Work in one client's tenant has no effect on another.
+
+## Per-client portal
+
+Each client gets their own support portal instance:
+
+- Separate branding (logo, colors, CSS)
+- Optional custom domain (e.g., `support.clientname.com`)
+- Independent contact list (manual or synced from the client's Entra ID)
+- Isolated ticket queue — end users only see their own organization's tickets
+
+<Info>
+  Portal configuration is managed within each client's context. Switch to the client, then go to **Settings → Portal** to customize.
+</Info>
+
+## Compliance tenant allocation
+
+Your Regentra subscription includes a set number of compliance tenants. Each client you onboard consumes one tenant. View your current usage and limits in **Settings → Billing**.
+
+<Warning>
+  If you reach your tenant limit, you must upgrade your plan before adding new clients. Existing clients are unaffected.
+</Warning>

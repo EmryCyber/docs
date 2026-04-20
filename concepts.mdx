@@ -1,72 +1,112 @@
 ---
-title: "Regentra core concepts: resources, workflows, and more"
-description: "Learn the building blocks of Regentra — resources, workflows, integrations, webhooks, environments, and API keys — and how they fit together."
+title: "Core Concepts"
+description: "Key concepts and terminology you need to understand to get the most out of Regentra."
 ---
 
-Before you build with Regentra, it helps to understand the core objects and how they relate to each other. This page covers the key concepts you'll encounter throughout the platform and the documentation.
+Before diving into specific features, it helps to understand the foundational concepts that shape how Regentra works. These patterns repeat throughout the platform.
 
-## Resources
+## Multi-Tenant Architecture
 
-Resources are the primary objects you manage in Regentra. A resource can represent a data record, a task, a ticket, or any item your team tracks. Resources have attributes, belong to environments, and can be created, updated, queried, and deleted through the dashboard or the API.
+Every organization in Regentra is a fully isolated **tenant**. Data, configurations, controls, policies, and user access are all scoped to a single organization.
 
-Think of resources as the "nouns" in Regentra — workflows and integrations act on them.
-
-## Workflows
-
-Workflows are automated sequences of actions that run in response to a trigger. A trigger can be an incoming webhook event, a schedule (for example, daily at 9 AM), or a manual invocation via the API. Each step in a workflow performs an action: creating a resource, calling an external service, sending a notification, and so on.
-
-Workflows are scoped to an environment, so you can test them in staging before promoting to production.
-
-## Integrations
-
-Integrations connect Regentra to external services such as Slack, GitHub, Jira, and others. Once an integration is configured, you can use it as a workflow action or as a data source. Integrations are set up from **Settings → Integrations** in the dashboard.
-
-## Webhooks
-
-Webhooks are HTTP callbacks that Regentra sends to a URL you specify when a particular event occurs — for example, when a resource is created or a workflow completes. Your server receives a POST request with a JSON payload describing the event.
-
-You can register webhook endpoints from the dashboard or via the API. See the [Webhooks API reference](/api-reference/webhooks) for payload schemas and retry behavior.
-
-## Environments
-
-Environments give you separate, isolated contexts within your Regentra account. A typical setup has at least two environments: `staging` and `production`. Resources, workflows, and configurations in one environment are independent from those in another, so you can develop and test without affecting live data.
-
-API keys are scoped to a specific environment. See [Environments](/configuration/environments) for setup instructions.
-
-## API keys
-
-API keys are the credentials your application uses to authenticate requests to the Regentra REST API. Each key is tied to an environment and can be granted specific permission scopes (read-only, read-write, or admin). You generate and manage keys from **Settings → API Keys**.
-
-## How the concepts relate
-
-The table below shows the typical relationships between Regentra's building blocks:
-
-| Concept      | Relationship                                                                 |
-| ------------ | ---------------------------------------------------------------------------- |
-| Resources    | Acted on by workflows; scoped to an environment                              |
-| Workflows    | Triggered by events or schedules; use integrations and act on resources      |
-| Integrations | Used by workflow actions; configured per account                             |
-| Webhooks     | Deliver event notifications to external URLs; emitted by resource changes    |
-| Environments | Isolate resources, workflows, and API keys (staging vs. production)          |
-| API keys     | Authenticate API requests; scoped to an environment with defined permissions |
+MSPs operate across multiple tenants. As an MSP, you can:
+- Create and manage client tenants from your MSP dashboard
+- Assign technicians and compliance officers to specific client organizations
+- Switch between client tenants without logging out
+- Maintain separate compliance programs, SLA policies, and configurations per client
 
 <Note>
-  For full technical details on each object — including request/response schemas, error codes, and rate limits — see the [API Reference](/api-reference/introduction).
+  There is no data bleed between tenants. A control, policy, or ticket in one organization is never visible to another.
 </Note>
 
-## Next steps
+## Common Control Framework (CCF)
 
-<CardGroup cols={2}>
-  <Card title="Quick start" icon="rocket" href="/quickstart">
-    Put these concepts into practice: generate an API key and make your first API call.
-  </Card>
-  <Card title="Workflows guide" icon="git-branch" href="/guides/workflows">
-    Learn how to build, test, and deploy workflows step by step.
-  </Card>
-  <Card title="Environments" icon="layers" href="/configuration/environments">
-    Set up staging and production environments to safely manage your configurations.
-  </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/introduction">
-    Explore the full REST API for resources, webhooks, and more.
-  </Card>
-</CardGroup>
+The **Common Control Framework** is Regentra's internal mapping layer. Instead of duplicating effort across frameworks, the CCF lets you implement a control once and satisfy requirements across multiple standards.
+
+For example, an "Access Control Policy" might map to:
+- HIPAA § 164.312(a)(1) — Access Control
+- SOC 2 CC6.1 — Logical and Physical Access Controls
+- NIST CSF PR.AC-1 — Identities and credentials
+- ISO 27001 A.9.2.1 — User registration and de-registration
+
+When you update the status or evidence for that control, it reflects across every mapped framework simultaneously.
+
+<Tip>
+  The CCF is what makes multi-framework compliance manageable. Adopt three frameworks and you will not triple your workload — overlapping controls are consolidated automatically.
+</Tip>
+
+## Frameworks
+
+A **framework** is a compliance standard you can adopt within your organization. Regentra supports HIPAA, SOC 2, NIST CSF, ISO 27001, CMMC, PCI-DSS, GDPR, and FTC Safeguards.
+
+When you adopt a framework:
+1. The full control set is seeded into your organization
+2. Controls are mapped to the CCF
+3. Gap analysis becomes available on your dashboard
+4. Framework-specific features unlock (e.g., BAA tracking for HIPAA)
+
+You can adopt multiple frameworks. Unadopting a framework removes it from your active view but does not delete underlying control data.
+
+## Policies and Campaigns
+
+**Policies** are formal documents (e.g., Acceptable Use Policy, Incident Response Plan) that your organization maintains for compliance.
+
+**Campaigns** are the mechanism for distributing policies to employees and collecting signed acknowledgments. When you create a campaign:
+- Select the policy and the target audience
+- Employees receive a notification to review and sign
+- You can track completion rates and send reminders
+- Signed records are stored as compliance evidence
+
+## SLA Policies
+
+An **SLA policy** defines response and resolution time targets for support tickets based on priority level. SLA policies account for:
+- **Business hours** — so timers pause outside working hours
+- **Priority tiers** — different targets for Critical, High, Medium, and Low
+- **Escalation rules** — what happens when a target is about to be breached
+
+SLA policies are assigned at the organization or client level.
+
+## Portal
+
+The **Portal** is a customer-facing interface where your clients can:
+- Submit and track support tickets
+- Access the knowledge base
+- Engage in live chat with your team
+- View compliance status dashboards (if enabled)
+
+The portal supports branded login pages with your logo and colors. Each client tenant can have its own portal URL.
+
+## Roles
+
+Regentra uses role-based access control to manage permissions across the platform.
+
+<AccordionGroup>
+  <Accordion title="SUPER_ADMIN">
+    Platform-level access. Can manage all organizations, system settings, and global configurations. Reserved for Regentra platform operators.
+  </Accordion>
+  <Accordion title="ADMIN">
+    Full access to a single organization. Can manage users, settings, integrations, and all modules.
+  </Accordion>
+  <Accordion title="MSP_ADMIN">
+    Manages the MSP relationship layer. Can create and manage client tenants, assign technicians, and oversee cross-tenant operations.
+  </Accordion>
+  <Accordion title="COMPLIANCE_ADMIN">
+    Full control over the compliance module. Can adopt frameworks, manage controls, create policies, and generate reports.
+  </Accordion>
+  <Accordion title="COMPLIANCE_OFFICER">
+    Works within the compliance module. Can update control statuses, upload evidence, manage policies, and run assessments.
+  </Accordion>
+  <Accordion title="EMPLOYEE">
+    Limited access. Can view assigned policies, sign acknowledgment campaigns, and submit basic information.
+  </Accordion>
+  <Accordion title="READ_ONLY">
+    View-only access across all modules. Cannot modify any data. Useful for auditors or executive stakeholders.
+  </Accordion>
+  <Accordion title="MSP_TECHNICIAN">
+    Focused on PSA operations. Can manage tickets, track time, update assets, and access the knowledge base. No compliance module access by default.
+  </Accordion>
+</AccordionGroup>
+
+<Info>
+  Users can hold different roles in different organizations. An MSP technician in one tenant can be a compliance officer in another.
+</Info>

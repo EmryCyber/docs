@@ -1,119 +1,44 @@
 ---
-title: "Troubleshoot authentication, workflow, and API issues"
-description: "Diagnose and resolve common Regentra problems — authentication errors, workflow failures, integration issues, and API rate limiting."
+title: "Troubleshooting"
+description: "Diagnose and resolve common issues with compliance, tickets, SLAs, integrations, portal access, and MFA."
 ---
 
-If you're running into issues with Regentra, this guide covers the most common problems and how to resolve them. For issues not listed here, contact support.
-
-## Authentication errors
+Solutions for the most common issues encountered in Regentra. If your problem is not listed here, contact support at [support@regentra.io](mailto:support@regentra.io) or ask in [Discord](https://discord.gg/DXfwbu5pXN).
 
 <AccordionGroup>
-  <Accordion title="401 Unauthorized">
-    Your API key is missing or invalid. Check that you're passing the key in the `Authorization` header using the Bearer scheme:
-
-    ```http
-    Authorization: Bearer YOUR_API_KEY
-    ```
-
-    Verify that the key exists and is active in **Settings → API Keys**.
+  <Accordion title="I can't see my framework after adopting it">
+    The sidebar navigation caches the framework list. After adopting a new compliance framework, refresh the page or click away and back to the compliance section. The framework will appear in the sidebar after the page reloads.
   </Accordion>
 
-  <Accordion title="403 Forbidden">
-    Your API key lacks permission for this action. Each key has a defined set of scopes that control what it can access.
-
-    Go to **Settings → API Keys**, select your key, and confirm that the required scopes are enabled.
+  <Accordion title="Tickets aren't showing in board view after filtering">
+    This is a known issue when filters are applied and then modified without clearing. Clear all filters first, then reapply the ones you need. The board view will reload with the correct results.
   </Accordion>
 
-  <Accordion title="Key expired">
-    API keys can be rotated at any time. If your key has expired or been revoked, generate a new one in **Settings → API Keys** and update your integration.
-  </Accordion>
-</AccordionGroup>
-
-## Workflow issues
-
-<AccordionGroup>
-  <Accordion title="Workflow not triggering">
-    Check that the workflow is active — use the toggle on the Workflows dashboard to enable it. Also verify that the trigger event is configured correctly and matches the event your integration is sending.
+  <Accordion title="SLA shows breached but I responded on time">
+    SLA timers run only during configured business hours. If your business hours or timezone are misconfigured, the SLA calculation may not match your expectations. Verify your business hours in **PSA → SLA Policies → [policy name]** and check the timezone in **Settings → Organization → Timezone**.
   </Accordion>
 
-  <Accordion title="Workflow failing mid-run">
-    View the run log to identify where the failure occurred. Navigate to **Workflows → [workflow name] → Run History** and open the failed run. The failed action will show error details that describe what went wrong.
+  <Accordion title="Entra sync shows duplicate assets">
+    If you have both the Entra ID and Level.io RMM integrations enabled, devices may temporarily appear as duplicates after the first sync. Regentra deduplicates by matching serial number and hostname. Duplicates are merged automatically on the next sync cycle (every 6 hours), or you can trigger a manual sync from **Settings → Integrations**.
   </Accordion>
 
-  <Accordion title="Action timeout">
-    If an action is timing out, you have two options: increase the timeout setting on the action in the workflow editor, or optimize the target endpoint to respond faster.
-
-    <Tip>
-      For external HTTP actions, check that the target service is healthy and within its own SLA.
-    </Tip>
-  </Accordion>
-</AccordionGroup>
-
-## Integration issues
-
-<AccordionGroup>
-  <Accordion title="Integration disconnected">
-    Re-authorize the integration in **Settings → Integrations**. OAuth tokens expire after periods of inactivity and must be refreshed by reconnecting the integration.
+  <Accordion title="Email notifications are not sending">
+    Verify your email configuration in **Settings → Organization → Email**. Regentra requires either Azure Communication Services or Microsoft Graph to be configured for outbound email. Send a test email from the settings page to confirm delivery. If using Microsoft Graph, ensure the Entra ID integration has mail send permissions.
   </Accordion>
 
-  <Accordion title="Slack notifications not arriving">
-    Verify the Slack channel name is correct, including any `#` prefix conventions used by your workspace. Also ensure the Regentra Slack app has permission to post messages to that channel. You may need to invite the app to private channels manually.
-  </Accordion>
-</AccordionGroup>
-
-## API issues
-
-<AccordionGroup>
-  <Accordion title="Rate limit exceeded (429)">
-    Regentra enforces rate limits to ensure service stability. If you receive a `429 Too Many Requests` response, slow down your request rate and implement exponential backoff in your client.
-
-    ```javascript
-    async function requestWithBackoff(fn, retries = 5) {
-      for (let i = 0; i < retries; i++) {
-        try {
-          return await fn();
-        } catch (err) {
-          if (err.status !== 429 || i === retries - 1) throw err;
-          await new Promise((res) => setTimeout(res, 2 ** i * 500));
-        }
-      }
-    }
-    ```
-
-    Enterprise customers can request a higher rate limit. See the [FAQ](/faq) for details.
+  <Accordion title="Portal login is not working">
+    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status in **Settings → Portal → Custom Domain**. If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
   </Accordion>
 
-  <Accordion title="Unexpected 500 errors">
-    A `500 Internal Server Error` indicates a server-side issue. Retry the request after a short delay. If the error persists, contact support and include the `X-Request-ID` header value from the failed response so we can investigate.
+  <Accordion title="MFA setup fails">
+    TOTP codes are time-based and require your authenticator app's clock to be accurate. Ensure your device's clock is synced with an NTP server (most devices do this automatically). If the code is still rejected, try generating a new QR code from **Settings → Security → MFA** and re-registering in your authenticator app.
   </Accordion>
 
-  <Accordion title="Request body not parsed">
-    Ensure you're sending the `Content-Type: application/json` header and that the request body is valid JSON. Omitting this header causes the server to reject or misparse the body.
-
-    ```http
-    POST /v1/resources HTTP/1.1
-    Content-Type: application/json
-
-    {"name": "my-resource", "type": "compute"}
-    ```
-  </Accordion>
-</AccordionGroup>
-
-## Webhook delivery issues
-
-<AccordionGroup>
-  <Accordion title="Webhooks not received">
-    Confirm that your endpoint URL is publicly accessible from the internet — local development URLs (such as `localhost`) will not work without a tunnel. Your endpoint must also return a `2xx` HTTP status code within the timeout window, or Regentra will treat the delivery as failed and retry.
-
-    <Warning>
-      Regentra retries failed webhook deliveries with exponential backoff. Check your run history in the dashboard to see delivery attempts and response codes.
-    </Warning>
-  </Accordion>
-
-  <Accordion title="Signature verification failing">
-    Every webhook request includes an `X-Regentra-Signature` header so you can verify the payload came from Regentra. If verification is failing, confirm you're using the correct signing secret and that you're computing the HMAC over the raw request body before parsing it.
-
-    See the [webhooks reference](/api-reference/webhooks) for the full verification algorithm.
+  <Accordion title="Invoice shows $0">
+    Invoices only include time entries that are both **approved** and **billable**. If your invoice total is $0, check that:
+    1. Time entries are marked as billable (not non-billable)
+    2. Time entries have been submitted and approved (not still in Draft or Submitted status)
+    3. The invoice date range covers the period when the time was logged
   </Accordion>
 </AccordionGroup>
 
@@ -121,15 +46,12 @@ If you're running into issues with Regentra, this guide covers the most common p
 
 <CardGroup cols={2}>
   <Card title="Frequently asked questions" icon="circle-question" href="/faq">
-    Find answers to common questions about pricing, limits, security, and features.
+    Answers to common questions about Regentra features, security, and billing.
   </Card>
-  <Card title="Authentication guide" icon="key" href="/guides/authentication">
-    Learn how to generate API keys, set scopes, and authenticate your requests.
-  </Card>
-  <Card title="API error reference" icon="triangle-exclamation" href="/api-reference/errors">
-    Browse the full list of Regentra error codes and what each one means.
+  <Card title="Join our Discord" icon="discord" href="https://discord.gg/DXfwbu5pXN">
+    Get help from the Regentra community and team.
   </Card>
   <Card title="Contact support" icon="envelope" href="mailto:support@regentra.io">
-    Reach our support team directly for issues not covered in the documentation.
+    Reach our support team directly for issues not covered here.
   </Card>
 </CardGroup>

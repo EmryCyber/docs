@@ -1,0 +1,78 @@
+---
+title: "Managing Tickets"
+description: "Create, triage, and resolve tickets across multiple channels with board and list views, SLA tracking, and AI-assisted replies."
+---
+
+Tickets are the core unit of work in Regentra's PSA. Every client interaction — whether it starts as an email, portal submission, live chat, or SMS — becomes a ticket that flows through a defined lifecycle.
+
+## Ticket lifecycle
+
+<Steps>
+  <Step title="Open">
+    Ticket is created and awaiting triage or assignment.
+  </Step>
+  <Step title="In Progress">
+    A technician is actively working the ticket. SLA response timer stops when the first reply is sent.
+  </Step>
+  <Step title="Waiting on Customer">
+    The technician has replied and is awaiting a customer response. SLA resolution timer pauses in this state.
+  </Step>
+  <Step title="Escalated">
+    Ticket has been escalated to a senior technician or team lead due to complexity or SLA risk.
+  </Step>
+  <Step title="Resolved">
+    The issue is fixed. The ticket auto-closes after 24 hours if the customer does not reopen it.
+  </Step>
+  <Step title="Closed">
+    Final state. No further action is taken. Closed tickets cannot be reopened — create a follow-up instead.
+  </Step>
+</Steps>
+
+<Note>
+  Resolved and Closed tickets display with muted status badges to visually distinguish them from active work.
+</Note>
+
+## Creating tickets
+
+Tickets can be created through five channels:
+
+| Channel | How it works |
+| --- | --- |
+| **Manual** | Technician creates a ticket from the PSA dashboard |
+| **Email inbound** | Emails sent to your support address automatically create tickets |
+| **Portal** | Customers submit tickets through the branded support portal |
+| **Live chat** | Chat conversations convert to tickets when the session ends |
+| **SMS** | Inbound SMS messages create tickets (requires phone number configuration) |
+
+## Ticket detail page
+
+Each ticket includes:
+
+- **Replies** — Threaded conversation between technician and customer
+- **Internal notes** — Private notes visible only to your team
+- **Time entries** — Logged time with billable/non-billable designation
+- **SLA badge** — Real-time SLA status (On Track, At Risk, Breached, Met)
+- **AI draft** — AI-generated reply suggestion based on ticket context and knowledge base articles
+
+<Tip>
+  The AI draft pulls from your knowledge base using RAG. The more KB articles you maintain, the better the draft quality.
+</Tip>
+
+## Board view vs list view
+
+<Tabs>
+  <Tab title="Board view">
+    Kanban-style columns organized by ticket status. Drag tickets between columns to update status. Best for visual triage and daily standups.
+  </Tab>
+  <Tab title="List view">
+    Tabular layout with sortable columns for priority, assignee, SLA status, and created date. Best for bulk operations and filtered searches.
+  </Tab>
+</Tabs>
+
+## Filtering and search
+
+Filter tickets by status, priority, assignee, client, SLA status, or date range. Combine filters to narrow results. Full-text search covers ticket subjects, descriptions, and reply content.
+
+## Auto-close behavior
+
+Tickets in **Resolved** status automatically transition to **Closed** after 24 hours. If a customer replies to a resolved ticket within that window, the ticket reopens to **In Progress**.

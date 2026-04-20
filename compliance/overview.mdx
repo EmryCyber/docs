@@ -1,0 +1,89 @@
+---
+title: "Compliance Module Overview"
+description: "Manage multi-framework compliance programs with centralized controls, policies, evidence collection, and audit-ready reports."
+---
+
+The Compliance module is where you build and maintain your clients' compliance programs. It handles the full lifecycle: adopting frameworks, implementing controls, writing policies, collecting evidence, assessing risk, and generating reports for auditors and executives.
+
+## What the Compliance Module Does
+
+- **Centralizes compliance management** across multiple frameworks in one interface
+- **Maps controls** across frameworks using the Common Control Framework (CCF) so you implement once and satisfy many
+- **Tracks implementation status** with real-time dashboards and gap analysis
+- **Automates evidence collection** through integrations with identity providers, cloud platforms, and RMM tools
+- **Generates audit-ready reports** with compliance scores, gap summaries, and executive overviews
+
+## Supported Frameworks
+
+<AccordionGroup>
+  <Accordion title="HIPAA">
+    Health Insurance Portability and Accountability Act. Covers the Privacy Rule, Security Rule, and Breach Notification Rule. Includes BAA tracking and Security Risk Assessment (SRA) workflows.
+  </Accordion>
+  <Accordion title="SOC 2">
+    Service Organization Control 2 based on the AICPA Trust Service Criteria. Covers Security, Availability, Processing Integrity, Confidentiality, and Privacy.
+  </Accordion>
+  <Accordion title="NIST CSF">
+    NIST Cybersecurity Framework. Organized around Identify, Protect, Detect, Respond, and Recover functions.
+  </Accordion>
+  <Accordion title="ISO 27001">
+    International standard for information security management systems (ISMS). Covers Annex A controls and the Plan-Do-Check-Act cycle.
+  </Accordion>
+  <Accordion title="CMMC">
+    Cybersecurity Maturity Model Certification for Department of Defense contractors. Tiered maturity levels with practice-based controls.
+  </Accordion>
+  <Accordion title="PCI-DSS">
+    Payment Card Industry Data Security Standard. Twelve requirement categories for organizations handling cardholder data.
+  </Accordion>
+  <Accordion title="GDPR">
+    General Data Protection Regulation. Covers data subject rights, lawful processing bases, DPIAs, and breach notification requirements.
+  </Accordion>
+  <Accordion title="FTC Safeguards">
+    FTC Safeguards Rule under the Gramm-Leach-Bliley Act. Requires financial institutions to develop, implement, and maintain an information security program.
+  </Accordion>
+</AccordionGroup>
+
+## How the Common Control Framework Works
+
+The CCF is the mapping layer that connects your internal controls to requirements across every adopted framework. When you implement a control — say, "Multi-Factor Authentication for All Users" — the CCF automatically maps it to the relevant requirements in HIPAA, SOC 2, NIST, and any other framework you have adopted.
+
+This means:
+- **One implementation** satisfies requirements across multiple frameworks
+- **Status updates** propagate everywhere the control is mapped
+- **Evidence** attached to a control counts toward every mapped framework
+- **Gap analysis** accounts for cross-framework coverage
+
+<Note>
+  The CCF mapping is maintained by Regentra and updated as frameworks evolve. You can also create custom controls and map them manually.
+</Note>
+
+## Compliance Dashboard
+
+When you open the Compliance module, the dashboard gives you an at-a-glance view of your compliance posture:
+
+- **Compliance Score** — percentage of controls that are fully implemented across your active frameworks
+- **Control Status Breakdown** — visual breakdown of Not Started, In Progress, Implemented, Needs Review, and N/A controls
+- **Risk Indicators** — flagged controls that are overdue, missing evidence, or approaching review deadlines
+- **Recent Activity** — latest changes to controls, policies, and evidence across your organization
+
+## Dive Deeper
+
+<CardGroup cols={2}>
+  <Card title="Frameworks" icon="layer-group" href="/compliance/frameworks">
+    Adopt and manage compliance frameworks. Understand what happens when you activate a new standard.
+  </Card>
+  <Card title="Controls" icon="list-check" href="/compliance/controls">
+    Work with individual controls — update statuses, attach evidence, and view framework mappings.
+  </Card>
+  <Card title="Policies" icon="file-signature" href="/compliance/policies">
+    Create policy documents from templates, manage approvals, and run signature campaigns.
+  </Card>
+  <Card title="Risk Assessment" icon="triangle-exclamation" href="/compliance/risk-assessment">
+    Conduct risk assessments, maintain a risk register, and track treatment plans.
+  </Card>
+  <Card title="Evidence Collection" icon="folder-open" href="/compliance/evidence-collection">
+    Collect evidence automatically through integrations or upload it manually.
+  </Card>
+  <Card title="Reports" icon="chart-bar" href="/compliance/reports">
+    Generate compliance summaries, gap analysis reports, and executive briefings.
+  </Card>
+</CardGroup>
