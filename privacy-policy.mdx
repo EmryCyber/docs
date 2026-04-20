@@ -50,13 +50,7 @@ We may receive information from:
 
 ### 2.4 Cookies and Similar Technologies
 
-We use cookies that are strictly necessary for the operation of the Platform:
-
-| Cookie | Purpose | Duration |
-|--------|---------|----------|
-| Session token | Authentication and authorization | 4 hours |
-| Refresh token | Session continuity | 14 days |
-| Theme preference | Light/dark mode selection | Persistent |
+We use cookies that are strictly necessary for the operation of the Platform, including authentication session cookies, security tokens, and user preference cookies (such as theme selection). These cookies are essential for the Platform to function and cannot be disabled.
 
 We do **not** use advertising cookies, third-party tracking pixels, or behavioral analytics cookies. We do not participate in cross-context behavioral advertising.
 
@@ -84,13 +78,13 @@ We may use the personal information we collect for the following purposes:
 
 ## 4. Artificial Intelligence Features
 
-Regentra offers optional AI-powered features including ticket draft generation, compliance gap analysis, and ticket classification. These features are powered by third-party AI services (currently Google Gemini API).
+Regentra offers optional AI-powered features including ticket draft generation, compliance gap analysis, and ticket classification. These features are powered by third-party AI service providers.
 
 - AI features process only data within the requesting organization's tenant
 - Data sent to AI providers is not used to train or improve their models
 - AI-generated outputs are presented as suggestions — human review is required before action
 - AI features can be disabled at the organization level by an administrator
-- No personal information is retained by the AI provider beyond the duration of the API request
+- Personal information is not retained by the AI provider beyond the duration of the request
 
 ---
 
@@ -100,19 +94,15 @@ We do not sell, rent, or trade your personal information for monetary considerat
 
 ### 5.1 Service Providers (Subprocessors)
 
-We use third-party service providers to operate and support the Platform. These providers process personal information on our behalf under contractual obligations that require them to protect the confidentiality and security of your data.
+We use third-party service providers to operate and support the Platform. These providers process personal information on our behalf under contractual obligations that require them to protect the confidentiality and security of your data. Our service providers fall into the following categories:
 
-| Provider | Purpose | Location |
-|----------|---------|----------|
-| Microsoft Azure | Cloud infrastructure, application hosting, blob storage | United States |
-| Neon | Managed PostgreSQL database | United States |
-| Stripe | Payment processing and subscription management | United States |
-| Azure Communication Services | Transactional email delivery | United States |
-| Microsoft Graph API | SSO authentication, email integration (when configured) | United States |
-| Ably | Real-time messaging for live chat features | United States / EU |
-| Google Cloud (Gemini API) | AI-powered features (ticket drafts, gap analysis) | United States |
-| Upstash | Redis caching and rate limiting | United States |
-| Inngest | Background job orchestration | United States |
+- **Cloud infrastructure and hosting** (United States)
+- **Database services** (United States)
+- **Payment processing** (United States)
+- **Email delivery** (United States)
+- **Authentication and identity services** (United States)
+- **AI service providers** (United States)
+- **Real-time communication services** (United States / EU)
 
 We maintain an up-to-date list of subprocessors. To request the current list or to subscribe to subprocessor change notifications, contact **privacy@regentra.io**.
 
@@ -138,16 +128,14 @@ We may share information with third parties when you have given us explicit cons
 
 We implement technical and organizational security measures designed to protect personal information against unauthorized access, alteration, disclosure, or destruction. These measures include:
 
-- **Encryption in transit** via TLS 1.2+ with HSTS enforcement on all connections
-- **Encryption at rest** for database storage and AES-256-GCM encryption for integration credentials with unique initialization vectors
-- **Multi-factor authentication** (TOTP-based) with enforcement after a grace period
-- **Tenant isolation** via application-layer middleware and database row-level security (RLS)
-- **Role-based access control** with eight granular permission levels
-- **Brute-force protection** with account lockout after five failed authentication attempts
-- **Comprehensive audit logging** of all authentication events, data modifications, and administrative actions
-- **Automated vulnerability scanning** in our CI/CD pipeline
-- **Security headers** including Content Security Policy, X-Frame-Options, X-Content-Type-Options, and Referrer-Policy
-- **Input validation and sanitization** on all API endpoints to prevent injection attacks
+- **Encryption in transit** for all connections and **encryption at rest** for stored data
+- **Multi-factor authentication** support with configurable enforcement
+- **Tenant isolation** at both the application and database layers
+- **Role-based access control** with granular permission levels
+- **Brute-force protection** and account lockout mechanisms
+- **Comprehensive audit logging** of authentication events, data modifications, and administrative actions
+- **Automated vulnerability scanning** in our deployment pipeline
+- **Industry-standard security headers** and input validation on all endpoints
 
 No method of transmission over the Internet or method of electronic storage is completely secure. While we strive to use commercially reasonable means to protect your personal information, we cannot guarantee its absolute security.
 
@@ -162,7 +150,7 @@ When determining retention periods, we consider the nature and sensitivity of th
 - **Account data** is retained for the duration of your active account and for a reasonable period thereafter to allow for reactivation
 - **Billing and transaction records** are retained as required by applicable tax and accounting regulations
 - **Audit logs** are retained for a minimum period as required by applicable compliance frameworks
-- **Session and authentication tokens** expire automatically (sessions: 4–12 hours; refresh tokens: 14 days)
+- **Session and authentication tokens** expire automatically based on configured security policies
 - **Backups** containing personal information are purged on a rolling schedule
 
 Upon termination of a service agreement, Customer Data is deleted within the timeframe specified in the applicable agreement or DPA.
