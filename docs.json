@@ -81,6 +81,12 @@
               "troubleshooting",
               "faq"
             ]
+          },
+          {
+            "group": "Legal",
+            "pages": [
+              "privacy-policy"
+            ]
           }
         ]
       }
