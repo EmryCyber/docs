@@ -58,8 +58,8 @@ Payment status is tracked on the invoice in Regentra:
 
 ## Webhook configuration
 
-Regentra uses Stripe webhooks to receive real-time payment events (payment succeeded, payment failed, refund issued). During setup, Regentra automatically configures the necessary webhook endpoint in your Stripe account.
+Regentra uses Stripe webhooks to receive real-time invoice events (payment succeeded, payment failed). During setup, Regentra automatically configures the necessary webhook endpoint in your Stripe account.
 
 <Info>
-  If you need to manually configure the webhook, the endpoint URL is available in **Settings → Integrations → Stripe → Webhook URL**. Subscribe to `invoice.paid`, `invoice.payment_failed`, and `charge.refunded` events.
+  If you need to manually configure the webhook, the endpoint URL is available in **Settings → Integrations → Stripe → Webhook URL**. Subscribe to these events: `invoice.paid`, `invoice.payment_succeeded`, and `invoice.payment_failed`.
 </Info>

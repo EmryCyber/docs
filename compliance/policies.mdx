@@ -48,15 +48,17 @@ The policy editor supports both **rich text** and **Markdown** formatting. You c
 
 Every policy moves through a defined lifecycle:
 
-| Stage | Description |
+| Status | Description |
 |---|---|
 | **Draft** | Initial creation and editing. Only visible to compliance team members. |
-| **Review** | Submitted for review by designated approvers. Comments and revision requests happen here. |
-| **Approved** | Reviewed and approved by an authorized approver. Ready for publication. |
-| **Published** | Live and visible to the organization. Can be attached to controls and included in signature campaigns. |
+| **In Review** | Submitted for review by designated approvers. Comments and revision requests happen here. |
+| **Approved** | Reviewed and approved by an authorized approver. Ready to be made active. |
+| **Active** | Live and visible to the organization. Can be attached to controls and included in signature campaigns. This is the operational state — auditors see it as the published policy. |
+| **Archived** | Superseded by a newer version or retired. Kept for audit history but no longer in force. |
+| **Expired** | Past its review date and not yet reviewed/re-approved. Acts as a flag that the policy is overdue for review. |
 
 <Note>
-  Moving a policy backward in the lifecycle (e.g., from Approved back to Draft) is allowed. This is useful when a published policy needs significant revisions.
+  Moving a policy backward in the lifecycle (e.g., from Approved back to Draft) is allowed. This is useful when an active policy needs significant revisions.
 </Note>
 
 ## Version History
