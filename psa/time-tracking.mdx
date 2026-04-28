@@ -24,17 +24,20 @@ Mark entries as **billable** when the work should be invoiced to the client. Use
 
 ## Approval workflow
 
-Time entries follow a three-stage workflow:
+Time entries move forward through four stages. The flow is one-way — there is no rejection state, so review the entry before submitting.
 
 <Steps>
   <Step title="Draft">
-    Technician creates the entry. It is visible but not yet submitted for review.
+    Technician creates the entry. The owner can edit or delete it at this stage; nobody else sees it for review yet.
   </Step>
   <Step title="Submitted">
-    Technician submits the entry for approval. A manager or admin reviews it.
+    Technician submits the entry for approval. The entry becomes read-only for the owner and appears in a manager's queue.
   </Step>
-  <Step title="Approved or Rejected">
-    The reviewer approves the entry (making it eligible for invoicing) or rejects it with a reason. Rejected entries can be edited and resubmitted.
+  <Step title="Approved">
+    A manager or admin (someone other than the owner) approves the entry. Once approved it becomes eligible for invoicing.
+  </Step>
+  <Step title="Invoiced">
+    The entry is attached to a generated invoice. Invoiced entries are locked into the billing record.
   </Step>
 </Steps>
 
