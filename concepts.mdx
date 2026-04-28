@@ -94,10 +94,16 @@ Regentra uses role-based access control to manage permissions across the platfor
     Full control over the compliance module. Can adopt frameworks, manage controls, create policies, and generate reports.
   </Accordion>
   <Accordion title="COMPLIANCE_OFFICER">
-    Works within the compliance module. Can update control statuses, upload evidence, manage policies, and run assessments.
+    Works within the compliance module. Can update control statuses, upload evidence, manage policies, and run assessments. Displayed in the Team UI as **Approver**.
+  </Accordion>
+  <Accordion title="PRIVACY_OFFICER">
+    Approver role focused on privacy controls, data subject rights, and privacy impact assessments. Same write/approve scope as COMPLIANCE_OFFICER but signals a privacy specialization. Displayed as **Approver (Privacy)**.
+  </Accordion>
+  <Accordion title="SECURITY_OFFICER">
+    Approver role focused on technical and security controls, incident response, and security assessments. Same write/approve scope as COMPLIANCE_OFFICER but signals a security specialization. Displayed as **Approver (Security)**.
   </Accordion>
   <Accordion title="EMPLOYEE">
-    Limited access. Can view assigned policies, sign acknowledgment campaigns, and submit basic information.
+    Limited access. Can view assigned policies, sign acknowledgment campaigns, and submit basic information. Displayed as **Analyst**.
   </Accordion>
   <Accordion title="READ_ONLY">
     View-only access across all modules. Cannot modify any data. Useful for auditors or executive stakeholders.

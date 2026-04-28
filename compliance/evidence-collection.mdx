@@ -7,34 +7,41 @@ Evidence is the proof that your controls are implemented and operating effective
 
 ## Automated Evidence via Integrations
 
-When you connect integrations like Microsoft Entra ID, AWS, GCP, or Level.io, Regentra can pull evidence automatically and attach it to the relevant controls.
+When you connect a cloud or identity integration, Regentra pulls evidence automatically and attaches it to the relevant controls.
 
 <Tabs>
   <Tab title="Microsoft Entra ID">
     - MFA enrollment status for all users
     - Conditional access policy configurations
-    - User provisioning and de-provisioning logs
-    - Group membership and role assignment snapshots
+    - Privileged role assignments (standing and PIM-eligible)
+    - Sign-in and directory audit logs
+    - Device compliance and security defaults
   </Tab>
   <Tab title="AWS">
-    - IAM policy configurations
+    - IAM password policy and root MFA
+    - Per-user MFA, access-key age, and unused-credential checks
     - CloudTrail logging status
-    - S3 bucket encryption settings
-    - Security group rules and VPC configurations
+    - S3 bucket public-access and encryption settings
+    - EC2 security groups, EBS encryption, RDS security
+    - KMS key rotation, VPC flow logs
   </Tab>
   <Tab title="GCP">
-    - IAM bindings and service account configurations
-    - Audit log settings
-    - Encryption-at-rest status
-    - Firewall rules and network policies
+    - Service-account key age and admin-role bindings
+    - Compute firewall rules and default-network presence
+    - Cloud Storage public access and CMEK encryption
+    - Cloud SQL SSL/private-IP/backup configuration
+    - Cloud KMS key rotation, Audit Log configs, Log Sinks, Monitoring Alerts
+    - VPC flow logs, OS Login enforcement
   </Tab>
-  <Tab title="Level.io">
-    - Device inventory and hardware details
-    - Patch compliance status
-    - Endpoint protection deployment
-    - Software inventory across managed devices
+  <Tab title="Proofpoint Security Awareness">
+    - Security awareness training completion rates
+    - Phishing simulation campaign results
   </Tab>
 </Tabs>
+
+<Note>
+  **Level.io** is integrated for PSA-side asset and ticket sync, not compliance evidence collection. Connecting Level.io populates your Configurations module — it does not currently feed automated evidence to compliance controls.
+</Note>
 
 <Info>
   Automated evidence is refreshed on a schedule. Regentra pulls fresh data from connected integrations so your evidence stays current without manual effort.

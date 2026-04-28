@@ -8,22 +8,23 @@ Each client you manage in Regentra operates as an independent tenant with its ow
 ## Adding a new client
 
 <Steps>
-  <Step title="Start the onboarding wizard">
-    Navigate to **MSP → Clients** and click **Add Client**. The onboarding wizard walks you through the setup.
+  <Step title="Start provisioning">
+    Navigate to **MSP → Clients** and click **Provision Client**.
   </Step>
   <Step title="Enter client details">
-    Provide the client's organization name, primary contact email, industry, and address.
+    Provide the client's **Organization Name**, **Industry**, and the first admin user's **First Name**, **Last Name**, and **Admin Email**. The admin receives an email to set their password and finish setup.
   </Step>
-  <Step title="Select compliance frameworks">
-    Choose which frameworks this client needs (e.g., SOC 2, HIPAA, CMMC). Each framework creates a set of controls within the client's tenant.
+  <Step title="Adopt frameworks (after provisioning)">
+    Frameworks are not selected during provisioning. Once the client tenant exists, switch into the client's context and adopt frameworks from **Compliance → Frameworks** — each Adopt click seeds that framework's controls into the tenant.
   </Step>
-  <Step title="Configure portal">
-    Set up the client's support portal with branding, domain, and authentication method.
-  </Step>
-  <Step title="Complete setup">
-    The client tenant is created. You can now switch into their context and begin managing compliance and tickets.
+  <Step title="Configure portal (optional)">
+    Switch into the client's context and use the PSA → Portal page to brand the support portal, attach a custom domain, and enable Microsoft SSO.
   </Step>
 </Steps>
+
+<Note>
+  Provisioning creates an empty tenant — no frameworks, no controls, no policies. This is intentional so you can choose only the frameworks the client actually needs and avoid pre-seeding controls they will not use.
+</Note>
 
 ## Context switching
 

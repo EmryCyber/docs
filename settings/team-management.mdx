@@ -25,12 +25,20 @@ Team management controls who has access to your Regentra organization and what t
 
 ## Roles
 
-| Role | Permissions |
-| --- | --- |
-| **Admin** | Full access to all features, settings, billing, and team management |
-| **Compliance Officer** | Manage compliance frameworks, controls, policies, risk assessments, and evidence. No access to billing or team settings |
-| **Technician** | Access to PSA features — tickets, time tracking, knowledge base, and reports. No access to compliance or settings |
-| **Read-Only** | View-only access to all modules. Cannot create, edit, or delete any data |
+The Team UI displays user-friendly labels (left column below). The right column is the role identifier used by the API and audit logs.
+
+| Display label | Role ID | Permissions |
+| --- | --- | --- |
+| **Super Admin** | SUPER_ADMIN | Platform-level access. Reserved for Regentra platform operators. |
+| **Admin** | ADMIN | Full access to a single organization. Manages users, settings, integrations, and all modules. |
+| **Compliance Admin** | COMPLIANCE_ADMIN | Full control over the compliance module. Adopts frameworks, manages controls, creates policies, generates reports. |
+| **Approver** | COMPLIANCE_OFFICER | Reviews and approves policies, controls, and assessments. Updates control status and uploads evidence. |
+| **Approver (Privacy)** | PRIVACY_OFFICER | Same scope as Approver, signaling a privacy specialization for data-subject requests and privacy impact assessments. |
+| **Approver (Security)** | SECURITY_OFFICER | Same scope as Approver, signaling a security specialization for technical controls and incident response. |
+| **Analyst** | EMPLOYEE | Does compliance work but cannot approve. Acknowledges policies, drafts evidence, runs assessments. |
+| **Read Only** | READ_ONLY | View-only access to all modules. Cannot create, edit, or delete any data. Useful for auditors and executives. |
+| **MSP Admin** | MSP_ADMIN | Manages the MSP relationship layer — creates client tenants, assigns technicians, oversees cross-tenant operations. |
+| **MSP Technician** | MSP_TECHNICIAN | PSA-focused. Manages tickets, time tracking, assets, and the knowledge base. |
 
 <Info>
   A user can hold only one role at a time. To change someone's role, go to **Settings → Team Management**, click on the user, and select a new role.

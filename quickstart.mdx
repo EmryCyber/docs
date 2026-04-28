@@ -46,23 +46,29 @@ This guide walks you through the essential setup steps so you can start using Re
   <Step title="Create your first support ticket">
     Switch to the **PSA** module and navigate to **Tickets → New Ticket**.
 
-    Fill in the basics:
-    - **Subject** — a short description of the issue
-    - **Priority** — Low, Medium, High, or Critical
-    - **Assignee** — assign to yourself or leave unassigned for now
-    - **Description** — details about the request or incident
+    Fill in the form:
+    - **Contact Name** *(required)* — the end user requesting support
+    - **Contact Email** *(required)* — used for status notifications
+    - **Title** *(required)* — short summary of the issue
+    - **Description** *(required)* — details about the request or incident
+    - **Priority** — Low, Medium, High, or Critical (defaults to Medium)
+    - **Category** — optional free-text label (e.g., "Billing", "Network", "Access")
+    - **Assign To** — assign to yourself or leave Unassigned for the queue
 
     Submit the ticket to see it appear in your queue with SLA timers active.
   </Step>
 
   <Step title="Invite your team">
-    Go to **Settings → Team → Invite**.
+    Go to **Settings → Team Members** and click **Invite**.
 
-    Enter email addresses and assign roles:
-    - **ADMIN** — full access to all modules and settings
-    - **COMPLIANCE_OFFICER** — manages frameworks, controls, and evidence
-    - **MSP_TECHNICIAN** — handles tickets and service operations
-    - **EMPLOYEE** — limited access for policy acknowledgment and basic tasks
+    Enter an email address and assign one of ten roles. The most common starting roles are:
+    - **Admin** — full access to all modules and settings
+    - **Approver** — reviews and approves policies, controls, and assessments (the COMPLIANCE_OFFICER role)
+    - **Analyst** — does compliance work but cannot approve (the EMPLOYEE role)
+    - **MSP Technician** — handles tickets and service-desk operations
+    - **Read Only** — view-only access for auditors or executives
+
+    See [Concepts → Roles](/concepts#roles) for the full list, including the privacy- and security-focused approver roles and the MSP-tier admin roles.
 
     <Info>
       Invited users receive an email with a link to set their password and join your organization.
@@ -72,9 +78,9 @@ This guide walks you through the essential setup steps so you can start using Re
   <Step title="Connect an integration">
     Go to **Settings → Integrations** and connect your first external service.
 
-    **Microsoft Entra ID** — sync your user directory, pull MFA status, and collect identity-related evidence automatically.
+    **Microsoft Entra ID** — sync your user directory, pull MFA status, and collect identity-related compliance evidence automatically.
 
-    **Level.io** — import device inventory, patch status, and endpoint compliance signals from your RMM.
+    **Level.io** — import device inventory and asset data into the PSA module from your RMM.
 
     Follow the guided setup for each integration. Most connections take under two minutes to configure.
 
