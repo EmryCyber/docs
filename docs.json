@@ -80,7 +80,8 @@
             "group": "Help",
             "pages": [
               "troubleshooting",
-              "faq"
+              "faq",
+              "changelog"
             ]
           },
           {

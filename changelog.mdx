@@ -1,0 +1,66 @@
+---
+title: "Changelog"
+description: "Recent product updates, new features, and notable improvements to Regentra."
+---
+
+A running log of what's shipped on Regentra. Entries are written in the order things go live; the newest are at the top. For the technical audit trail of every change to the codebase, see the [GitHub repository](https://github.com/EmryCyber/PSA).
+
+<Info>
+  Want to be notified about new releases? Subscribe to changelog-only updates from your email preferences in **Settings → Notifications**. You'll get product news without any of the marketing flow.
+</Info>
+
+## 2026-05
+
+### QuickBooks ↔ Stripe dual-system support
+
+The most common MSP setup — using QuickBooks for books of record and Stripe as the payment processor — now works end-to-end without operator intervention.
+
+- **Stripe-paid → QuickBooks Payment recorded automatically.** When a customer pays an invoice through Stripe, Regentra creates a matching QB Payment so your QB AR aging report stays accurate. No more "phantom outstanding receivables" in QuickBooks.
+- **QuickBooks-paid → Stripe invoice voided automatically.** If the customer pays through QB instead, Regentra voids the linked Stripe invoice so they can't double-pay.
+- **Smart defaults.** When both Stripe and QB are connected, the QB Pay Now button defaults off so customers see one payment path. Toggleable per-MSP under Settings → Integrations → QuickBooks Mapping.
+- **Primary-channel banner.** The invoice detail page now shows which channel is primary when both integrations are present.
+
+[Full QuickBooks integration guide](/integrations/quickbooks)
+
+### QuickBooks integration — full feature set
+
+- **Auto-propagate Portal Company edits to QB** — name/phone/address changes flow to QB automatically.
+- **Soft-delete QB customer when Portal Company is deleted** — no more orphaned QB customers.
+- **Email invoice via QB** — trigger QB to email the customer the invoice from QB's own pipeline.
+- **Mark Paid creates QB Payment** — manual mark-paid in Regentra now records a payment in QB ledger.
+- **DRAFT invoice edit propagation** — notes/due-date changes propagate to QB sparse update.
+- **Issue Credit Memo** — operator can issue QB credit memos against PAID/VOID synced invoices from the invoice detail page.
+- **Download QB-rendered invoice PDF** — pull the canonical QB PDF for support tickets and audit trails.
+- **Auto-void linked Stripe invoice when QB-side payment lands** — closes the duplicate-charge window.
+- **Webhook-health watermark** — integrations card shows "Webhook X ago" so operators spot when Intuit stops reaching us.
+- **Reconnect banner + intuit_tid in error logs** — better diagnostics for connection issues.
+- **International Pay Now gating** — non-US realms see ACH disabled automatically (Intuit rejects ACH for non-US).
+- **Operator kill-switch** — `QUICKBOOKS_ENABLED=false` env disables outbound QB calls without redeploy.
+
+### HIPAA Security & Privacy Officer designations
+
+Per-framework officer designations independent of the auth-role tier system. An admin can also be the designated Privacy Officer for HIPAA without collapsing the two concepts. New `OrganizationOfficerDesignation` model + dashboard card with picker. Per HHS guidance (45 CFR §164.308(a)(2) Security Officer, §164.530(a) Privacy Officer), the same person can hold both slots in smaller covered entities — the schema models them separately so the audit record remains clean.
+
+### Compliance setup gate relaxed
+
+The post-consent compliance workspace now unlocks immediately after Microsoft Entra admin consent is granted. The first compliance sync runs in the background; a brand-color banner surfaces on compliance pages until the watermark lands so users know why asset/user counts are still empty. Replaces the previous behavior where users were stuck on the setup wizard until both consent and first sync completed.
+
+## 2026-04
+
+### Phase 1 marketing event pipeline
+
+Regentra emits structured lifecycle events to GoHighLevel (drip emails) and Microsoft Teams (sales alerts). Phase 1 wired `trial.started` and `subscription.started`. Internal tooling — not customer-facing.
+
+### Per-MSP QuickBooks integration (initial)
+
+OAuth flow, encrypted token storage with AAD binding, customer sync (PSA Portal Company → QB Customer), invoice push, payment reconciliation via webhook. Phase 1 of the integration.
+
+### Per-MSP Stripe integration
+
+Per-MSP Stripe accounts so MSPs can invoice their own customers through Regentra and have payments flow directly to their bank. Distinct from the platform Stripe integration (which handles MSP subscriptions to Regentra).
+
+## How updates land
+
+Most updates ship continuously and silently — Regentra deploys multiple times per day. We surface the notable ones here, especially those that change MSP- or compliance-customer workflows.
+
+For deep technical context on a specific update, the commit history on [GitHub](https://github.com/EmryCyber/PSA) is the source of truth. For questions about what's coming next, reply to your most recent Regentra email or contact [support@regentra.io](mailto:support@regentra.io).
