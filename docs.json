@@ -63,7 +63,8 @@
               "integrations/overview",
               "integrations/microsoft-entra",
               "integrations/level-rmm",
-              "integrations/stripe"
+              "integrations/stripe",
+              "integrations/quickbooks"
             ]
           },
           {
