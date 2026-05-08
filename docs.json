@@ -64,7 +64,8 @@
               "integrations/microsoft-entra",
               "integrations/level-rmm",
               "integrations/stripe",
-              "integrations/quickbooks"
+              "integrations/quickbooks",
+              "integrations/regentra-bot"
             ]
           },
           {

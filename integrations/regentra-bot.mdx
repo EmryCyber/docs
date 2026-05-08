@@ -1,0 +1,151 @@
+---
+title: "Regentra Bot — Microsoft Teams"
+description: "Deploy the Regentra support bot so your clients can create and manage tickets directly from Microsoft Teams. Covers tenant routing, install procedure, App Centric Management vs legacy tenants, and sideload fallback."
+---
+
+The Regentra Bot is a Microsoft Teams app that lets your clients create and manage support tickets from their Teams chat. When a client messages the bot, it walks them through opening a ticket; technician replies in the PSA flow back to the client's Teams thread in real time.
+
+## How tickets bridge to your MSP
+
+The bot routes inbound messages to the correct MSP using the **Microsoft Entra tenant ID** of the user who messaged it. Concretely:
+
+1. Each Teams activity carries the user's M365 tenant GUID.
+2. Regentra looks up `Organization.entraTenantId` for a match.
+3. **If the matched org is an MSP-managed client** (has `mspOrganizationId` set), the ticket routes to that MSP, attributed to the client.
+4. **If the matched org is standalone or itself an MSP**, the ticket routes to that org.
+5. **If no org matches**, the bot replies *"Sorry, I couldn't identify your organization."* No ticket is created.
+
+<Warning>
+Adding a client only as a **Portal Company** or **Portal Contact** is **not** sufficient. Routing requires an `Organization` row with the client's Entra tenant ID populated. PortalCompany/PortalContact records enrich ticket attribution but don't bridge the bot.
+</Warning>
+
+## Prerequisites — what to do before the client installs
+
+Do **both** of these for each client tenant:
+
+<Steps>
+  <Step title="Provision the client as a managed Organization">
+    From your MSP dashboard, add the client through the standard managed-client flow. This creates an `Organization` with `mspOrganizationId` pointing at your MSP org. Without this, the bot has nowhere to route their tickets.
+  </Step>
+  <Step title="Capture the client's Entra tenant ID">
+    The client's admin completes the Entra consent flow — typically by clicking the consent link your platform sends them, or by a manual sync if they're already connected for compliance evidence collection. After consent, `Organization.entraTenantId` is populated.
+  </Step>
+</Steps>
+
+You can verify both prerequisites are met by looking at the client in your CRM and confirming the Entra integration card shows **Connected** with their tenant ID.
+
+## Install the bot in the client's tenant
+
+The procedure differs slightly between **App Centric Management (ACM)** tenants — Microsoft's newer model, becoming the default — and **legacy** tenants. Steps 1, 2, and 4 apply to both; Step 3 has two paths.
+
+<Steps>
+  <Step title="Confirm Regentra is Allowed">
+    In the client's [Teams Admin Center](https://admin.teams.microsoft.com) → **Teams apps → Manage apps**, search for **Regentra** and confirm the status is **Allowed**. New tenants Allow Store apps by default; tenants with locked-down app permission policies must flip this on before users can install.
+  </Step>
+  <Step title="Install the bot in Teams">
+    From the modern Teams desktop app or web client:
+
+    - Click the **"..." (More added apps)** menu in the left rail (or the **Apps** icon if the tenant has pinned it).
+    - Choose **More apps**.
+    - Search for **Regentra**.
+    - Click **Add**.
+
+    The bot now appears in the user's chat list. They can open a conversation and start creating tickets immediately.
+  </Step>
+  <Step title="Optional — deploy org-wide">
+    To make the bot available to **all users** in the tenant without each user installing manually, the path depends on whether the tenant is on App Centric Management:
+
+    **App Centric Management tenants** (default for newer M365 tenants):
+    - Teams Admin Center → **Teams apps → Manage apps**.
+    - Select **Regentra** → **Install app** → choose **Users and groups** scope.
+    - Optionally pin under **Teams apps → Setup policies → Global (Org-wide default) → Pinned apps**.
+
+    **Legacy tenants** (pre-ACM):
+    - Teams Admin Center → **Teams apps → Setup policies → Global (Org-wide default)**.
+    - Under **Installed apps**, click **Add apps** → search **Regentra** → **Add**.
+    - Optionally pin under **Pinned apps**.
+
+    Microsoft documents that policy and install changes propagate within **a few hours**.
+  </Step>
+  <Step title="Sideload fallback (Store blocked)">
+    If the client's tenant blocks the Microsoft Teams Store entirely, the admin can upload the bot manifest directly:
+
+    - Teams Admin Center → **Teams apps → Manage apps → Upload new app** → pick the manifest zip.
+
+    Contact Regentra support for the latest manifest zip.
+  </Step>
+</Steps>
+
+## What the client sees
+
+Once the bot is installed and their tenant is bridged, here's the experience:
+
+<Steps>
+  <Step title="Welcome message">
+    On first open, the bot greets the user: *"Hi! I'm the Regentra support bot. Send me a message to create a support ticket or check your ticket status."*
+  </Step>
+  <Step title="Main menu">
+    Any message triggers the menu:
+    - **1.** New Ticket — start a support request
+    - **2.** Check Status — view open tickets
+  </Step>
+  <Step title="Ticket creation">
+    The bot asks for, in order:
+    - **Title** — subject of the issue
+    - **Description** — details
+    - **Priority** — 1 = Low, 2 = Medium, 3 = High, 4 = Critical
+
+    On confirmation, the bot replies with the ticket number and the conversation becomes a live thread.
+  </Step>
+  <Step title="Ongoing conversation">
+    Subsequent messages in the thread are added to the ticket as replies. Pasted images and screenshots are uploaded as ticket attachments. Technician replies in the PSA appear in the user's Teams chat in real time. Type **end** or **cancel** to close the conversation.
+  </Step>
+</Steps>
+
+## What your technicians see
+
+Bot-created tickets land in the PSA queue tagged with **Source: Chat Bot** so they're distinguishable from email-created and portal-created tickets. New replies arrive in real time on the ticket detail page; technician replies are sent back to Teams automatically.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Client gets 'I couldn't identify your organization'">
+    The bot didn't find an `Organization` row with that user's tenant ID.
+
+    - Confirm the client is a managed client of your MSP (`mspOrganizationId` set on their org).
+    - Confirm `Organization.entraTenantId` is populated — check the Entra integration card on the client profile.
+    - If the client recently completed Entra consent, allow a few minutes for the tenant ID to propagate.
+  </Accordion>
+  <Accordion title="Bot doesn't appear in Teams Store search">
+    The tenant has Regentra blocked at the **Manage apps** level (Step 1 above). The client's Teams admin needs to flip it to **Allowed**.
+  </Accordion>
+  <Accordion title="Can't see the 'More apps' menu in the left rail">
+    Modern Teams clients use the **"..."** overflow menu in the left rail. Some tenants have pinned the **Apps** icon directly via Setup policies — either path works.
+  </Accordion>
+  <Accordion title="Pinned the app in Setup policies but it isn't appearing for users">
+    Microsoft policy propagation takes up to a few hours. Also confirm the tenant is on a **legacy** model — App Centric Management tenants install apps via **Manage apps → Install app**, not Setup policies (which only handle pinning in ACM).
+  </Accordion>
+  <Accordion title="Tickets aren't routing to the right MSP">
+    If the client tenant ID is registered against the wrong `Organization` row (e.g. provisioned twice), the most-recently-saved entry wins. Audit the Organization table for duplicates with the same `entraTenantId`.
+  </Accordion>
+</AccordionGroup>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need to configure anything on Regentra's side?">
+    No. The bot is fully managed by Regentra and routes by the tenant ID stored on the client's `Organization` row. No webhook setup, no API key, no per-MSP configuration needed.
+  </Accordion>
+  <Accordion title="How does the bot handle multiple clients at once?">
+    Each client conversation is isolated by tenant ID. The bot routes every message to the correct MSP queue based on the sender's tenant.
+  </Accordion>
+  <Accordion title="Can I deploy the same bot to multiple client tenants?">
+    Yes — repeat the Install procedure for each client. The same Microsoft Teams Store app works across all tenants.
+  </Accordion>
+  <Accordion title="What if I haven't onboarded a client yet?">
+    The bot will reply *"I couldn't identify your organization."* until you provision the client as a managed Organization AND capture their Entra tenant ID. PortalCompany/PortalContact alone don't bridge the bot.
+  </Accordion>
+  <Accordion title="Does the bot also work in Slack?">
+    A Slack adapter exists in the codebase and uses the same routing logic — the Slack workspace `team_id` is matched against `Organization.entraTenantId`. Onboarding a Slack workspace requires populating that column with the workspace's team_id, which is currently a manual step. Microsoft Teams remains the recommended channel for the bot today.
+  </Accordion>
+</AccordionGroup>
