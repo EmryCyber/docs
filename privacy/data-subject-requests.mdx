@@ -1,0 +1,83 @@
+---
+title: "Data Subject Requests"
+description: "Receive, verify, and respond to data-subject access, deletion, and rights requests within regulatory deadlines."
+---
+
+When individuals request access to their data, deletion, correction, or portability, you have legally binding deadlines to respond. GDPR gives you 30 days; HIPAA gives you 30 days for access; CCPA gives you 45 days. Missing these deadlines triggers enforcement actions and fines. Regentra tracks every request, verifies identity, coordinates across systems, and keeps an evidence trail.
+
+## What it does
+
+- **Intake and verification** — log requests from email / web form / patient portal; verify identity; flag incomplete requests
+- **Request classification** — categorize against applicable regimes (HIPAA access/amendment/accounting; GDPR access/erasure/portability; CCPA/state rights to know/delete/correct)
+- **Data retrieval** — route to data stewards and system owners; compile relevant data; deduplicate; redact privileged or third-party content
+- **Response and documentation** — generate a compliant response letter; log dispatch and delivery
+- **SLA tracking** — track response times; escalate overdue requests; publish annual metrics where law requires it
+
+## How to process a data-subject request
+
+<Steps>
+  <Step title="Publish request intake channels">
+    Configure intake for each jurisdiction:
+    - HIPAA: patient-access form + mail/email address
+    - GDPR: DPO mailbox + web form
+    - CCPA / state laws: toll-free number + email + web form
+
+    All channels route to a common Regentra inbox visible to your Privacy Officer and intake team.
+  </Step>
+  <Step title="Log and verify the request">
+    When a request arrives, click **New Request**. Enter requestor name, email, phone, and channel. Regentra auto-starts the SLA clock. If identity verification is needed, click **Request Verification** and send the requestor a secure link to upload ID. Mark **Verified** once confirmed.
+  </Step>
+  <Step title="Classify the request against applicable regimes">
+    Select which regimes apply (HIPAA, GDPR, CCPA, state laws). For each, select the specific rights requested (access, deletion, amendment, portability, etc.). Regentra calculates the deadline for each and flags conflicts (e.g. HIPAA says deny but GDPR says allow).
+  </Step>
+  <Step title="Route data retrieval">
+    Click **Retrieve Data**. Regentra displays your data map. Create a task for each steward: "Retrieve all profile, transaction, and ticket data for jane@example.com." Stewards respond within ~2 business days.
+  </Step>
+  <Step title="Review and redact">
+    Once data is retrieved, click **Review**. Regentra surfaces the data alongside regulatory carve-outs (HIPAA: psychotherapy notes; GDPR: rights of others; CCPA: SSNs). Manually redact items that fit a carve-out and document the reason. Suspicious items (credit card numbers, passwords) are flagged automatically.
+  </Step>
+  <Step title="Generate and send the response">
+    Click **Generate Response**. Regentra creates a letter with:
+    - Summary of enclosed data (categories, counts)
+    - Form and format (JSON, CSV, PDF, portal link)
+    - Statement of any denials and regulatory basis
+    - Appeal instructions (if applicable)
+    - Follow-up contact info
+
+    Click **Send** — Regentra emails the response and logs delivery confirmation.
+  </Step>
+  <Step title="Close and document">
+    Once the requestor confirms receipt, click **Close Request**. Regentra archives the entire file — intake, verification, classification, retrieval requests, redaction log, response, and delivery proof.
+  </Step>
+</Steps>
+
+## Response deadlines and escalation
+
+Regentra tracks SLAs for each regime:
+
+- **HIPAA** — 30 days from receipt (60 with one written extension)
+- **GDPR** — 30 days (60-90 if request is complex or numerous)
+- **CCPA / CPRA** — 45 days (90 with one written extension)
+- **State privacy laws** — 30-45 days; some allow one extension
+
+When an SLA is approaching, Regentra alerts your Privacy Officer. If the deadline will be missed, Regentra prompts you to either **Send Extension Notice** or **Escalate** to executive leadership. Overdue requests appear in red on your Privacy Officer dashboard.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="What if I don't know where all the data is?">
+    A Privacy Program Policy and Data Map are prerequisites. Before a DSR arrives, document all systems, processors, and data flows. If you don't have a data map, you can't reliably respond. Adopt the Privacy Program Policy and work through the data-inventory section first.
+  </Accordion>
+  <Accordion title="Can I deny a request?">
+    Yes, on specific regulatory grounds. HIPAA allows denial for legal proceedings and some third-party data. GDPR allows denial to protect rights of others. CCPA allows denial if cost of retrieval is disproportionate. Regentra flags applicable denial grounds. Document the denial reason and provide appeal instructions.
+  </Accordion>
+  <Accordion title="What if a processor (cloud vendor) holds some of the data?">
+    Your Data Processing Agreement requires processors to respond to controller-forwarded DSRs within a defined SLA (typically 5 business days). Create a retrieval task for the processor contact.
+  </Accordion>
+  <Accordion title="Do I have to respond to authorized agents?">
+    Under CCPA, yes — but with heightened verification: verify the consumer's identity AND the agent's authorization (signed power of attorney). Regentra's verification flow includes an "authorized agent" path with dual verification.
+  </Accordion>
+  <Accordion title="How do I know if I've responded in time?">
+    Regentra's SLA tracker shows green (on time), yellow (approaching deadline), red (overdue). Your Privacy Officer dashboard surfaces overdue requests at the top. If you'll miss a deadline, send the extension notice (which restarts the SLA clock legally) before the deadline passes.
+  </Accordion>
+</AccordionGroup>

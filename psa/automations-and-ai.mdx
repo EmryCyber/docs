@@ -1,0 +1,107 @@
+---
+title: "Automations & AI Reviews"
+description: "Automate ticket triage and assignment; review AI-suggested replies before they reach the customer."
+---
+
+Reduce manual work with automation rules that react to ticket events. Review AI-generated replies before they're sent so you stay in control of the customer experience.
+
+## What it does
+
+**Automations:**
+- **Trigger events** — react to ticket creation, status changes, replies, and SLA escalations
+- **Conditions** — match on priority, status, category, contact email, company, and more
+- **Actions** — auto-assign, change priority, update status, add internal notes, send notifications
+- **Rule priority** — execute rules in order; stop processing after a match if enabled
+- **Execution logs** — view every time a rule ran, whether it matched, and what it did
+
+**AI Reviews:**
+- **Pending reviews** — see unreviewed AI-suggested replies, sorted by confidence
+- **Condition matching** — understand why the AI suggested each action
+- **Override ratings** — mark suggestions as Correct, Wrong, or let the AI learn from overrides
+- **Execution audit** — track what AI suggestions were accepted vs. rejected by your team
+
+## How to create an automation rule
+
+<Steps>
+  <Step title="Open Automations and click New Rule">
+    Navigate to **PSA → Automations** and click **New Rule**.
+  </Step>
+  <Step title="Name and describe the rule">
+    Enter a name (e.g. "Auto-assign Critical tickets to Tom") and optional description.
+  </Step>
+  <Step title="Choose a trigger event">
+    Ticket Created, Status Changed, Reply Added, or SLA Escalation.
+  </Step>
+  <Step title="Add conditions (optional)">
+    Click **+ Add Condition**. For each, choose a field (e.g. Priority), operator (Equals), and value (CRITICAL). All conditions must match for the rule to execute.
+  </Step>
+  <Step title="Add actions">
+    Click **+ Add Action**. Choose: Assign Ticket, Change Priority, Change Status, Add Internal Note, or Send Notification. Configure the payload (e.g. which technician).
+  </Step>
+  <Step title="Set priority and options">
+    Lower Priority = executed first. Check **Enabled** to activate. Check **Stop after match** to prevent other rules from running if this one matches.
+  </Step>
+  <Step title="Save the rule">
+    Click **Create Rule**.
+  </Step>
+</Steps>
+
+## How to test an automation rule
+
+<Steps>
+  <Step title="Open the rule">
+    Find the rule in your Automations list.
+  </Step>
+  <Step title="Click the test icon">
+    A dry-run executes the rule against a sample ticket. You'll see the test ticket evaluated, which conditions matched, what actions would have executed, and a "Would Execute" / "Would NOT execute" summary.
+  </Step>
+  <Step title="Review and adjust">
+    If the test shows unexpected behavior, edit the conditions or actions and test again.
+  </Step>
+</Steps>
+
+## How to review AI suggestions
+
+<Steps>
+  <Step title="Open AI Draft Reviews">
+    Navigate to **PSA → Automations → AI Draft Reviews** (admin-only page).
+  </Step>
+  <Step title="View pending suggestions">
+    The Pending Reviews tab shows tickets with unreviewed AI replies, sorted by confidence (low confidence first).
+  </Step>
+  <Step title="Open a ticket and review the AI reply">
+    Click a ticket to view the suggested reply, its confidence score, and the trigger.
+  </Step>
+  <Step title="Accept, edit, or reject the reply">
+    - **Accept** — send the reply as-is to the customer
+    - **Edit** — modify and send your version. The system logs the override.
+    - **Reject** — don't send the reply. The system logs the rejection.
+  </Step>
+  <Step title="Provide feedback (optional)">
+    Add a reason for rejection or edit. This feedback trains the AI model over time.
+  </Step>
+</Steps>
+
+## Understanding AI confidence
+
+AI replies include a confidence score (0-100%) representing how sure the model is. Low scores mean the AI was uncertain — review carefully. **Low confidence does not always mean wrong; high confidence does not guarantee correct.** Always review the actual reply text and the ticket context before sending.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I test a rule without creating it?">
+    No. Save the rule first, then use the test button. Drafts cannot be tested.
+  </Accordion>
+  <Accordion title="What happens if two rules match the same ticket?">
+    Rules execute in priority order (lower number = first). If a rule has **Stop after match** enabled, execution stops there. Otherwise all matching rules execute in sequence.
+  </Accordion>
+  <Accordion title="Can I disable a rule without deleting it?">
+    Yes. Click the play/pause icon next to the rule. It's disabled immediately and won't execute on new tickets.
+  </Accordion>
+  <Accordion title="Are AI reviews separate from automations?">
+    Yes. AI reviews are for manual approval of AI-suggested replies. Automations execute immediately with no manual review. They can work together: an automation might trigger an AI suggestion, which then appears in the review queue.
+  </Accordion>
+  <Accordion title="Does the AI learn from my overrides?">
+    Yes. When you mark a suggestion Correct or Wrong, or edit it, that feedback trains the model. Over time, suggestions should improve.
+  </Accordion>
+</AccordionGroup>

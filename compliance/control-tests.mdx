@@ -1,0 +1,73 @@
+---
+title: "Control Tests"
+description: "Define, run, and track compliance tests mapped to your controls — manual, automated, or integration-fed."
+---
+
+Control Tests let you validate that your security controls are working as designed. Each test is linked to a specific control and can be run manually, on a schedule, or fed by automated tooling — capturing evidence that flows into [Evidence Collection](/compliance/evidence-collection) and [Reports](/compliance/reports).
+
+## What you can do
+
+- **Create and link tests** — Map tests to any control in your framework; specify test type (manual, automated, or integration)
+- **Track test results** — Run tests and record Pass / Fail / Warning outcomes with optional notes
+- **Schedule recurring tests** — Set frequency (in days) so tests re-run automatically on your cadence
+- **View test history** — See last run date, next scheduled run, and test status across your control portfolio
+- **Generate audit evidence** — Test results flow into [Evidence Collection](/compliance/evidence-collection) and feed [Reports](/compliance/reports)
+
+## How to run a control test
+
+<Steps>
+  <Step title="Navigate to Control Tests">
+    Go to **Compliance → Control Tests** to view all defined tests.
+  </Step>
+  <Step title="Click Run Test on a test row">
+    The Run Test button opens a result-entry modal.
+  </Step>
+  <Step title="Select result and add optional notes">
+    Choose **Pass**, **Fail**, or **Warning**. Add details about what you tested or any findings in the Message field.
+  </Step>
+  <Step title="Submit the result">
+    Click **Submit Result**. The test status updates immediately and is logged in the audit trail.
+  </Step>
+</Steps>
+
+## Test statuses
+
+| Status | Meaning | Action |
+| --- | --- | --- |
+| **Pass** | Control is functioning correctly | No action needed; evidence captured |
+| **Fail** | Control failed the test | Creates a compliance issue; review and resolve |
+| **Warning** | Control has partial or questionable behavior | Investigate further; may escalate |
+| **Not Run** | Test has never been executed | Run the test to collect initial evidence |
+
+## Test types
+
+- **Manual** — A team member runs the test and submits the result (e.g., "verify firewall rules")
+- **Automated** — A scheduled check runs and reports back (e.g., "MFA enforcement on all admins")
+- **Integration** — Connected to an external service (RMM, SIEM, identity provider) that feeds results
+
+## Audit-readiness cadence
+
+Each test has a configurable **frequency** (how often it should run, in days). The dashboard shows:
+
+- **Last Run At** — when the test was last executed
+- **Next Run At** — when the test is scheduled to run next
+- **Frequency Days** — how often the test repeats (default: 90 days)
+
+For critical [Controls](/compliance/controls), set shorter frequencies (e.g. 7 or 30 days) so evidence is fresh when auditors arrive.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="How do I link a test to a control?">
+    When you create a test, choose the control from the dropdown. If the control doesn't appear, ensure it's been adopted in your framework first (see [Controls](/compliance/controls)).
+  </Accordion>
+  <Accordion title="What happens when a test fails?">
+    A failed test creates a draft compliance issue tied to that control. You can review, assign, and track closure. The issue appears in the [Audit Lifecycle](/compliance/audit-lifecycle) view.
+  </Accordion>
+  <Accordion title="Is there a default frequency for new tests?">
+    Yes — 90 days (quarterly). You can change it when creating the test or edit it later.
+  </Accordion>
+  <Accordion title="Can I see a test's history?">
+    Yes. Click any test to see every previous run with timestamp, result, and notes. Useful for SOC 2 Type 2 evidence (proving the control operated throughout the audit period).
+  </Accordion>
+</AccordionGroup>

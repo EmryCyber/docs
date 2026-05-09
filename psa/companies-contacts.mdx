@@ -1,0 +1,84 @@
+---
+title: "Companies & Contacts"
+description: "Organize MSP customers and the people inside them; import from Microsoft 365; track tickets and assets per company."
+---
+
+Companies are your MSP customers. Contacts are the individuals inside those companies. Together, they're the foundation of every [Ticket](/psa/tickets), [Asset](/psa/assets), [Invoice](/psa/invoices-quotes), and portal interaction in the PSA.
+
+## What it does
+
+- **Company management** — Create customers manually or bulk-import from Microsoft 365 tenants
+- **Contact management** — Add portal contacts per company; send invites and password resets
+- **Automatic syncing** — [Microsoft Entra ID](/integrations/microsoft-entra) integration pulls users and devices in the background
+- **Portal access** — Contacts can submit and track tickets via the [Portal](/psa/portal)
+- **Relationship tracking** — Ticket and asset counts per company and contact, surfaced inline
+
+## How to add a company
+
+<Steps>
+  <Step title="Open the Companies page">
+    Navigate to **PSA → Companies**.
+  </Step>
+  <Step title="Click Add Company">
+    Enter the company name, phone, address, and website. Click **Create**.
+  </Step>
+  <Step title="(Optional) Import from Microsoft 365">
+    Click **Import from Microsoft 365**. Provide the company name and tenant details. You'll be redirected to grant admin consent; sign in as a Microsoft 365 admin. Users and devices sync automatically in the background.
+  </Step>
+</Steps>
+
+## How to manage contacts
+
+<Steps>
+  <Step title="Open the Contacts page">
+    Navigate to **PSA → Contacts**.
+  </Step>
+  <Step title="Add a new contact">
+    Click **Add Contact**. Enter name, email, phone (optional), and assign a company. Optionally send a welcome email with a portal setup link.
+  </Step>
+  <Step title="Bulk import contacts">
+    Click **Template** to download a CSV; fill in name, email, phone, and company. Click **Import CSV** and upload. Duplicates are skipped; errors are reported per row.
+  </Step>
+  <Step title="Send invite or reset password">
+    For each contact, **Send Invite** (if pending setup) sends the welcome email. **Reset Password** (if active) sends a password-reset link.
+  </Step>
+</Steps>
+
+## Organization & relationships
+
+Companies appear as collapsible groups on the Contacts list. Contacts without a company are shown in a separate "No Company Assigned" section. Each contact shows:
+
+- **Status badges** — Active or Inactive
+- **Pending Setup flag** — shown if invited but hasn't set a password
+- **Ticket & asset counts** — how many tickets and assets are linked
+- **Company link** — click to view all contacts in that company
+
+When a contact is inactive, **Send Invite** and **Reset Password** are hidden. Companies show total contacts, tickets, and asset counts on the main Companies page.
+
+## Microsoft 365 integration
+
+The **Import from Microsoft 365** flow requires admin consent. Once granted:
+
+- All users in the tenant are synced as contacts
+- Devices (computers, mobile) are synced as [Assets](/psa/assets)
+- Syncs run in the background; new users and devices appear automatically
+- One sync per import request; not a live monitor
+
+See [Microsoft Entra ID](/integrations/microsoft-entra) for full integration details.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I assign multiple companies to one contact?">
+    No. Each contact belongs to zero or one company. If a person works across multiple clients, create separate contact records for each.
+  </Accordion>
+  <Accordion title="What happens when I import from Microsoft 365?">
+    The system fetches all users and devices from the tenant and creates or updates contacts and assets. Existing contacts are not modified unless their Microsoft 365 record changed.
+  </Accordion>
+  <Accordion title="Can I revoke portal access for a contact?">
+    Yes. Toggle the contact to Inactive. They lose portal access immediately, but their historical data remains.
+  </Accordion>
+  <Accordion title="How do I bulk-delete contacts?">
+    Currently one at a time via the detail page. If you need bulk operations, contact support.
+  </Accordion>
+</AccordionGroup>

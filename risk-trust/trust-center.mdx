@@ -1,0 +1,112 @@
+---
+title: "Trust Center"
+description: "Public-facing Trust Center to demonstrate your compliance posture and security practices to prospects and customers."
+---
+
+The Trust Center is a customizable, public webpage showcasing your organization's compliance, security, and governance maturity. Control exactly what's visible — from compliance scores and framework coverage to policies, certifications, and security practices — and gate sensitive documents behind signed NDAs.
+
+## What it provides
+
+- **Public compliance score** — overall percentage if enabled
+- **Framework coverage** — implementation status of compliance [Frameworks](/compliance/frameworks)
+- **Published policies** — list of active policies (Security, Privacy, Incident Response, etc.)
+- **Certifications** — active certifications with issue and expiry dates
+- **Security practices** — key implemented security controls (MFA, encryption, audit logging)
+- **Subprocessors & vendors** — third-party service providers your organization uses
+- **Public documents** — SOC 2 reports, security white papers, audit summaries
+- **Protected documents** — gated behind NDA workflows
+- **FAQs** — answer common customer questions about security and compliance
+
+## How to configure the Trust Center
+
+<Steps>
+  <Step title="Enable the Trust Center">
+    Go to **Settings → Trust Center** and toggle **Enable Trust Center**. A public URL is auto-generated based on your organization slug.
+  </Step>
+  <Step title="Set headline and description">
+    Enter a custom headline (e.g. "Security & Compliance") and a brief description visitors see at the top.
+  </Step>
+  <Step title="Choose what to show">
+    Tick checkboxes for each section: Compliance Score, Frameworks, Policies, Controls, Certifications, Security Practices, Subprocessors, FAQs.
+  </Step>
+  <Step title="Add documents">
+    In the Documents tab, upload or link:
+    - **Public** — available to all visitors
+    - **Protected** — requires NDA signature before download
+  </Step>
+  <Step title="Configure NDA (optional)">
+    Enable **Require NDA** for gated access. Paste NDA text and optionally upload an NDA document. Visitors must accept before accessing protected documents.
+  </Step>
+  <Step title="Customize FAQs">
+    Add questions and answers covering common concerns (data handling, subprocessor updates, incident response). Order by drag-and-drop.
+  </Step>
+  <Step title="Apply custom branding (optional)">
+    Add custom CSS to match your brand. CSS is sanitized for security.
+  </Step>
+  <Step title="Publish and share">
+    Once enabled, the Trust Center is live. Copy the public URL and share via email, your website, or sales decks.
+  </Step>
+</Steps>
+
+## Public vs. private data
+
+**PUBLIC (visible to anyone):**
+- Compliance score and framework coverage percentages
+- List of published policies (title and category only)
+- Certifications (framework name, issuer, dates)
+- Implemented security practices (control names only)
+- Subprocessor names and service types
+- Public documents (downloadable via link)
+- Headline, description, organization name, logo
+- FAQ questions and answers
+
+**PRIVATE (not shown):**
+- Control implementation details (domain mappings, evidence, checklists)
+- Risk register and remediation queue
+- Raw compliance snapshots or detailed control assessments
+- NDA text or protected documents (shown only after signature)
+- Access request history and analytics (admin-only)
+
+<Warning>
+  Carefully review which sections you enable. Once enabled, data is publicly queryable. Don't include sensitive internal details (control IDs, remediation timelines, financial impact metrics) in your headline or description.
+</Warning>
+
+## Sharing the Trust Center URL
+
+After enabling, visitors access your Trust Center at the auto-generated URL. Share via:
+
+- **Sales emails** — include in security questionnaire responses
+- **Website footer or "Security" page** — link from your main site
+- **RFP/RFI responses** — provide as evidence of your compliance program
+- **Customer onboarding** — send to new customers to build trust
+
+## Tracking Trust Center activity
+
+Admins can view analytics from the Trust Center settings:
+
+- **Page views** — total and unique visitor counts
+- **Document downloads** — which public documents were downloaded
+- **Access requests** — who requested access to protected documents and approval status
+- **NDA signatures** — track which users signed your NDA and when
+
+Use this data to understand customer interest and identify hot-button compliance concerns.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I hide my compliance score?">
+    Yes. Disable the **Compliance Score** toggle. You can still show framework coverage, policies, and certifications.
+  </Accordion>
+  <Accordion title="What happens if a customer requests access to a protected document?">
+    They complete an access request form (name, email, company, reason). Approve or deny from **Settings → Trust Center → Access Requests**. If approved and NDA is required, they sign before the download link appears.
+  </Accordion>
+  <Accordion title="Can I require an NDA for public documents too?">
+    No. Public documents are always freely available. Only protected documents require NDA signature.
+  </Accordion>
+  <Accordion title="How do I update the Trust Center when our compliance score changes?">
+    The Trust Center pulls live data from your compliance snapshot. Once you update assessment statuses or control implementation, the score and framework coverage refresh automatically (within a few minutes).
+  </Accordion>
+  <Accordion title="Can I use the Trust Center for internal employees?">
+    The Trust Center is public-facing by design. For internal compliance training or employee-only content, use the [Policies](/compliance/policies) section.
+  </Accordion>
+</AccordionGroup>

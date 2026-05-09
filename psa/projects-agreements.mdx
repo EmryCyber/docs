@@ -1,0 +1,82 @@
+---
+title: "Projects & Service Agreements"
+description: "Group work into projects with budgets and timelines; define agreements with monthly recurring and hourly rates."
+---
+
+Projects organize work into managed units with budgets, timelines, and task tracking. Service Agreements define how you bill — monthly recurring (MRR), hourly, or both.
+
+## What it does
+
+- **Project creation** — Name, description, status, priority, start/end dates, budget hours
+- **Task tracking** — Real-time progress: X of Y tasks done with a progress bar
+- **Budget tracking** — Compare actual hours logged via [Time Tracking](/psa/time-tracking) against the budget
+- **Service Agreements** — Define MRR and hourly rates per customer; link to [Invoices](/psa/invoices-quotes) for billing
+- **Time rollup** — Time entries logged against a project automatically roll up into project hours and become billable
+
+## How to create a project
+
+<Steps>
+  <Step title="Open Projects and click New Project">
+    Navigate to **PSA → Projects** and click **New Project**.
+  </Step>
+  <Step title="Fill project details">
+    Enter project name (required), description (optional), status (Planning / Active / On Hold / Completed / Cancelled), and priority (Low / Medium / High / Critical).
+  </Step>
+  <Step title="Set dates and budget">
+    Enter start and end dates (optional). Enter a budget in hours if you want to cap.
+  </Step>
+  <Step title="Assign company and manager">
+    Optionally link to a [Company](/psa/companies-contacts) and assign a project manager.
+  </Step>
+  <Step title="Create the project">
+    Click **Create Project**. You can then add tasks and log time.
+  </Step>
+</Steps>
+
+## Service Agreements
+
+Each agreement has:
+
+- **Monthly Recurring (MRR)** — fixed monthly charge
+- **Hourly Rate** — applied to hours logged by techs
+- **Status** — Active, Paused, Cancelled, or Expired
+- **Effective Date & End Date** — when the agreement is/was in effect
+
+When creating an [Invoice](/psa/invoices-quotes), optionally link a Service Agreement to auto-populate the monthly charge. Additional line items can be added on top.
+
+## How time entries roll up
+
+When a tech logs time against a task in a project:
+
+1. The time entry records duration and billable rate
+2. It's attributed to the linked Service Agreement (if any)
+3. The project's **Actual Hours** counter increments
+4. When invoices are generated, time entries are included as line items
+
+Complete audit trail: logged time → project hours → invoices.
+
+## Filtering and search
+
+On the Projects list, search by project name, company name, or description. Filter by:
+
+- **Status** — Planning, Active, On Hold, Completed, Cancelled
+- **Priority** — Low, Medium, High, Critical
+
+Results update in real time.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can a project have multiple Service Agreements?">
+    A project links to one company. If that company has multiple agreements (one hourly, one MRR), choose which to use when logging time. Time can also be logged without an agreement.
+  </Accordion>
+  <Accordion title="What happens when a project goes over budget?">
+    Status remains unchanged, but Actual Hours visibly exceeds Budget Hours. No automatic alert — manager monitors.
+  </Accordion>
+  <Accordion title="Can I archive a project?">
+    Mark it Completed or Cancelled. They don't appear in the Active filter by default, but remain searchable with full history.
+  </Accordion>
+  <Accordion title="Are Service Agreements the same as project budgets?">
+    No. A Service Agreement is a customer contract defining rates and terms. A Project Budget is an internal estimate of hours for a specific piece of work. They can be linked but serve different purposes.
+  </Accordion>
+</AccordionGroup>

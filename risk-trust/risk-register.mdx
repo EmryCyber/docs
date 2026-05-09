@@ -1,0 +1,83 @@
+---
+title: "Risk Register"
+description: "Maintain a register of identified risks with inherent and residual scores; assign treatment plans; track remediation."
+---
+
+The Risk Register is your organization's central inventory for managing identified risks. Assign each risk a category and score (likelihood × impact), link to controls and assessments, track treatment status, and measure progress from open through mitigation or acceptance.
+
+## What it does
+
+- **Risk scoring** — assess inherent risk (before controls) and residual risk (after treatment) on a 5×5 likelihood/impact matrix
+- **Multi-category tracking** — cybersecurity, compliance, operational, financial, third-party, personnel, privacy, reputational, emerging tech
+- **Treatment planning** — link risks to remediation actions, assign owners, set due dates
+- **Heat map visualization** — see distribution at a glance and identify concentration in high-severity cells
+- **Risk library** — accelerate intake with pre-built templates
+
+## How to add a risk
+
+<Steps>
+  <Step title="Click Add Risk">
+    From the Risk Register page, click **Add Risk** to open the entry form.
+  </Step>
+  <Step title="Fill in the details">
+    Enter title, description, and select a category. The system auto-assigns a risk number.
+  </Step>
+  <Step title="Assess the risk">
+    Open the detail page and set inherent likelihood (1-5) and impact (1-5). The inherent score calculates automatically.
+  </Step>
+  <Step title="Link controls">
+    Link any internal [Controls](/compliance/controls) that mitigate this risk. Update the residual score once controls are in place.
+  </Step>
+  <Step title="Create a treatment plan">
+    Assign an owner, set a due date, and describe the mitigation strategy or acceptance rationale.
+  </Step>
+</Steps>
+
+## Risk lifecycle and status
+
+Risks progress through:
+
+- **Open** — newly identified; no treatment started
+- **In Treatment** — actively being mitigated; owner working toward due date
+- **Mitigated** — risk reduced to acceptable residual level through controls
+- **Accepted** — risk acknowledged and accepted by leadership (formal acceptance record exists)
+- **Closed** — no longer relevant or fully resolved; archived for historical reference
+
+## Remediation tracking
+
+Each risk can be linked to remediation work via related tasks:
+
+- Assign specific [Controls](/compliance/controls) to implement
+- Create assessment activities to test control effectiveness
+- Track related tickets or projects in the PSA module if manual work is required
+- Update treatment status as controls progress; residual score updates when controls are marked implemented
+
+The **Remediation Queue** view consolidates all gaps and control statuses in one place — bulk-assign work and manage due dates across multiple controls.
+
+## Heat map and summary cards
+
+The dashboard displays:
+
+- **Summary cards** — total risks, open count, in-treatment count, resolved count, overdue items
+- **Heat map** — inherent risk distribution across the 5×5 matrix; cell color intensity indicates risk level
+- **Filtering** — search by keyword, filter by status / category / owner
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="What is the difference between inherent and residual score?">
+    **Inherent** is the risk level without any controls — raw threat and impact. **Residual** is what remains after controls are implemented. As you implement mitigating controls, residual score typically decreases.
+  </Accordion>
+  <Accordion title="Can I bulk-import risks from a spreadsheet?">
+    Use the Risk Library to browse and add pre-built risk templates. For custom bulk import, contact your admin. Individual entry via the UI is the standard method.
+  </Accordion>
+  <Accordion title="How do I link a risk to a compliance framework requirement?">
+    On the risk detail page, select **Link Assessment**. Choose a framework and requirement; the system shows which controls map to that requirement; link those controls to the risk.
+  </Accordion>
+  <Accordion title="What happens to an accepted risk?">
+    Accepted risks move to **Accepted** status and are no longer flagged as open. A formal acceptance record is kept for audit trails. You can monitor the residual score but no further treatment is required.
+  </Accordion>
+  <Accordion title="Can I see which risks are associated with a specific control?">
+    Yes. Open the [Control](/compliance/controls), find the **Linked Risks** section, and view all risks that reference it.
+  </Accordion>
+</AccordionGroup>

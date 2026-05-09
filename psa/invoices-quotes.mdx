@@ -1,0 +1,90 @@
+---
+title: "Invoices & Quotes"
+description: "Draft quotes, generate invoices, send via Stripe or QuickBooks, and track payment status in one place."
+---
+
+Create and manage customer quotes and invoices. Pull line items from your [Service Catalog](/psa/service-catalog), set payment terms, and send via [Stripe](/integrations/stripe) for hosted online payment or [QuickBooks](/integrations/quickbooks) for accounting sync.
+
+## What it does
+
+- **Quote drafting** — Build multi-line quotes with custom descriptions, quantities, and pricing
+- **Invoice generation** — Convert service agreements or manual line items into invoices
+- **Dual destinations** — Send invoices to both Stripe (online payment) and QuickBooks (accounting)
+- **Catalog integration** — Pick from your [Service Catalog](/psa/service-catalog) or enter free-text items
+- **Payment options** — Card, ACH, bank transfer, SEPA debit, and more per invoice
+- **Tax & due date control** — Set tax rate and override the default 30-day due window
+
+## How to create a quote
+
+<Steps>
+  <Step title="Open Quotes and click New Quote">
+    Navigate to **PSA → Quotes** and click the **New Quote** button.
+  </Step>
+  <Step title="Fill quote basics">
+    Enter a title (e.g. "Managed IT Services Proposal"), select a [company and contact](/psa/companies-contacts) (optional), and set a validity date.
+  </Step>
+  <Step title="Add line items">
+    Click **Add Item**. For each row, enter description, quantity, and unit price. Total calculates automatically.
+  </Step>
+  <Step title="Set tax and review totals">
+    Enter a tax rate (%). Subtotal, tax amount, and grand total update in real time.
+  </Step>
+  <Step title="Create the quote">
+    Click **Create Quote**. The detail page lets you review, send, or edit before acceptance.
+  </Step>
+</Steps>
+
+## How to generate an invoice
+
+<Steps>
+  <Step title="Open Invoices and click Generate Invoice">
+    Navigate to **PSA → Invoices** and click **Generate Invoice**.
+  </Step>
+  <Step title="Choose destination(s)">
+    Check **Stripe** (for hosted online payment) and/or **QuickBooks** (for accounting sync). If QB is checked, link a Portal Company; click **Sync now** if not yet synced.
+  </Step>
+  <Step title="Select a client and agreement (optional)">
+    For Stripe, pick a customer from your connected Stripe account. Optionally link a [Service Agreement](/psa/projects-agreements) to auto-populate the monthly recurring charge.
+  </Step>
+  <Step title="Set period and line items">
+    Define the billing period. Add manual line items by picking from your [Service Catalog](/psa/service-catalog) or entering free-text descriptions and amounts. Catalog items sync to Stripe automatically.
+  </Step>
+  <Step title="Configure payment options">
+    Set a custom due date (default: 30 days from invoice date). Enable payment methods: Card, ACH, Link, Bank Transfer, SEPA Debit. If none selected, Card and ACH are used.
+  </Step>
+  <Step title="Generate the invoice">
+    Click **Generate**. The invoice is created and synced to your chosen destination(s).
+  </Step>
+</Steps>
+
+## Stripe & QuickBooks behaviour
+
+**Stripe** invoices are hosted online. Customers receive a link and can pay directly. You track payment status in real time.
+
+**QuickBooks** invoices sync to your QuickBooks account. They don't include an online payment link; customers receive the PDF and pay via the methods you specify offline.
+
+Configure both in **Settings → Integrations**:
+
+- [Stripe](/integrations/stripe) — Per-organization Stripe account connection
+- [QuickBooks](/integrations/quickbooks) — Per-organization QuickBooks authorization
+
+## Supply dates & tax compliance
+
+When adding manual line items, optionally enable **Supply date** to specify a single date or date range (e.g. "Service period: 2026-05-01 — 2026-05-31"). This is rendered on the Stripe invoice and helps satisfy UK/EU tax-point rules.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I convert a quote to an invoice?">
+    Not directly today. View the quote's line items as a reference, then create an invoice with them. We plan to automate this flow.
+  </Accordion>
+  <Accordion title="What happens if I edit a catalog item?">
+    The invoice retains the price and description at the time of generation. Historical invoices are unaffected. A new Stripe Price is created on the next sync if the unit amount or currency changed.
+  </Accordion>
+  <Accordion title="Can I send an invoice via both Stripe and QuickBooks?">
+    Yes. Check both destinations, link a Portal Company for QB, and generate. The invoice is created in both systems independently.
+  </Accordion>
+  <Accordion title="What's the difference between Line Items and Service Agreements?">
+    **Line Items** are one-off charges on a single invoice. **Service Agreements** ([Projects & Agreements](/psa/projects-agreements)) define recurring billing (monthly + hourly). You can link an agreement and still add extra line items.
+  </Accordion>
+</AccordionGroup>

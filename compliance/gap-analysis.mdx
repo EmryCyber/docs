@@ -1,0 +1,85 @@
+---
+title: "Gap Analysis"
+description: "Identify unimplemented controls across your adopted frameworks and turn gaps into prioritized remediation tickets."
+---
+
+Gap Analysis automatically evaluates your control implementation status against your adopted frameworks. It surfaces which controls are not yet started, in progress, or need review — then helps you generate a prioritized remediation plan.
+
+## What you can do
+
+- **Select frameworks** — Choose one or more adopted frameworks to analyze
+- **View gap summary** — Implementation percentage, count of gaps, critical gaps (required controls not started), and domain breakdown
+- **Review domain details** — Drill into each compliance domain (e.g. Access Control, Cryptography) and see individual control status
+- **Prioritize remediation** — Gaps are ranked by requirement level (required vs. addressable) and status
+- **Create remediation tickets** — Select gaps and auto-generate tickets with guidance and checklists pre-filled
+
+## How to run a gap analysis
+
+<Steps>
+  <Step title="Open Gap Analysis">
+    Navigate to **Compliance → Gap Analysis**.
+  </Step>
+  <Step title="Select frameworks">
+    Choose one or more frameworks you've adopted. You'll see implementation stats and a list of all controls.
+  </Step>
+  <Step title="Review the gap overview">
+    The summary shows total controls, implemented count, in-progress count, and gaps.
+  </Step>
+  <Step title="Expand domains">
+    Click any domain (e.g. "Logical and Physical Access Control") to see which controls in that domain are gaps.
+  </Step>
+  <Step title="Create remediation tickets">
+    Select the gaps you want to address and click **Create Remediation Tickets** to generate one ticket per control.
+  </Step>
+</Steps>
+
+## Control status definitions
+
+| Status | Meaning | Remediation action |
+| --- | --- | --- |
+| **Implemented** | Control is deployed and tested | Document evidence; no gap |
+| **In Progress** | Work is underway | Continue; track completion |
+| **Needs Review** | Implemented but not yet verified | Test or audit the control |
+| **Not Started** | Control has not been addressed | Create ticket and begin work |
+| **N/A** | Control does not apply to your organization | No action required |
+
+## Critical gaps alert
+
+The analysis flags **Critical Gaps** — controls that are both **Required** by your framework and **Not Started**. These appear in a red alert box. Addressable gaps (good-to-have, but not required) are lower priority.
+
+<Warning>
+  If you have critical gaps when an audit begins, auditors will require evidence of a remediation plan or risk-acceptance documentation. Address critical gaps first.
+</Warning>
+
+## Domain breakdown
+
+Each framework is organized by domain (e.g. "CC6 — Logical & Physical Access Controls" for SOC 2). The analysis shows:
+
+- Total controls in the domain
+- Counts: implemented, in progress, gaps, N/A
+- Each control with its code, title, and status
+
+## Remediation tickets
+
+When you click **Create Remediation Tickets**, one ticket is generated per selected control with the control code, title, domain, and implementation guidance pre-filled. Tickets are assigned to your compliance/engineering team. As they close tickets, update the control status in [Controls](/compliance/controls) to keep the gap analysis current.
+
+## Implementation percentage
+
+The percentage shows: `(Implemented + In Progress) / Total` controls. For example, 50 total controls with 20 implemented and 15 in progress = 70%. Use this to track progress over time toward your audit date.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I run gap analysis on multiple frameworks at once?">
+    Yes. Select multiple frameworks and the system deduplicates controls that appear in more than one, showing a combined remediation plan.
+  </Accordion>
+  <Accordion title="What happens after I create remediation tickets?">
+    Tickets appear with a link back to the control in Regentra. As you complete work, update the control status to **In Progress** or **Implemented** to keep the gap analysis current.
+  </Accordion>
+  <Accordion title="How often should I run a gap analysis?">
+    At the start of audit prep (3-6 months before audit), then monthly to track progress. Re-run when adopting new frameworks.
+  </Accordion>
+  <Accordion title="Can I exclude controls as not applicable?">
+    Yes. Mark them **Not Applicable** in the [Controls](/compliance/controls) view. They won't count as gaps.
+  </Accordion>
+</AccordionGroup>

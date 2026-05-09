@@ -31,9 +31,14 @@
               "compliance/overview",
               "compliance/frameworks",
               "compliance/controls",
+              "compliance/control-tests",
               "compliance/policies",
+              "compliance/acknowledgment-campaigns",
               "compliance/risk-assessment",
+              "compliance/gap-analysis",
               "compliance/evidence-collection",
+              "compliance/access-reviews",
+              "compliance/audit-lifecycle",
               "compliance/reports"
             ]
           },
@@ -44,9 +49,31 @@
               "psa/tickets",
               "psa/sla-policies",
               "psa/time-tracking",
+              "psa/companies-contacts",
+              "psa/projects-agreements",
+              "psa/invoices-quotes",
+              "psa/service-catalog",
+              "psa/assets",
+              "psa/password-management",
+              "psa/automations-and-ai",
               "psa/knowledge-base",
               "psa/portal",
               "psa/reports"
+            ]
+          },
+          {
+            "group": "Privacy",
+            "pages": [
+              "privacy/notices",
+              "privacy/data-subject-requests",
+              "privacy/impact-assessments"
+            ]
+          },
+          {
+            "group": "Risk & Trust",
+            "pages": [
+              "risk-trust/risk-register",
+              "risk-trust/trust-center"
             ]
           },
           {

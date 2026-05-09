@@ -1,0 +1,85 @@
+---
+title: "Service Catalog"
+description: "Define reusable products and services for invoices; sync pricing with Stripe in both directions."
+---
+
+Build a catalog of services and products your team charges for. Catalog items appear in [Invoice](/psa/invoices-quotes) line-item pickers and sync to [Stripe](/integrations/stripe) so your pricing is consistent across all billing channels.
+
+## What it does
+
+- **Item creation** — Name, description, unit price, currency, and unit (hour, license, seat/month, etc.)
+- **Stripe sync** — Push items to Stripe as Products and Prices; pull items from Stripe to keep in sync
+- **Invoice picker** — When creating an invoice, pick from the catalog to auto-fill description and amount
+- **Pricing consistency** — One catalog drives both PSA invoices and Stripe pricing
+- **Archival** — Hide inactive items from the picker while keeping historical invoices intact
+
+## How to add a catalog item
+
+<Steps>
+  <Step title="Open the Service Catalog">
+    Navigate to **PSA → Service Catalog**.
+  </Step>
+  <Step title="Click Add Item">
+    Enter the item name (required), description (optional), unit price (required), currency, and display unit.
+  </Step>
+  <Step title="Save the item">
+    Click **Create item**. The item is saved and marked **Not synced** (waiting to be pushed to Stripe).
+  </Step>
+  <Step title="Sync to Stripe">
+    Click the **sync** icon next to the item. It's pushed to your Stripe account as a Product and Price; status changes to **Synced**.
+  </Step>
+</Steps>
+
+## How to sync from Stripe
+
+<Steps>
+  <Step title="Click Sync from Stripe">
+    At the top of the catalog list, click **Sync from Stripe**.
+  </Step>
+  <Step title="Confirm the import">
+    Click **Import** in the modal. All Products and Prices from your Stripe account are pulled into the PSA.
+  </Step>
+  <Step title="Review imported items">
+    New items are created; items with matching Stripe IDs are updated. You'll see a summary (e.g. "5 imported, 2 updated").
+  </Step>
+</Steps>
+
+## Using the catalog on invoices
+
+When creating or editing an [Invoice](/psa/invoices-quotes), for each line item you can:
+
+1. Click **Pick from catalog**
+2. Select an item from the dropdown
+3. The description and unit price auto-fill
+4. Edit if needed; the catalog binding is cleared if you change description or amount
+
+If an item is later archived, historical invoices keep referencing it; it just won't appear in the picker for new invoices.
+
+## Pricing and currency changes
+
+If you edit a catalog item's unit price or currency:
+
+- Future invoices use the new value immediately
+- Existing invoices retain the price at time of generation
+- The next Stripe sync creates a new Stripe Price (the old price remains on historical invoices)
+
+## Archiving items
+
+Click **Archive** to hide an item from the invoice picker. The item is marked Archived and won't appear in new invoices. Historical invoices continue to reference it.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I have different prices for different customers?">
+    The catalog stores one price per item. For customer-specific pricing, add manual line items to invoices instead.
+  </Accordion>
+  <Accordion title="What currencies are supported?">
+    Any ISO 4217 currency code (USD, EUR, GBP, etc.). Enter the 3-letter code when creating or editing an item.
+  </Accordion>
+  <Accordion title="Can I import products from Stripe?">
+    Yes. **Sync from Stripe** pulls all Stripe Products and Prices. Items with matching Stripe IDs are updated; new items are created. Stripe-only changes must be re-synced.
+  </Accordion>
+  <Accordion title="What if I archive a catalog item by mistake?">
+    Create a new item with the same details, or contact support to restore the archived item.
+  </Accordion>
+</AccordionGroup>

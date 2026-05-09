@@ -1,0 +1,87 @@
+---
+title: "Privacy Impact Assessments"
+description: "Evaluate privacy risks before launching new products, vendors, or data uses — and maintain an audit-ready register of all PIAs."
+---
+
+Before launching a new product feature, adding a vendor, or changing how you use data (especially for AI, profiling, or sensitive personal information), assess the privacy risks. GDPR mandates this for high-risk processing; CCPA's recent Risk Assessment rule mandates it for certain uses. Regentra guides you through the assessment, documents mitigations, and maintains a register auditors and regulators can review.
+
+## What it does
+
+- **Threshold screening** — determine whether a full PIA is required (or if processing is routine and already assessed)
+- **Risk identification** — document data flows; identify risks from the data subject's perspective (re-identification, discrimination, autonomy, harm)
+- **Mitigation design** — select technical, organizational, and contractual controls; calculate residual risk
+- **Supervisory review** — for high-residual-risk processing, coordinate prior consultation with regulators (GDPR requirement)
+- **PIA register** — maintain a timestamped, searchable register of all PIAs, approvals, and review dates
+
+## How to conduct a privacy impact assessment
+
+<Steps>
+  <Step title="Identify the processing activity">
+    Go to **Privacy → Impact Assessments** and click **New PIA**. Give it a name (e.g. "Customer Behavioral Segmentation via ML Model"). Assign the processing owner. Specify processing purpose, categories of data subjects, and legal basis.
+  </Step>
+  <Step title="Complete the threshold questionnaire">
+    Regentra prompts: Does this involve automated decision-making? Large-scale processing of special-category data? Selling or sharing personal information? AI for significant decisions? Behavioral advertising? Systematic monitoring? If any answer is yes, proceed to a full PIA. If all are no and processing is routine, mark it low-risk and set a re-assessment date.
+  </Step>
+  <Step title="Document data flows and necessity">
+    In the PIA form, describe data sources, data types, downstream flows, cross-border transfers, retention periods, and legal basis. Then assess: is this processing necessary and proportionate? Could you achieve the same goal with less intrusive methods? Are you respecting data minimization?
+  </Step>
+  <Step title="Identify risks from the data subject's perspective">
+    Evaluate:
+    - **Re-identification risk** — can de-identified data be reverse-engineered?
+    - **Discrimination and bias** — does an ML model perpetuate bias in consequential decisions?
+    - **Autonomy and deception** — dark patterns? Profiling without knowledge?
+    - **Chilling effects** — could surveillance chill speech, association, or other rights?
+    - **Concrete harm** — financial, employment, reputational, physical?
+    - **Special populations** — children, patients, employees, other vulnerable groups?
+
+    Record risk level (low / medium / high) for each.
+  </Step>
+  <Step title="Design and approve mitigations">
+    For each risk, select a mitigation: data minimization, de-identification, access controls, encryption, retention limits, transparency, consent, opt-out rights, human-review gates, model-fairness testing, vendor contractual controls, or process redesign. Assign owner and completion date. Regentra links each mitigation to controls.
+  </Step>
+  <Step title="Evaluate residual risk and escalate if needed">
+    After mitigations, what risk remains? If residual risk is **high** under GDPR or CCPA, you may need supervisory-authority approval before proceeding. Regentra surfaces a **Request Prior Consultation** button to contact your lead regulator and document feedback.
+  </Step>
+  <Step title="Approve and publish">
+    Privacy Officer and Legal review and approve. Regentra generates an approval certificate with signatures, dates, and reviewers. The PIA enters your register.
+  </Step>
+  <Step title="Re-assess on material change">
+    If the processing changes materially (new data type, vendor, use, or population), click **Re-assess**. Regentra snapshots the prior version and creates a new assessment.
+  </Step>
+</Steps>
+
+## When a PIA is required
+
+PIAs are mandatory under GDPR Article 35 if processing involves:
+
+- Automated decision-making with legal or similarly significant effect
+- Systematic monitoring of a public area
+- Large-scale processing of special-category data (health, biometric, racial/ethnic origin, political opinion, union membership, genetic data)
+- Matching or combining datasets at scale
+
+Also mandatory under CCPA's Risk Assessment rule (operative 2026) for processing that presents heightened privacy risk — automated decision-making, profiling for targeted advertising, large-scale processing of sensitive personal information, behavioral advertising.
+
+As a best practice, conduct a PIA anytime you launch a new product, add a vendor, or materially change data practices, regardless of regime.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Do I need a PIA for routine operations like email or payroll?">
+    These are often low-risk and may have already been assessed. If processing involves no automated decision-making, no special-category data, and no new vendors or data flows, mark low-risk with a re-assessment date (e.g. 2 years). But if you're profiling employees or migrating to a new vendor, conduct a fresh PIA.
+  </Accordion>
+  <Accordion title="Can I share my PIA with a regulator?">
+    Yes. GDPR Article 36 requires sharing your PIA via prior consultation if high risk is identified. Regentra flags which assessments require prior consultation and generates audit-ready exports.
+  </Accordion>
+  <Accordion title="What if my PIA identifies a serious risk I cannot mitigate?">
+    Privacy Officer and Legal should escalate to executive leadership and the Board. You may need to abandon the processing, redesign it, or accept the risk and document the business justification. Regentra's escalation workflow records the decision with full context.
+  </Accordion>
+  <Accordion title="Who should be involved?">
+    The processing owner (product/engineering), Privacy Officer, Legal, Security Officer, and ideally representatives of affected individuals. Regentra's collaboration features let you invite cross-functional reviewers and track comments.
+  </Accordion>
+  <Accordion title="How do I link a PIA to controls?">
+    Regentra auto-suggests controls when you select mitigations (encryption suggests encryption controls; consent suggests consent controls). Manually link additional controls. This creates bidirectional traceability between your PIA and [Controls](/compliance/controls).
+  </Accordion>
+  <Accordion title="Do I publish my PIA publicly?">
+    Generally no — it's an internal risk-assessment document. Some public-sector organizations are required to publish a PIA summary. Regentra lets you designate a PIA as public and generates a redacted summary.
+  </Accordion>
+</AccordionGroup>

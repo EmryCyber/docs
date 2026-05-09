@@ -1,0 +1,90 @@
+---
+title: "Access Reviews"
+description: "Live identity signals from Microsoft Entra ID plus periodic employee attestation reviews — both feed your access-control evidence."
+---
+
+Access Reviews provides two windows into your access-control posture: live identity signals from Microsoft Entra ID (MFA coverage, conditional access policies, device compliance, sign-in risks) and periodic employee attestation reviews. Together, they evidence the access-control and access-review requirements in SOC 2, ISO 27001, HIPAA, and other frameworks.
+
+## What you can do
+
+- **View MFA coverage** — Percentage of users with MFA enabled and a list of users without it
+- **Monitor conditional access** — Track enabled, report-only, and disabled Entra ID policies
+- **Check device compliance** — Percentage of enrolled devices that meet your compliance requirements
+- **Review sign-in risks** — High, medium, and low-risk sign-in events detected by Entra
+- **Run periodic reviews** — Launch attestation campaigns asking employees to confirm access is still needed
+- **Track completion** — Monitor who has completed their review and who needs a reminder
+
+## Prerequisite: connect Entra ID
+
+The live signals require a Microsoft Entra ID connection. Configure it via [Microsoft Entra ID](/integrations/microsoft-entra). Once connected, data syncs automatically every 6 hours.
+
+<Note>
+  If you don't use Microsoft Entra ID, skip the live signals and focus on periodic reviews. The attestation evidence still counts as access-review evidence.
+</Note>
+
+## How to run a periodic access review
+
+Periodic reviews ask employees to attest that their current access is still necessary — a key control test for SOC 2 Type 2.
+
+<Steps>
+  <Step title="Open Access Reviews">
+    Navigate to **Compliance → Access Reviews**.
+  </Step>
+  <Step title="Click Launch Periodic Review">
+    Choose the scope (all users, specific departments, or security groups from Entra ID).
+  </Step>
+  <Step title="Set a due date">
+    Employees will receive a review link via email. Typical window is 2-4 weeks.
+  </Step>
+  <Step title="Send the campaign">
+    Each person confirms their access is correct or flags changes needed.
+  </Step>
+  <Step title="Track completion">
+    Monitor the response rate; send reminders as the due date approaches.
+  </Step>
+  <Step title="Review flagged items">
+    Anyone who reports access changes is escalated for verification. Update access in Entra ID and close the review.
+  </Step>
+</Steps>
+
+## Live Entra signals
+
+### MFA Coverage
+Percentage of users with MFA enabled, plus a list of users **without** MFA. Color-coded green / yellow / red. Users without MFA are a critical access risk — enforce via Entra Conditional Access before audit.
+
+### Conditional Access
+Count of policies by state: **Enabled**, **Report-Only**, **Disabled**. Report-only policies are useful for testing but don't enforce; transition critical policies to **Enabled** before audit.
+
+### Device Compliance
+Percentage of enrolled devices meeting your compliance baseline (encryption, antivirus, OS version), plus a list of non-compliant devices and their users.
+
+### Sign-in Risks
+Risky sign-ins detected by Entra, by severity. Helps spot brute-force attacks, impossible travel, anomalous logins. High-risk events should trigger immediate investigation.
+
+## Last collected timestamp
+
+At the bottom of the page, "Last collected: [date/time]" shows when Regentra last synced from Entra. If older than 12 hours, click **Sync Settings** to trigger an immediate refresh. Default cadence is every 6 hours.
+
+## Using access reviews for audit evidence
+
+Periodic review campaigns and completion percentages are direct evidence for auditors that you actively manage access rights. When auditors sample access reviews, they see who was reviewed, when, by whom, who confirmed vs. flagged changes, and timestamps of sign-offs. Store the final review report in [Evidence Collection](/compliance/evidence-collection) for easy auditor access.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="How often should I run periodic reviews?">
+    Quarterly is best practice; semi-annually is the common minimum. Most auditors require evidence of reviews at least annually.
+  </Accordion>
+  <Accordion title="What if someone doesn't complete their review by the due date?">
+    The system tracks non-completion; send reminders. For audit readiness aim for 95%+ completion. Unresponsive users may need escalation to their manager.
+  </Accordion>
+  <Accordion title="Can I use periodic reviews without Entra ID?">
+    Yes. The attestation evidence still counts even without the live signals.
+  </Accordion>
+  <Accordion title="What MFA methods count for MFA coverage?">
+    Entra recognizes authenticator apps, Windows Hello, FIDO2 keys, and SMS. Conditional Access policies can require specific methods for sensitive roles.
+  </Accordion>
+  <Accordion title="How do I export access review results for audit?">
+    Click **Export Report** on the completed review and save as PDF. Include in your audit evidence package.
+  </Accordion>
+</AccordionGroup>

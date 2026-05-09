@@ -1,0 +1,116 @@
+---
+title: "Acknowledgment Campaigns"
+description: "Send policies for digital sign-off and collect timestamped acknowledgments — audit-defensible proof your workforce read and accepted the policy."
+---
+
+Acknowledgment Campaigns let you send one or more [Policies](/compliance/policies) to employees for review and digital acknowledgment. Each recipient gets a unique link, reviews the policies, and electronically signs off. Regentra timestamps and records every sign-off, creating audit-defensible evidence that employees read and accepted your security, privacy, and compliance policies.
+
+## What you can do
+
+- **Create campaigns** — Select policies and recipients, set a due date
+- **Send for signature** — Employees receive personalized emails with a link to sign
+- **Track completion** — Monitor who has opened, signed, and who's pending or overdue
+- **Tie to policy versions** — Each campaign is linked to specific policy versions; if a policy changes, create a new campaign for re-acknowledgment
+- **Generate audit evidence** — Completion reports prove your workforce understood and agreed to your policies
+
+## How to send a policy campaign
+
+<Steps>
+  <Step title="Open Policy Campaigns">
+    Navigate to **Compliance → Policies → Campaigns**.
+  </Step>
+  <Step title="Click New Campaign">
+    Choose a name (e.g. "Security Policy 2026 Sign-Off") and optional description.
+  </Step>
+  <Step title="Select policies to include">
+    Check the boxes for the policies (or specific policy versions) you want to send. Common picks: Information Security Policy, Acceptable Use Policy, Incident Response Policy, Data Privacy Policy.
+  </Step>
+  <Step title="Choose recipients">
+    Select employees from your directory or upload a list. You can target specific departments or roles.
+  </Step>
+  <Step title="Set a due date">
+    Pick the date by which you need all acknowledgments — typically 2-4 weeks from send date.
+  </Step>
+  <Step title="Send the campaign">
+    Click **Send Campaign**. The system emails each recipient a personalized link.
+  </Step>
+</Steps>
+
+## Campaign status lifecycle
+
+| Status | Meaning |
+| --- | --- |
+| **Draft** | Campaign is being prepared but not yet sent |
+| **Scheduled** | Queued to send at a future date |
+| **Sending** | Currently dispatching emails |
+| **Sent** | All emails delivered; awaiting sign-offs |
+| **Completed** | All recipients signed (or campaign due date passed) |
+| **Cancelled** | Abandoned before sending; links invalidated |
+
+## Recipient flow
+
+Each recipient gets an email with a unique, secure link. When they click:
+
+1. **View policies** — they read each policy included in the campaign
+2. **Confirm understanding** — a checkbox or button confirms they've read and understand
+3. **Sign** — they electronically sign and submit
+4. **Confirmation** — they see a confirmation page with timestamp and receipt
+
+The system records sent / opened / completed timestamps to the second.
+
+## Linking acknowledgments to policy versions
+
+Each campaign is tied to the specific policy version current when you sent it. If you update the policy later, the old acknowledgments remain tied to the old version — showing auditors that sign-offs were collected for the language in effect at that time.
+
+To get new acknowledgments after a policy change:
+1. Publish the updated policy version
+2. Create a new campaign with the new version
+3. Send to the same (or different) recipients
+
+This builds a clear chain of evidence: Policy v1 → Acknowledgments (Jan) → Policy v2 → Acknowledgments (Apr).
+
+## Exporting acknowledgment reports
+
+<Steps>
+  <Step title="Open the campaign">
+    Navigate to **Policies → Campaigns** and click the campaign name.
+  </Step>
+  <Step title="Click Export Report">
+    Download the full report.
+  </Step>
+  <Step title="Store the evidence">
+    The report includes recipient names, emails, sent date, opened date, signed date, and policy versions. Store in [Evidence Collection](/compliance/evidence-collection) for auditors.
+  </Step>
+</Steps>
+
+<Warning>
+  Signed reports should be treated as immutable. Store in a secure, time-stamped archive — auditors verify the integrity of your records.
+</Warning>
+
+## Best practices
+
+1. **Plan ahead** — send campaigns 4-6 weeks before audit so you have time to follow up on stragglers
+2. **Set realistic due dates** — give employees 2-4 weeks; many will procrastinate
+3. **Send reminders** — when due date is a week away, ping unsigned recipients
+4. **Document non-compliance** — if someone refuses to sign, escalate and document the exception
+5. **Archive evidence** — after the campaign closes, export and store
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I send a campaign to just part of my organization?">
+    Yes. Filter recipients by department, location, role, or upload a custom list — useful for targeted policy updates.
+  </Accordion>
+  <Accordion title="What happens if someone doesn't sign before the due date?">
+    Their status shows **Pending** or **Overdue**. Send a reminder email. If they still don't sign, document the exception and escalate.
+  </Accordion>
+  <Accordion title="Can I edit a policy while a campaign is active?">
+    You can update the policy content, but the campaign remains tied to the version it was sent with. Existing sign-offs are locked to that version. New campaigns will use the new version.
+  </Accordion>
+  <Accordion title="Is click-to-sign sufficient for compliance?">
+    Yes for most frameworks (SOC 2, ISO 27001, HIPAA). If you need advanced e-signatures, you can integrate DocuSign or similar.
+  </Accordion>
+  <Accordion title="How long should I keep acknowledgment records?">
+    Typically 6 years. Store in your secure archive and reference during audits.
+  </Accordion>
+</AccordionGroup>
