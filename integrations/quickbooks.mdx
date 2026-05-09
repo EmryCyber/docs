@@ -1,9 +1,9 @@
 ---
 title: "QuickBooks Integration"
-description: "Connect each MSP's QuickBooks Online realm for invoice push, payment ledger, and credit memos. Pairs cleanly with Stripe for the dual-system pattern."
+description: "Connect your MSP's QuickBooks Online realm for invoice push, payment ledger, and credit memos. Pairs cleanly with Stripe."
 ---
 
-Each MSP connects their own QuickBooks Online realm to Regentra. The integration lives next to the per-MSP Stripe integration — they're peers, not competitors. Most MSPs run both: QuickBooks for books of record, Stripe for payment processing.
+Each MSP connects their own QuickBooks Online realm to Regentra. The integration lives next to the per-MSP [Stripe](/integrations/stripe) integration — they're peers, not competitors. Most MSPs run both: QuickBooks for books of record, Stripe for payment processing.
 
 ## What this integration does
 
@@ -16,61 +16,31 @@ Pushed automatically when you generate / send / void invoices in Regentra:
 | Edit DRAFT invoice (notes, due date) | Sparse update to the QB invoice |
 | Void invoice | QB invoice voided; if also linked to Stripe, Stripe invoice voided too |
 | Mark Paid | QB Payment created applying full balance to the invoice |
-| Customer pays via QB | Webhook flips local invoice to PAID; Stripe invoice voided automatically |
+| Customer pays via QB | Local invoice flips to PAID; Stripe invoice voided automatically |
 | Issue credit memo | New QB CreditMemo against the customer |
 
-Plus continuous sync via Intuit webhooks for incoming payments and invoice status changes — Regentra keeps the local PSA invoice in step with QB without operator intervention.
+Plus continuous sync via Intuit webhooks for incoming payments and invoice status changes — Regentra keeps the local PSA invoice in step with QB without manual intervention.
 
 ## Setting up QuickBooks
 
 <Steps>
-  <Step title="Get production keys from developer.intuit.com">
-    Sign in at [developer.intuit.com](https://developer.intuit.com) → **Dashboard** → your Connector / Regentra app → **Production Settings → Keys and OAuth**. Copy the **Production Client ID** and **Production Client Secret**.
-  </Step>
-  <Step title="Add the redirect URI on Intuit">
-    Same page → **Redirect URIs** → add exactly:
-
-    ```
-    https://app.regentra.io/api/settings/integrations/quickbooks/callback
-    ```
-
-    Byte-exact match required: HTTPS only, no trailing slash, all lowercase.
-  </Step>
-  <Step title="Configure webhooks on Intuit">
-    Production Settings → **Webhooks**.
-    - Notification URL: `https://app.regentra.io/api/webhooks/quickbooks`
-    - Subscribe to entities: **Invoice** and **Payment** (skip Customer — Regentra ignores those)
-    - Click **Show Verifier Token** and copy it.
-  </Step>
-  <Step title="Set the env vars in your deployment">
-    Set these three in your production deployment env:
-
-    | Env var | Value |
-    | --- | --- |
-    | `QUICKBOOKS_CLIENT_ID` | Production Client ID |
-    | `QUICKBOOKS_CLIENT_SECRET` | Production Client Secret |
-    | `INTUIT_WEBHOOK_VERIFIER_TOKEN` | Webhook verifier token |
-
-    Restart the container after saving so Node picks up the new env.
-  </Step>
   <Step title="Connect from Regentra">
-    Go to **Settings → Integrations → QuickBooks → Connect QuickBooks**. Sign in with the email that owns your QBO company (NOT your developer.intuit.com account). Authorize Regentra against your realm. You'll land back on the integrations page with the green **Connected** badge.
+    Go to **Settings → Integrations → QuickBooks → Connect QuickBooks**. Sign in with the email that owns your QBO company. Authorize Regentra against your realm. You'll land back on the integrations page with the green **Connected** badge.
   </Step>
   <Step title="Configure the mapping">
     Go to **Settings → Integrations → QuickBooks → Configure mapping**. Choose:
     - **Default Service Item** — which QB Service item PSA invoice line items book against (drives your GL account). Optional; falls back to the first active Service item.
     - **Default Income Account** — reference only; QB routes invoice income via the Service item itself.
-    - **Online Payment Methods** — see the [QuickBooks Payments section](#quickbooks-payments-pay-now-button) below.
+    - **Online Payment Methods** — see [QuickBooks Payments](#quickbooks-payments-pay-now-button) below.
+  </Step>
+  <Step title="(Optional) Sync your customers">
+    From a Portal Company detail page, click **Sync to QuickBooks** to push it as a QB Customer. Regentra dedupes by primary email so re-syncs don't create duplicates.
   </Step>
 </Steps>
 
-<Warning>
-  Production keys only work against the live `quickbooks.api.intuit.com` host. **Development keys** target sandbox-quickbooks.api.intuit.com which Regentra does not call. If you paste Development keys, every operation 401s.
-</Warning>
-
-<Warning>
-  Until your app is approved for **Production** by Intuit (their app-review process, ~1–2 weeks), only the developer's own QB realm can connect. Your customers can't connect their realms until production approval clears.
-</Warning>
+<Note>
+  If the Connect button is missing or you see "QuickBooks integration not configured," contact support@regentra.io — the platform-side QuickBooks app needs to be enabled for your account.
+</Note>
 
 ## QuickBooks Payments (Pay Now button)
 
@@ -78,18 +48,18 @@ Optional. Lets your customers pay through QuickBooks' hosted payment page direct
 
 <Steps>
   <Step title="Enroll the QB realm in QuickBooks Payments">
-    In QuickBooks: **Settings (gear) → Account and Settings → Payments → Set up Payments**. Intuit collects KYC (EIN, deposit account, identity verification) — typically 1–3 business days.
+    In QuickBooks: **Settings (gear) → Account and Settings → Payments → Set up Payments**. Intuit collects KYC (EIN, deposit account, identity verification) — typically 1-3 business days.
   </Step>
   <Step title="Pick the methods to accept">
-    Settings → Integrations → QuickBooks Mapping → **Online Payment Methods**: master Pay Now toggle, credit card, and ACH (US-only). Toggles default ON when QB is your only payment integration, OFF when Stripe is also connected (see [the dual-system section](#using-quickbooks-with-stripe-the-dual-system-pattern) below).
+    Settings → Integrations → QuickBooks Mapping → **Online Payment Methods**: master Pay Now toggle, credit card, and ACH (US-only). Toggles default ON when QB is your only payment integration, OFF when [Stripe](/integrations/stripe) is also connected (see [the dual-system section](#using-quickbooks-with-stripe-the-dual-system-pattern) below).
   </Step>
   <Step title="Push invoices, send via QB email">
-    On the Regentra invoice detail page, **Send to QuickBooks** → push the invoice. **Email via QuickBooks** → trigger QB to email the customer with the Pay Now button. Customer clicks → enters card or ACH on Intuit's hosted page → Intuit Payments processes the charge → QB auto-creates a Payment entity → our webhook handler marks the local PSA invoice PAID.
+    On the Regentra invoice detail page, **Send to QuickBooks** → push the invoice. **Email via QuickBooks** → trigger QB to email the customer with the Pay Now button. Customer clicks → enters card or ACH on Intuit's hosted page → Intuit Payments processes the charge → QB auto-creates a Payment entity → the local PSA invoice flips to PAID.
   </Step>
 </Steps>
 
 <Info>
-  No card data ever touches Regentra. The Pay Now flow is end-to-end Intuit-hosted — we just set the AllowOnline* flags on the QB invoice body so the button appears.
+  No card data ever touches Regentra. The Pay Now flow is end-to-end Intuit-hosted — Regentra just sets the AllowOnline* flags on the QB invoice body so the button appears.
 </Info>
 
 ## Using QuickBooks with Stripe (the dual-system pattern)
@@ -102,9 +72,9 @@ When both are connected:
 
 | Customer action | Stripe side | QuickBooks side |
 | --- | --- | --- |
-| Pays via Stripe checkout link | Invoice closes, deposit lands in your bank | Regentra **automatically creates a QB Payment** so the QB ledger reflects the receipt |
-| Pays via QB Pay Now (if enabled) | Regentra **automatically voids the linked Stripe invoice** so they can't double-pay | Payment lands, ledger updates |
-| Pays you offline (cash, wire) | — | Operator clicks Mark Paid in Regentra → QB Payment created |
+| Pays via Stripe checkout link | Invoice closes, deposit lands in your bank | Regentra automatically creates a QB Payment so the QB ledger reflects the receipt |
+| Pays via QB Pay Now (if enabled) | Regentra automatically voids the linked Stripe invoice so they can't double-pay | Payment lands, ledger updates |
+| Pays you offline (cash, wire) | — | Click Mark Paid in Regentra → QB Payment created |
 
 The bridges are best-effort and idempotent — webhook redeliveries and double-clicks can't double-book.
 
@@ -137,41 +107,23 @@ These tools sit alongside Regentra without conflict — they handle the deposit/
 
 ### Regentra → QuickBooks
 
-- **Customers**: Portal Companies push to QB Customers via `Sync to QuickBooks` button (or auto-sync on Portal Company edit). Dedupes by primary email so re-syncs don't create duplicates.
-- **Invoices**: pushed on `Send to QuickBooks` from the invoice detail page or auto-pushed when "QuickBooks" is checked as a destination on invoice generate.
-- **Payments**: created automatically on Stripe webhook + Mark Paid manual action.
-- **Voids**: propagated to QB invoice voids.
-- **Credit Memos**: created via the **Issue Credit Memo** button on PAID/VOID invoices.
+- **Customers** — Portal Companies push to QB Customers via **Sync to QuickBooks** (or auto-sync on Portal Company edit). Dedupes by primary email.
+- **Invoices** — pushed on **Send to QuickBooks** from the invoice detail page or auto-pushed when "QuickBooks" is checked as a destination on invoice generate.
+- **Payments** — created automatically on Stripe webhook + Mark Paid manual action.
+- **Voids** — propagated to QB invoice voids.
+- **Credit Memos** — created via the **Issue Credit Memo** button on PAID/VOID invoices.
 
 ### QuickBooks → Regentra
 
-- **Invoice paid (full)**: webhook flips local invoice to PAID; if linked to Stripe, Stripe invoice auto-voided.
-- **Invoice paid (partial)**: webhook flips local invoice to PARTIAL with the remaining balance shown in the UI. Flips to PAID once the rest lands.
-- **Payment received**: walks `LinkedTxn[]` to find the affected invoice and reconciles balance.
-
-## Operator kill-switch
-
-If something goes wrong with the QB side and you need to pause all outbound calls without redeploying, set `QUICKBOOKS_ENABLED=false` in your deployment env and restart. The integrations card surfaces a yellow "QuickBooks integration is currently disabled by the operator" banner. Webhook receipts still process (so Intuit doesn't disable our endpoint), but connect, sync, mapping, and invoice push all return 503 with a clear message.
+- **Invoice paid (full)** — local invoice flips to PAID; if linked to Stripe, Stripe invoice auto-voided.
+- **Invoice paid (partial)** — local invoice flips to PARTIAL with remaining balance shown in the UI. Flips to PAID once the rest lands.
+- **Payment received** — walks `LinkedTxn[]` to find the affected invoice and reconciles balance.
 
 ## Troubleshooting
 
-### "QuickBooks integration not configured" on Connect
-
-`QUICKBOOKS_CLIENT_ID` env var is missing in your deployment. Set it (and the other two — `QUICKBOOKS_CLIENT_SECRET`, `INTUIT_WEBHOOK_VERIFIER_TOKEN`) and restart the container.
-
-### "redirect_uri query parameter value is invalid"
-
-The redirect URI you registered on developer.intuit.com doesn't byte-exactly match what Regentra is sending. The string must be:
-
-```
-https://app.regentra.io/api/settings/integrations/quickbooks/callback
-```
-
-HTTPS only, no trailing slash, all lowercase. Register under **Production** Settings (not Development) — they're separate URI lists.
-
 ### "First you'll need to create a company to use with your app"
 
-The Intuit account you signed in with has no QBO company attached. That's almost certainly your developer.intuit.com account, not a real customer account. Sign out of Intuit, sign back in with the email that owns your QBO company, and retry the connect.
+The Intuit account you signed in with has no QBO company attached. Sign out of Intuit, sign back in with the email that owns your QBO company, and retry the connect.
 
 ### Test Connection succeeded yesterday, fails today
 
@@ -179,7 +131,7 @@ Refresh tokens last ~100 days. If yours expired, the connection-status banner on
 
 ### Customer paid via Stripe but QB still shows the invoice as outstanding
 
-The auto-bridge runs in the Stripe webhook handler. If it failed (network blip, expired QB token, etc.), the local invoice is PAID but QB ledger isn't. Click **Mark Paid** on the invoice detail page — same `payment-{invoiceId}` idempotency key, so it retries the QB Payment creation. The audit log captures both the failed attempt and the manual retry.
+The auto-bridge runs when the Stripe payment completes. If it failed (network blip, expired QB token, etc.), the local invoice is PAID but the QB ledger isn't. Click **Mark Paid** on the invoice detail page — same idempotency key, so it retries the QB Payment creation. The audit log captures both the failed attempt and the manual retry.
 
 ### Stripe invoice still shows "open" after customer paid via QB
 
@@ -189,6 +141,6 @@ Same situation in reverse. The QB-paid → Stripe void bridge is best-effort. Ma
 
 Each QuickBooks realm can only be connected to one Regentra organization. If you see "This QuickBooks realm is already connected to another Regentra organization. Disconnect it there before connecting it here." — go to that other org first, disconnect, then retry.
 
-### `intuit_tid` for Intuit support tickets
+### Other errors
 
-Every QB API error logs the Intuit-side trace id (`intuit_tid` from the response header). When you contact Intuit support about a failed call, give them this id — it's how their team traces requests on their side. Find the id in your platform logs alongside the `errorClass: QuickBooksApiError` log line.
+If you hit an error not covered here, contact support@regentra.io with the timestamp and the error message shown in the UI. The platform team can trace the underlying request to Intuit and follow up.

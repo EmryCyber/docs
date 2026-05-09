@@ -10,13 +10,13 @@ The Regentra Bot is a Microsoft Teams app that lets your clients create and mana
 The bot routes inbound messages to the correct MSP using the **Microsoft Entra tenant ID** of the user who messaged it. Concretely:
 
 1. Each Teams activity carries the user's M365 tenant GUID.
-2. Regentra looks up `Organization.entraTenantId` for a match.
-3. **If the matched org is an MSP-managed client** (has `mspOrganizationId` set), the ticket routes to that MSP, attributed to the client.
-4. **If the matched org is standalone or itself an MSP**, the ticket routes to that org.
-5. **If no org matches**, the bot replies *"Sorry, I couldn't identify your organization."* No ticket is created.
+2. Regentra looks up the registered organization for that tenant ID.
+3. **If the matched organization is an MSP-managed client**, the ticket routes to that MSP, attributed to the client.
+4. **If the matched organization is standalone or itself an MSP**, the ticket routes to that organization.
+5. **If no organization matches**, the bot replies *"Sorry, I couldn't identify your organization."* No ticket is created.
 
 <Warning>
-Adding a client only as a **Portal Company** or **Portal Contact** is **not** sufficient. Routing requires an `Organization` row with the client's Entra tenant ID populated. PortalCompany/PortalContact records enrich ticket attribution but don't bridge the bot.
+Adding a client only as a **Portal Company** or **Portal Contact** is **not** sufficient. Routing requires the client to be provisioned as a managed organization with their Entra tenant ID captured. Portal Company / Portal Contact records enrich ticket attribution but don't bridge the bot.
 </Warning>
 
 ## Prerequisites — what to do before the client installs
@@ -24,11 +24,11 @@ Adding a client only as a **Portal Company** or **Portal Contact** is **not** su
 Do **both** of these for each client tenant:
 
 <Steps>
-  <Step title="Provision the client as a managed Organization">
-    From your MSP dashboard, add the client through the standard managed-client flow. This creates an `Organization` with `mspOrganizationId` pointing at your MSP org. Without this, the bot has nowhere to route their tickets.
+  <Step title="Provision the client as a managed organization">
+    From your MSP dashboard, add the client through the standard managed-client flow. This creates a client organization linked to your MSP. Without this, the bot has nowhere to route their tickets.
   </Step>
   <Step title="Capture the client's Entra tenant ID">
-    The client's admin completes the Entra consent flow — typically by clicking the consent link your platform sends them, or by a manual sync if they're already connected for compliance evidence collection. After consent, `Organization.entraTenantId` is populated.
+    The client's admin completes the Entra consent flow — typically by clicking the consent link Regentra sends them, or via a manual sync if they're already connected for compliance evidence collection. After consent, the client's Entra tenant ID is recorded against their organization.
   </Step>
 </Steps>
 
@@ -110,10 +110,10 @@ Bot-created tickets land in the PSA queue tagged with **Source: Chat Bot** so th
 
 <AccordionGroup>
   <Accordion title="Client gets 'I couldn't identify your organization'">
-    The bot didn't find an `Organization` row with that user's tenant ID.
+    The bot couldn't find a matching organization for that user's tenant ID.
 
-    - Confirm the client is a managed client of your MSP (`mspOrganizationId` set on their org).
-    - Confirm `Organization.entraTenantId` is populated — check the Entra integration card on the client profile.
+    - Confirm the client is a managed client of your MSP.
+    - Confirm the client's Entra tenant ID is populated — check the Entra integration card on the client profile.
     - If the client recently completed Entra consent, allow a few minutes for the tenant ID to propagate.
   </Accordion>
   <Accordion title="Bot doesn't appear in Teams Store search">
@@ -126,7 +126,7 @@ Bot-created tickets land in the PSA queue tagged with **Source: Chat Bot** so th
     Microsoft policy propagation takes up to a few hours. Also confirm the tenant is on a **legacy** model — App Centric Management tenants install apps via **Manage apps → Install app**, not Setup policies (which only handle pinning in ACM).
   </Accordion>
   <Accordion title="Tickets aren't routing to the right MSP">
-    If the client tenant ID is registered against the wrong `Organization` row (e.g. provisioned twice), the most-recently-saved entry wins. Audit the Organization table for duplicates with the same `entraTenantId`.
+    The client's Entra tenant ID may be registered against the wrong managed Organization. Contact support@regentra.io with the client's tenant ID and the MSP it should route to — the platform team can correct the mapping.
   </Accordion>
 </AccordionGroup>
 
@@ -134,7 +134,7 @@ Bot-created tickets land in the PSA queue tagged with **Source: Chat Bot** so th
 
 <AccordionGroup>
   <Accordion title="Do I need to configure anything on Regentra's side?">
-    No. The bot is fully managed by Regentra and routes by the tenant ID stored on the client's `Organization` row. No webhook setup, no API key, no per-MSP configuration needed.
+    No. The bot is fully managed by Regentra and routes by the tenant ID captured when you onboard a client organization. No webhook setup, no API key, no per-MSP configuration needed.
   </Accordion>
   <Accordion title="How does the bot handle multiple clients at once?">
     Each client conversation is isolated by tenant ID. The bot routes every message to the correct MSP queue based on the sender's tenant.
@@ -143,9 +143,9 @@ Bot-created tickets land in the PSA queue tagged with **Source: Chat Bot** so th
     Yes — repeat the Install procedure for each client. The same Microsoft Teams Store app works across all tenants.
   </Accordion>
   <Accordion title="What if I haven't onboarded a client yet?">
-    The bot will reply *"I couldn't identify your organization."* until you provision the client as a managed Organization AND capture their Entra tenant ID. PortalCompany/PortalContact alone don't bridge the bot.
+    The bot will reply *"I couldn't identify your organization."* until you've provisioned the client as a managed organization with their Entra tenant ID captured. Adding only a portal company / portal contact isn't enough to route bot conversations.
   </Accordion>
   <Accordion title="Does the bot also work in Slack?">
-    A Slack adapter exists in the codebase and uses the same routing logic — the Slack workspace `team_id` is matched against `Organization.entraTenantId`. Onboarding a Slack workspace requires populating that column with the workspace's team_id, which is currently a manual step. Microsoft Teams remains the recommended channel for the bot today.
+    Microsoft Teams is the supported channel today. Slack support is on the roadmap; contact support@regentra.io if you'd like early access.
   </Accordion>
 </AccordionGroup>
