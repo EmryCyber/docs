@@ -1,0 +1,55 @@
+---
+title: "Google Workspace Integration"
+description: "Connect Google Workspace via service account delegation to pull users and org units for access-review evidence."
+---
+
+The Google Workspace integration pulls user and organizational unit data from your Workspace domain into Regentra. This data is used to evidence access reviews and provisioning controls.
+
+## What it provides
+
+- **User sync** — Active and suspended users, org units, primary email, and last sign-in
+- **Access review evidence** — Used to evidence access reviews and provisioning controls
+- **Read-only access** — Regentra cannot create, modify, or suspend Workspace users
+
+## Setup
+
+<Steps>
+  <Step title="Create a service account in Google Cloud Console">
+    In Google Cloud Console, create or pick a project, then create a service account. Note the service account's **Client ID** (the long numeric one, not the email).
+  </Step>
+  <Step title="Enable the Admin SDK API">
+    Enable the **Admin SDK API** on the project.
+  </Step>
+  <Step title="Create and download a JSON key">
+    Create a JSON key for the service account and download the file. Paste the full JSON contents into the **Service Account JSON** field on the Workspace card in Regentra.
+  </Step>
+  <Step title="Enable domain-wide delegation">
+    In the Google Workspace Admin Console, open **Security → API Controls → Domain-wide Delegation**. Click **Add new** and enter the service account's Client ID.
+  </Step>
+  <Step title="Add the OAuth scope">
+    Add this OAuth scope to the delegation:
+    ```
+    https://www.googleapis.com/auth/admin.directory.user.readonly
+    ```
+  </Step>
+  <Step title="Set the admin email">
+    In the **Admin Email (for delegation)** field on the Regentra card, enter the email of a Workspace super-admin that the service account will impersonate when querying the Directory API.
+  </Step>
+  <Step title="Save and test">
+    Save and test the connection.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Test fails with unauthorized_client">
+    Domain-wide delegation isn't wired up. The Client ID you added in the Admin Console must EXACTLY match the service account's numeric Client ID, and the requested scope must be on the allow-list. Re-check both.
+  </Accordion>
+  <Accordion title="Test fails with invalid_grant or admin_email_required">
+    The Admin Email is missing or isn't a real Workspace super-admin in the same domain. Service-account delegation needs an admin to impersonate; pick one (any super-admin works) and re-save.
+  </Accordion>
+  <Accordion title="Where do I rotate the JSON key?">
+    Google Cloud → IAM & Admin → Service Accounts → Keys. Generate a new key, paste it into Regentra, then delete the old key from Google. Regentra picks up the new key on the next sync.
+  </Accordion>
+</AccordionGroup>

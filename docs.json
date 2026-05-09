@@ -62,10 +62,17 @@
             "pages": [
               "integrations/overview",
               "integrations/microsoft-entra",
+              "integrations/microsoft365-sso",
+              "integrations/teams-chat-bridge",
+              "integrations/regentra-bot",
               "integrations/level-rmm",
+              "integrations/okta",
+              "integrations/google-workspace",
+              "integrations/proofpoint-sat",
+              "integrations/github",
+              "integrations/jira",
               "integrations/stripe",
-              "integrations/quickbooks",
-              "integrations/regentra-bot"
+              "integrations/quickbooks"
             ]
           },
           {

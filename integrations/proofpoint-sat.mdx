@@ -1,0 +1,52 @@
+---
+title: "Proofpoint Security Awareness Integration"
+description: "Pull training-completion and phishing-simulation results from Proofpoint into Regentra for compliance evidence."
+---
+
+The Proofpoint Security Awareness integration imports training-completion rates and phishing-simulation results from your Proofpoint PSAT account into Regentra. This data automatically evidences your security awareness controls.
+
+## What it provides
+
+- **Training completion rates** — Mapped to security-awareness-training controls
+- **Phishing simulation results** — Click rate and report rate; mapped to phishing-protection controls
+- **Scheduled sync** — Data syncs daily at 7:00 AM ET. You can also trigger an on-demand sync from the card.
+
+## Setup
+
+<Steps>
+  <Step title="Generate API credentials in Proofpoint">
+    Sign in to the Proofpoint admin portal and open **Account Management → Integrations → Integration Keys**. Add an integration key with **Access Type: Security Awareness Reporting**. Copy the **API Key** and **API Secret** — Proofpoint only shows the secret once.
+  </Step>
+  <Step title="Enter credentials in Regentra">
+    In Regentra, go to **Settings → Integrations** and find the Proofpoint SAT card. Paste your API Key and API Secret, then pick a **Region** (see below).
+  </Step>
+  <Step title="Save and test">
+    Click **Save Credentials**, then **Test Connection**.
+  </Step>
+</Steps>
+
+## The Region field
+
+The Region value is one of three short codes: `US`, `EU`, or `AP`. Look at the URL you use to log into PSAT:
+
+- Starts with `us1-` or `us2-` → region is **US** (most customers)
+- Starts with `eu` → **EU**
+- Starts with `ap` → **AP**
+
+<Warning>
+  Don't paste the full admin URL (e.g. `us2-XXXXXXX.ws01-securityeducation.com`) into the Region field. That's the admin portal, not the reporting API host — the integration will reject it.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Test Connection returns 401">
+    Most likely the secret was copied with whitespace, or the integration key was created with the wrong access type. Re-issue the key with *Security Awareness Reporting* access type and paste fresh.
+  </Accordion>
+  <Accordion title="Test Connection returns 404">
+    The Region is wrong. Double-check the URL prefix you log in with (us, eu, or ap) and re-save. The integration will not auto-detect region.
+  </Accordion>
+  <Accordion title="I see training data but no phishing simulations">
+    Phishing simulations only sync if your PSAT plan includes the simulation feature AND the integration key has Reporting access. If your plan doesn't include simulations, the relevant cells stay blank — Regentra still uses the training data to evidence security-awareness controls.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,46 @@
+---
+title: "Okta Integration"
+description: "Pull users, MFA enrollment, and group/app assignments from Okta to evidence access-control and authentication compliance controls."
+---
+
+The Okta integration pulls user provisioning, MFA enrollment, and access-assignment data from your Okta org into Regentra. This data automatically evidences the access-review, provisioning, authentication, and least-privilege controls.
+
+## What it provides
+
+- **User sync** — Active and deactivated users; feeds the access-review and provisioning controls
+- **Per-user MFA enrollment** — Feeds the authentication control
+- **Group memberships and assigned applications** — Feeds the least-privilege control
+
+## Setup
+
+<Steps>
+  <Step title="Sign in to your Okta admin console">
+    Use a service-account user with a read-only admin role for least privilege.
+  </Step>
+  <Step title="Open Security → API → Tokens">
+    Navigate to the API tokens section in your Okta admin console.
+  </Step>
+  <Step title="Create a token">
+    Click **Create Token** and name it something descriptive like *Regentra Compliance*.
+  </Step>
+  <Step title="Copy the token immediately">
+    Okta will not show the token again after this screen.
+  </Step>
+  <Step title="Enter credentials in Regentra">
+    In Regentra, go to **Settings → Integrations → Okta**. Paste the token and your Okta domain (e.g. `mycompany.okta.com`). Save and test the connection.
+  </Step>
+</Steps>
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="What permissions does the API token need?">
+    Read-only is enough. Okta API tokens inherit the role of the user that created them. Best practice: create the token from a service-account user with a read-only admin role (e.g. *Read-only administrator*), so the token can never modify users, MFA factors, or apps even if it leaks.
+  </Accordion>
+  <Accordion title="Tokens expire — what happens?">
+    Okta API tokens are valid until used at least once every 30 days, or rotated by an admin. Regentra polls daily, so tokens stay alive automatically. If you rotate manually, paste the new token; the old one stops working immediately.
+  </Accordion>
+  <Accordion title="Should I use Okta API tokens or OAuth?">
+    API token for now. OAuth-based service-to-service is on the roadmap but not required for evidence sync.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,80 @@
+---
+title: "Teams Chat Bridge Integration"
+description: "Connect a real Teams account so client messages flow into Regentra as tickets, and tech replies flow back through the same Teams chat."
+---
+
+The Teams Chat Bridge connects a Microsoft 365 user account in your tenant to Regentra. When a client messages that account in Teams, Regentra reads the chat through Microsoft Graph and creates a ticket. Replies your technicians post on the ticket are sent back into the same Teams chat as that support user.
+
+## What it provides
+
+- **Real human identity** — Clients message a real Teams user, not a bot
+- **Graph-scoped access** — Read-and-send only; Regentra cannot rename chats, change members, or modify any chat
+- **Federation aware** — Built-in checker for cross-tenant chat eligibility
+
+## Setup
+
+<Steps>
+  <Step title="Choose the right account">
+    Pick a licensed Microsoft 365 user that you want clients to chat with. Most MSPs use a dedicated mailbox like `support@` or `helpdesk@`. The account must have a Teams license and should be a shared one so the connection isn't lost when staff turn over. Avoid using a personal account.
+  </Step>
+  <Step title="Open Settings → Integrations">
+    Find the **Teams Chat Bridge** card under *Chat Platforms*, expand it, and click **Connect Teams Chat**.
+  </Step>
+  <Step title="Sign in as the support user">
+    A Microsoft sign-in window opens. Sign in with the **support account** you chose above (not your own admin account). Microsoft asks the user to grant the following Graph permissions:
+
+    - `Chat.Read` — list the user's chats
+    - `ChatMessage.Read` — read message contents
+    - `ChatMessage.Send` — send replies as the user
+    - `offline_access` — refresh tokens so polling keeps working
+    - `User.Read` — read the support account's display name
+
+    There's no `Chat.ReadWrite` or rename/membership scope in the request.
+  </Step>
+  <Step title="Verify the connection">
+    Once consent is granted, you're bounced back to the Integrations page and the card shows **Connected** with the support account's email. Polling for new messages starts on a 5-minute cron.
+  </Step>
+</Steps>
+
+## How it works
+
+1. A user at the client tenant starts a Teams chat with your support account.
+2. Every 5 minutes, Regentra polls Microsoft Graph for new messages on the support user's chats.
+3. The first inbound message in a new chat creates a ticket; the contact is matched to the client by Entra tenant ID. Subsequent messages on the same chat are appended as ticket replies.
+4. When a tech replies inside Regentra, the reply is sent back to the chat as the support user.
+
+## Verify client federation
+
+Cross-tenant external chat in Teams is governed by **External Access** on both your tenant and your client's tenant. If either side blocks external messaging, the client's Teams app silently drops messages to your support account.
+
+On the Teams Chat Bridge card, click **Verify Client Federation**. Regentra checks each client organization with a known Entra tenant ID and reports:
+
+- **Connected** — federation is allowed both ways. Messages will work.
+- **Blocked** — one side has external access disabled or is blocking the other tenant. Use the manual PowerShell / Admin Center steps shown on the card to reach the client's admin.
+- **Unknown** — Microsoft Graph couldn't determine the federation state (commonly because the client tenant ID is wrong or hasn't been set on the client record).
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="How is this different from the Regentra Bot?">
+    Regentra Bot is a Microsoft Teams app published by Regentra — clients install it from the Teams Apps store and chat with the bot. The Teams Chat Bridge is the opposite: clients chat with a real human at your support account, and Regentra reads/writes those conversations through Graph. Use the bot when you want a self-service flow; use the bridge when clients are already used to messaging your support address.
+  </Accordion>
+  <Accordion title="Why does Microsoft warn 'this app is not verified'?">
+    If your tenant requires admin consent for new apps, the support user (or your tenant admin) needs to consent on first use. Once granted, the consent is recorded and re-used. The scopes requested are the minimum needed — no rename, members, or chat-modify permissions.
+  </Accordion>
+  <Accordion title="Can I use my own personal Microsoft account?">
+    Yes, but it's not recommended. If the person leaves and the account is deleted, the integration breaks and clients lose chat history with you. Use a shared support mailbox.
+  </Accordion>
+  <Accordion title="What happens if I disconnect?">
+    Polling stops immediately. Existing tickets and chat history are kept. Reconnecting (even with a different support account) resumes polling on the connected account's chats.
+  </Accordion>
+  <Accordion title="Are messages encrypted in transit?">
+    Yes. All Graph API calls run over TLS, and Regentra stores access/refresh tokens encrypted at rest with AES-256-GCM.
+  </Accordion>
+  <Accordion title="How fast is 'real-time'?">
+    The poller runs every 5 minutes by default. New chats and inbound messages appear in Regentra within that window. Outbound replies (tech → client) are sent immediately when the tech posts in Regentra.
+  </Accordion>
+  <Accordion title="Why are some clients showing as 'Blocked' in federation check?">
+    Either your tenant or theirs has External Access locked down. The fix is on the blocking side: in Teams Admin Center → Users → External Access, allow your domain (or theirs). The card shows a PowerShell command and Admin Center path you can send to the client's IT admin.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,55 @@
+---
+title: "GitHub Integration"
+description: "Pull repository, branch-protection, and review evidence from GitHub for change-management and SDLC controls."
+---
+
+The GitHub integration pulls repository metadata, branch protection rules, pull-request review records, and org member data from your GitHub organization into Regentra. This data evidences change management and source-code access controls.
+
+## What it provides
+
+- **Repository metadata** — Repositories owned by your org, including default branches and visibility
+- **Branch protection rules** — Required reviews, status checks, signed-commit enforcement
+- **Pull-request reviews** — Reviewer, approval state, merge time. Used to evidence change management.
+- **Org members** — Members and their roles; used to evidence access control on source code
+
+## Setup
+
+<Steps>
+  <Step title="Generate a fine-grained Personal Access Token">
+    Open [github.com/settings/tokens](https://github.com/settings/tokens?type=beta) and select **Fine-grained tokens**. Click **Generate new token**.
+  </Step>
+  <Step title="Set the resource owner">
+    Set the **resource owner** to your organization. If you don't see your org, an org admin needs to enable fine-grained tokens for the org first.
+  </Step>
+  <Step title="Choose repository access">
+    Under **Repository access**, choose either *All repositories* or specific repositories. Pick what matches your evidence scope.
+  </Step>
+  <Step title="Grant read-only permissions">
+    Grant **read-only** permissions for:
+
+    - Repository → Metadata (read)
+    - Repository → Contents (read)
+    - Repository → Pull requests (read)
+    - Organization → Members (read)
+  </Step>
+  <Step title="Enter token in Regentra">
+    Generate the token and paste it into Regentra along with your **organization name** (the URL slug, e.g. `my-org` from `github.com/my-org`).
+  </Step>
+  <Step title="Save and test">
+    Save and test the connection.
+  </Step>
+</Steps>
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Why fine-grained instead of classic PAT?">
+    Fine-grained tokens are scoped to a specific org and a specific permission set, and they expire by default. Classic PATs grant broad access tied to a user account. Fine-grained is the lower-blast-radius choice for evidence sync.
+  </Accordion>
+  <Accordion title="What if my org hasn't enabled fine-grained tokens?">
+    An org admin needs to enable them under Settings → Personal access tokens. Until that's done, classic PATs work but with broader scope — request the `read:org` and `repo` (read-only via SAML) scopes if you must.
+  </Accordion>
+  <Accordion title="Tokens expire — what happens?">
+    Fine-grained tokens expire on a date you set during creation (default 30 days). Pick something reasonable (e.g. 1 year) and rotate via the same flow. Regentra surfaces a warning on the card a week before expiry.
+  </Accordion>
+</AccordionGroup>

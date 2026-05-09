@@ -1,0 +1,43 @@
+---
+title: "Jira Integration"
+description: "Pull change tickets and approval workflows from Jira for change-management control evidence."
+---
+
+The Jira integration pulls change tickets and approval workflows from your Jira Cloud instance into Regentra. This data evidences your change-management control.
+
+## What it provides
+
+- **Change tickets** — Issues with the type or label that represents a change (you configure the JQL filter)
+- **Approval status** — Approvers and resolution timestamps
+- **Linked PRs** — Pull requests linked to Jira issues (when Jira is connected to GitHub) for cross-reference evidence
+
+## Setup
+
+<Steps>
+  <Step title="Generate an Atlassian API token">
+    Sign in to [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens). Click **Create API token**, give it a label like *Regentra Compliance*, and copy the token.
+  </Step>
+  <Step title="Enter credentials in Regentra">
+    In Regentra, go to **Settings → Integrations** and find the Jira card. Paste the token along with:
+
+    - **Jira domain** — e.g. `mycompany.atlassian.net`
+    - **Email address** — the email of the Atlassian user that owns the token
+  </Step>
+  <Step title="Save and test">
+    Save and test the connection.
+  </Step>
+</Steps>
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="What permissions does the user need?">
+    Read access to the projects you want pulled — that's it. The token inherits the user's role, so don't pick a Jira admin if a project-member account works. Treat the token like a password: rotate when the user leaves.
+  </Accordion>
+  <Accordion title="Does it work for Jira Server / Data Center?">
+    Cloud only today. Server / Data Center uses different auth (Basic + cookies / PAT) and isn't on the roadmap.
+  </Accordion>
+  <Accordion title="Can I narrow what gets synced?">
+    Yes. The card has a JQL field — set it to e.g. `project = OPS AND issuetype = Change` to limit sync to operational change tickets.
+  </Accordion>
+</AccordionGroup>

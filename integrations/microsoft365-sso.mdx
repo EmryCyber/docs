@@ -1,0 +1,49 @@
+---
+title: "Microsoft 365 Single Sign-On"
+description: "Let your team sign in to Regentra with their Microsoft work account, with no separate password to manage."
+---
+
+The Microsoft 365 SSO integration allows your team to sign in to Regentra using their Microsoft work account. When SSO is enabled, the login page shows a **Sign in with Microsoft** button. Clicking it redirects to Microsoft, the user authenticates with their work account, and Regentra creates or matches a user record by email domain. The user's role is whatever your admin set on their Regentra account; Microsoft only handles authentication.
+
+## What it provides
+
+- **Single sign-on** — Sign in with Microsoft work account
+- **Conditional Access** — Regentra honors your tenant's Conditional Access policies, including MFA requirements
+- **Multi-tenant support** — MSP techs sign in to your tenant; clients sign in to theirs
+
+## Setup
+
+<Steps>
+  <Step title="Open Settings → Security">
+    In Regentra, navigate to **Settings → Security**.
+  </Step>
+  <Step title="Enable SSO">
+    Under **Single Sign-On**, toggle SSO on.
+  </Step>
+  <Step title="Enter your Tenant ID">
+    Enter your Microsoft 365 **Tenant ID** (a GUID you can copy from the Entra admin center → Overview).
+  </Step>
+  <Step title="Save">
+    Save. The login page now shows the **Sign in with Microsoft** button to anyone whose email domain matches your tenant's verified domains.
+  </Step>
+</Steps>
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Will SSO bypass MFA?">
+    No. Regentra honors whatever Conditional Access policy your tenant enforces — including MFA. If your tenant requires MFA, the user gets prompted by Microsoft before the redirect back to Regentra. Regentra also enforces app-level MFA when configured per-user.
+  </Accordion>
+  <Accordion title="Can I require everyone to sign in via SSO?">
+    Yes — under Settings → Security, set 'Force SSO for users with @yourdomain emails'. Password-based sign-in is then disabled for those users.
+  </Accordion>
+  <Accordion title="What happens to existing password users?">
+    Existing users keep working. They can sign in via password OR Microsoft. The two paths converge on the same Regentra account by email match — no double-account.
+  </Accordion>
+  <Accordion title="Can my MSP clients use their own tenants?">
+    Yes — each Regentra organization configures SSO independently. MSP techs sign in to your tenant; clients sign in to theirs. The login page detects the tenant from the email domain.
+  </Accordion>
+  <Accordion title="How is this different from the Compliance Entra integration?">
+    SSO is for authenticating your team. The Compliance Entra integration is for collecting evidence from your Microsoft tenant. They are separate Entra apps with separate consent and lifecycles.
+  </Accordion>
+</AccordionGroup>
