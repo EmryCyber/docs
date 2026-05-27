@@ -24,6 +24,7 @@ Every control has a status that reflects its current implementation state:
 | **In Progress** | Implementation is underway but not complete |
 | **Implemented** | The control is fully in place and operational |
 | **Needs Review** | The control was previously implemented but requires review — due to expiring evidence, policy changes, or a scheduled review cycle |
+| **Flagged for Review** | Operator parked the control mid-assessment to come back to later. Distinct from Not Started so flagged items show up in a "follow-up needed" filter. Mirrors the HHS SRA Tool's "Flag for later" workflow. |
 | **N/A** | The control does not apply to this organization's environment |
 
 <Info>
@@ -65,6 +66,26 @@ Assign the control to a specific team member who is responsible for implementati
 The right sidebar of the control detail page shows **Framework Mappings** — a list of every framework requirement this control satisfies.
 
 If a control maps to three different frameworks, you will see all three listed with their specific clause or section references. This visibility is key for understanding how a single implementation effort contributes to multiple compliance programs.
+
+### Cross-framework citations (NIST CSF, HPH CPG, HICP)
+
+Below the Framework Mappings, each control card shows an **Also referenced as** panel sourced from the HHS/ONC SRA Tool v3.6.1. For every HIPAA §ref the control covers, the panel lists:
+
+- **NIST CSF 2.0** subcategory IDs (e.g., `ID.RA`, `PR.AC-7`, `DE.CM-7`)
+- **HPH CPG** numeric references (Health and Public Health Critical Performance Goals)
+- **HICP** Technical Volume references (Health Industry Cybersecurity Practices)
+
+These cross-references mean a customer reviewing a control sees every external framework that probes the same HIPAA §ref in one place. Useful when preparing for cross-framework audits or when an auditor asks "show me the NIST CSF equivalent."
+
+## SRA Tool question reference
+
+For each control whose `hipaaRef` matches a question in the HHS/ONC SRA Tool v3.6.1 workbook, the control card shows a collapsible **HHS SRA Tool questions for §164.xxx** panel listing every SRA question that probes that §ref. Each question renders:
+
+- The question text and its `SRA-S{section}-Q{n}` code
+- HHS's `Required` / `Addressable` flag (when present)
+- The full multi-choice answer set with HHS's per-answer markers (✓ compliant per HHS, ! risk indicated, · skip)
+
+This is a **read-only reference** — Regentra does not currently track which answers operators select. Operators running the SRA Tool workbook in parallel use this panel to see "for this control, here are the HHS questions to answer" alongside Regentra's control checklist + evidence. See [Risk Assessment → Alignment with the HHS/ONC SRA Tool](/compliance/risk-assessment#alignment-with-the-hhsonc-sra-tool) for the broader picture.
 
 ## Gap Analysis
 

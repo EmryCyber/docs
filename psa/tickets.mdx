@@ -58,6 +58,18 @@ Each ticket includes:
   The AI draft pulls from your knowledge base using RAG. The more KB articles you maintain, the better the draft quality.
 </Tip>
 
+## Priority is customer-controlled
+
+The priority chosen at ticket creation is the source of truth across the system. The AI auto-analyzer reads priority for context and may suggest a different value (visible on the ticket sidebar), but it **cannot change `ticket.priority` on its own** — not up, not down. Customer-set CRITICAL stays CRITICAL.
+
+Priority changes after creation happen only through:
+
+- **Operator edit** on the ticket detail page
+- **Operator-authored automation rules** (Settings → Automations) using the Change Priority action
+- **Policy escalations** — VIP override, ticket-spike pattern, and AI security/frustration escalation can each bump LOW/MEDIUM → HIGH, never downgrade
+
+See [Automations & AI](/psa/automations-and-ai#ai-and-ticket-priority) for the full matrix.
+
 ## Board view vs list view
 
 <Tabs>

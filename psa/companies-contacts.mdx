@@ -27,6 +27,68 @@ Companies are your MSP customers. Contacts are the individuals inside those comp
   </Step>
 </Steps>
 
+<Tip>
+  After a company is created, the detail page has a **Sync With M365** button that re-runs the per-company Entra sync on demand. Use it to pull a fresh snapshot of users + devices for that one customer without waiting for the next scheduled cycle. See [Microsoft Entra ID](/integrations/microsoft-entra#per-company-sync).
+</Tip>
+
+## Archiving and deleting companies
+
+Removing a customer is a **two-stage process** designed to make accidental data loss nearly impossible. Stage 1 (Archive) is reversible; Stage 2 (Permanent delete) is irreversible and intentionally gated.
+
+### Stage 1 — Archive (reversible)
+
+Archiving hides a company from operational views while preserving every record tied to it. Tickets, assets, invoices, contacts, password-vault entries, and history all stay in the database. The QuickBooks Customer is flipped to `Active=false` (recoverable on restore).
+
+<Steps>
+  <Step title="Open the company detail page">
+    Navigate to **PSA → Companies** and select the company you want to archive.
+  </Step>
+  <Step title="Scroll to the Danger zone and click Archive company">
+    Provide an optional reason (captured in the audit log and visible in the Archive view).
+  </Step>
+  <Step title="Confirm">
+    The company is hidden from the default list, search results, integration sync candidates, and every picker dropdown (new ticket / invoice / project / password / contact). It returns to view under **Show archived** at the top of the Companies list.
+  </Step>
+</Steps>
+
+While archived, the company is blocked from receiving new resources:
+
+- New tickets, invoices, projects, contacts, SLA policies, password entries / folders, notification subscriptions, asset reassignments
+- QuickBooks Customer sync (re-sync would reactivate the QB row)
+- Microsoft 365 / Entra sync
+- Promotion to a Compliance tenant
+- Customer portal login (both password and SSO paths return "Portal access is paused")
+
+**Restore** is symmetric: from the Archive view, click **Restore** on any archived row to clear the archive state and reactivate the QB Customer link.
+
+<Note>
+  Archive requires Admin, MSP Admin, or Compliance Admin. The action is idempotent — clicking Archive on an already-archived company is a no-op.
+</Note>
+
+### Stage 2 — Permanent delete (irreversible)
+
+Permanent deletion physically removes the company row and most of its dependencies. Only **Super Admin** can perform this action, and only on a company that has already been archived.
+
+Before permanent delete is allowed, the system **blocks** the action when any of these are true:
+
+- The company is not yet archived (Stage 1 must complete first)
+- One or more invoices for this company still have an outstanding balance
+- The company has been promoted to a Compliance tenant (the linked Organization must be archived first to preserve the promotion audit trail)
+
+The confirmation modal shows the full impact:
+
+- **Records that will become unassigned** (kept in the DB but lose their company link): tickets, assets, contacts, invoices, KB articles, KB folders, quotes, projects, password folders, password entries
+- **Records that will be permanently deleted** (cascade): per-customer SLA policies
+- **QuickBooks Customer** is set to `Active=false` (best-effort soft-delete)
+
+To complete the deletion, the Super Admin must **type the exact company name** into the confirmation field — the Submit button stays disabled until the typed value matches the row's `name` exactly (case-sensitive). The server re-validates the match inside the same transaction as the delete, so there is no race window.
+
+<Warning>
+  Permanent delete cannot be undone. Neon database snapshots provide a ~24-hour recovery window for catastrophic mistakes; after that, the row is gone. Use Archive for any case where there is even a 1% chance you might want the customer back.
+</Warning>
+
+If you have hundreds of stale customers to clear, archive them first. The Archive view supports per-row restore and per-row permanent delete; there is no batch permanent-delete by design.
+
 ## How to manage contacts
 
 <Steps>
@@ -80,5 +142,11 @@ See [Microsoft Entra ID](/integrations/microsoft-entra) for full integration det
   </Accordion>
   <Accordion title="How do I bulk-delete contacts?">
     Currently one at a time via the detail page. If you need bulk operations, contact support.
+  </Accordion>
+  <Accordion title="How do I delete a company?">
+    See [Archiving and deleting companies](#archiving-and-deleting-companies) above. Archive (reversible) is the right action 99% of the time. Permanent delete is Super Admin only and requires the company to be archived first.
+  </Accordion>
+  <Accordion title="What happens to existing tickets and invoices when I archive a company?">
+    Nothing — they're preserved exactly as-is. The company is just hidden from operational views (pickers, search, dashboards). Restoring the company brings everything back unchanged.
   </Accordion>
 </AccordionGroup>

@@ -61,6 +61,35 @@ Every policy moves through a defined lifecycle:
   Moving a policy backward in the lifecycle (e.g., from Approved back to Draft) is allowed. This is useful when an active policy needs significant revisions.
 </Note>
 
+### Separation of duties — author cannot self-approve
+
+Regentra enforces a separation-of-duties (SoD) rule on policy approval: **the person who last edited a version's content cannot approve that same version**. The system tracks `lastContentAuthorId` per version and blocks the Approve action if the requesting user matches.
+
+This is a hard server-side check — not a UI suggestion — and matches the SOC 2 / ISO 27001 / HIPAA expectation that author and approver are different individuals.
+
+| Scenario | Behavior |
+| --- | --- |
+| Author submits the policy for review, a different approver approves | Approval succeeds |
+| Author submits, then approves their own version | Blocked with "You cannot approve your own edits — another approver must review" |
+| Author edits, a second person edits, second person approves | Blocked — the second person is now the `lastContentAuthorId` |
+| Same person edits in Draft, makes no further edits in Review, then approves | Blocked — they are the last content author |
+
+To unblock, either (a) a different approver reviews and approves the existing version, or (b) the original author hands the draft to a co-author who makes a substantive edit and submits, after which the original author may approve.
+
+## Per-organization applicability profile
+
+Compliance programs vary by organization type. Regentra captures applicability metadata at the organization level — for example, whether the org operates a healthcare clearinghouse (§164.308(a)(4)(ii)(A) becomes relevant), is subject to FTC Safeguards, processes payment cards in scope of PCI DSS, or operates within the EU under GDPR.
+
+Set the profile under **Settings → Organization → Compliance Applicability**. The values feed into:
+
+- Which controls auto-mark **N/A** on framework adoption (e.g., a non-clearinghouse skips the Clearinghouse Functions control without manual N/A)
+- Which policy templates show in the "New Policy → From template" picker
+- Annex filtering on framework views (e.g., HIPAA `annex:hipaa` templates for Privacy Officer, Patient Rights notices)
+
+<Tip>
+  Setting the applicability profile correctly at adoption time saves hours of manual N/A toggling on controls that don't apply to your specific organization shape.
+</Tip>
+
 ## Version History
 
 Regentra maintains a **complete version history** for every policy. Each time a policy is updated and re-published, a new version is created.

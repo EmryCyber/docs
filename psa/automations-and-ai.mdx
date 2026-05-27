@@ -86,6 +86,27 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
 
 AI replies include a confidence score (0-100%) representing how sure the model is. Low scores mean the AI was uncertain — review carefully. **Low confidence does not always mean wrong; high confidence does not guarantee correct.** Always review the actual reply text and the ticket context before sending.
 
+## AI and ticket priority
+
+The AI auto-analyzer suggests, **never sets**, ticket priority. The priority chosen at ticket creation — by the customer (portal or Teams bot), by the inbound-email classifier, or by the operator (manual UI) — is the sole source of truth.
+
+| Surface | Behavior |
+| --- | --- |
+| AI's per-ticket triage analysis | Stored in `aiAnalysis.suggestedPriority`, visible in the ticket sidebar with an Apply control |
+| Automatic write to `ticket.priority` from the AI analyzer | **Never happens.** No upgrade, no downgrade — the AI cannot mutate priority on its own |
+| Operator-authored automation rule with **Change Priority** action | Allowed. MSP rules are explicit operator policy and remain authoritative |
+| VIP override | Bumps LOW/MEDIUM → HIGH for VIP-tagged contacts (never downgrades) |
+| Ticket-spike pattern detection | Bumps LOW/MEDIUM → HIGH when 3+ tickets arrive from the same company within 2 hours (never downgrades) |
+| AI escalation step (security or high-frustration concern) | Bumps LOW/MEDIUM → HIGH AND flips status to **Escalated** with a visible audit reply explaining why. Never downgrades a customer-set CRITICAL or HIGH |
+
+<Note>
+  This is a hard guarantee. A customer-submitted CRITICAL ticket will arrive in the PSA at CRITICAL regardless of what the AI's per-ticket analysis suggests. Notification rules and SLA timers keyed on customer priority always fire correctly.
+</Note>
+
+<Info>
+  The **Change Priority** automation action listed in the rule-builder above is for operator-authored MSP rules. It does not represent AI behavior. Use it freely — your rules are policy you define, not AI judgment.
+</Info>
+
 ## Frequently asked questions
 
 <AccordionGroup>

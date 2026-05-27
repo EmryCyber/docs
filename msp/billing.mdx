@@ -31,7 +31,22 @@ Plans differ in:
 
 ## Per-seat billing (PSA)
 
-PSA seats are billed per user per month. Each team member who needs access to the PSA module (creating tickets, logging time, managing the service desk) requires a seat. Users with compliance-only access do not consume PSA seats.
+Your subscription includes a **bundled seat allotment** — for example, 5 seats on the Starter plan. You pay for that allotment each month at the plan's per-seat price, regardless of utilization. Adding more team members beyond the allotment requires upgrading the plan; the upgrade adjusts both the seat limit and the monthly bill at the same time.
+
+Compliance-only users do not consume PSA seats — only team members who can create tickets, log time, or manage the service desk count against the allotment.
+
+### Reading the billing page
+
+The **Settings → Billing** page shows two distinct numbers when usage exceeds your bundled allotment:
+
+| Line | What it means |
+| --- | --- |
+| **Monthly Total** | The actual amount Stripe will charge this cycle. Calculated as `bundled_seat_limit × per_seat_price` — what you are paying for the plan you currently have. |
+| **After update** projection (shown below the "Over plan limit" warning) | The projected monthly cost **if** you bring your plan's seat limit up to match your current active user count. Surfaced as a budgeting aid; nothing is changed until you explicitly upgrade. |
+
+<Tip>
+  If the warning reads **Over plan limit (7/5). Update your subscription to cover all active technicians**, you are paying for 5 seats today and the "After update" line shows what 7 seats would cost. Click **Manage Billing** to upgrade.
+</Tip>
 
 ## Compliance tenant billing
 

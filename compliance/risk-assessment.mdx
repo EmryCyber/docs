@@ -33,24 +33,40 @@ Risk assessment is the process of identifying, analyzing, and evaluating risks t
 
 ## Risk Scoring Methodology
 
-Regentra uses a **likelihood x impact** matrix to calculate risk scores:
+Regentra uses a **3×3 likelihood × impact lookup** calibrated against the HHS/ONC SRA Tool v3.6.1 `Risk_Logic` matrix. A customer running both Regentra and the SRA Tool workbook sees consistent scores.
 
-| Factor | Scale | Description |
-|---|---|---|
-| **Likelihood** | 1 (Rare) to 5 (Almost Certain) | How probable is it that this threat will exploit this vulnerability? |
-| **Impact** | 1 (Negligible) to 5 (Severe) | What is the potential damage to the organization if the risk materializes? |
-| **Risk Score** | 1 to 25 | Likelihood multiplied by Impact |
+### The matrix
 
-Risk scores map to severity levels:
+|  | **Low impact** | **Moderate impact** | **High impact** |
+| --- | --- | --- | --- |
+| **Low likelihood** | Low | Low | High |
+| **Moderate likelihood** | Low | Moderate | **Critical** |
+| **High likelihood** | Moderate | High | **Critical** |
 
-- **Low (1-6)** — acceptable risk, monitor periodically
-- **Medium (7-12)** — requires a documented treatment plan
-- **High (13-19)** — prioritize remediation, escalate to leadership
-- **Critical (20-25)** — immediate action required
+Each cell is the inherent risk for that combination. Notable cells that surprise some operators:
+
+- **Moderate × High = Critical** (high-impact events deserve immediate attention even at moderate likelihood)
+- **High × High = Critical**
+- **Low × High = High** (a low-probability but catastrophic event is still a high-priority finding)
+
+<Note>
+  Regentra also accepts a fourth "Critical likelihood" tier (for findings the operator wants to flag as effectively-certain). Any cell in the Critical likelihood row is at minimum the same level as the corresponding High likelihood row, never lower.
+</Note>
 
 <Tip>
   When scoring risks, involve the people closest to the systems in question. Technical staff understand vulnerabilities better than anyone, and business stakeholders understand impact more accurately.
 </Tip>
+
+## Alignment with the HHS/ONC SRA Tool
+
+For HIPAA-covered entities, Regentra is structured to map 1:1 against the [HHS/ONC SRA Tool](https://www.healthit.gov/topic/privacy-security-and-hipaa/security-risk-assessment-tool) v3.6.1 workbook. The alignment touches every layer of the risk-assessment surface:
+
+- **All 60 SRA Tool §refs are covered** by Regentra's HIPAA 2026 framework requirements. The 5 sub-clauses the SRA Tool checks but the prior version of Regentra hadn't surfaced (§164.316(b)(2)(i/ii/iii) for documentation hygiene, §164.314(a)(2)(i)(A) and §164.314(a)(2)(iii) for BA contract clauses) are now present.
+- **Canonical 40-entry threat catalog.** When you create a Finding, the Threat Library picker has two tabs: a generic NIST/OCR-derived catalog and the HHS SRA Tool catalog. Threats picked from the SRA tab carry a stable code (e.g., `SRA-S4-T1`) and surface in audit-package exports as "X of Y findings came from the SRA Tool catalog."
+- **Per-§ref question reference.** On each control card, a collapsible "HHS SRA Tool questions for §164.xxx" panel shows the SRA Tool's questions probing that §ref, with HHS's multiple-choice answers and per-answer compliant/risk-indicated markers. Read-only reference for customers running both tools in parallel.
+- **Risk-matrix calibration** (the table above) matches the SRA Tool's `Risk_Logic` exactly on the LOW/MEDIUM/HIGH subset.
+
+See [Working with Controls](/compliance/controls#sra-tool-question-reference) for the per-control question panel.
 
 ## Risk Register
 
