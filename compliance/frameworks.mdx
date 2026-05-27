@@ -47,9 +47,16 @@ Some frameworks unlock additional capabilities beyond standard controls:
 
 <Tabs>
   <Tab title="HIPAA">
+    Regentra's HIPAA framework slug is **`hipaa-2026`**. It builds you to the Security Rule as proposed in the January 2025 NPRM (RIN 0945-AA22, 90 FR 898) — the standard most organizations will be audited against once OCR finalizes the rule. The 2026 target exceeds the currently-binding 2013 Omnibus Rule on most provisions, so meeting Regentra's checklist also meets today's enforceable requirements.
+
+    - **NPRM banner** — every HIPAA framework view shows a banner identifying the 2026 NPRM scope and highlighting the 9 new mandatory controls (asset inventory, MFA mandate, vulnerability scanning, network segmentation, etc.)
+    - **PARTIAL-coverage callout** — when a framework requirement is satisfied only by PARTIAL-strength mappings (no FULL-strength control covers it), the gap-analysis view shows a yellow banner so auditors are alerted that supplemental evidence will be requested
+    - **Annex filter** — HIPAA-specific policy templates (Notice of Privacy Practices, Patient Rights, Minimum Necessary, etc.) are tagged `annex:hipaa` and can be filtered separately from general controls
     - **BAA Tracking** — maintain a register of Business Associate Agreements with vendors and partners
-    - **Privacy Rule controls** — dedicated controls for patient data handling, minimum necessary standard, and individual rights
-    - **Security Risk Assessment** — structured SRA workflow aligned with HHS guidance
+    - **Privacy Rule controls** — dedicated controls for patient data handling, minimum necessary standard, and individual rights (covers 37+ §refs the HHS SRA Tool's Security-Rule scope doesn't address)
+    - **Breach Notification Rule** — full coverage of §164.402–414 (Four-Factor Test, Individual / Media / HHS notification, BA reporting)
+    - **Security Risk Assessment** — structured SRA workflow with native [HHS/ONC SRA Tool v3.6.1 alignment](/compliance/risk-assessment#alignment-with-the-hhsonc-sra-tool) (40-threat catalog, per-§ref question reference, calibrated 3×3 risk matrix)
+    - **regulatoryStatus tag per requirement** — power users tracking what's strictly binding today vs. proposed under the NPRM can filter by `binding-with-proposed-changes` vs `nprm-proposed-new`
   </Tab>
   <Tab title="SOC 2">
     - **Trust Service Criteria** — controls organized by the five TSC categories: Security (mandatory), Availability, Processing Integrity, Confidentiality, and Privacy (optional based on scope)

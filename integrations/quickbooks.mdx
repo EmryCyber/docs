@@ -88,20 +88,41 @@ You can override this — turn the QB Pay Now toggles back on under **Settings �
 
 When a customer pays $100 via Stripe, Stripe deposits ~$97 into your bank and keeps ~$3 as a processing fee. Your QB books need three entries to balance:
 
-1. $100 invoice paid (Regentra creates this — the QB Payment).
+1. $100 invoice paid (the QB Payment).
 2. $97 net deposit hitting your bank account.
 3. $3 expense recorded against a "Stripe Fees" account.
 
-**Regentra creates entry #1 only.** The other two are out of scope for this integration — they're Stripe-to-QB bookkeeping, not invoice/payment-record sync. For full reconciliation use one of:
+**Regentra creates all three natively** when you configure two account mappings — no third-party reconciliation tool required.
 
-| Tool | What it does | Cost |
-| --- | --- | --- |
-| QBO native Stripe app | Install via QBO → Apps → search Stripe. Pulls deposits + fees into QB. | Free |
-| [Acodei](https://www.acodei.com) | Same job, more configuration. | Paid |
-| [Synder](https://synder.com/integrations/quickbooks/stripe/) | Same. | Paid |
-| [Bookkeep](https://bookkeep.com) | Same. | Paid |
+<Steps>
+  <Step title="Open the QuickBooks mapping page">
+    **Settings → Integrations → QuickBooks → Configure mapping** → scroll to the **Stripe Fee Reconciliation** card. (The card only appears when both Stripe and QuickBooks are connected.)
+  </Step>
+  <Step title="Pick the expense account">
+    Choose the QB **Expense** account where the Stripe processing fees should be debited. Typical name: "Merchant Processing Fees" or "Stripe Fees." Create one in QB first if it doesn't exist.
+  </Step>
+  <Step title="Pick the deposit bank account">
+    Choose the QB **Bank** account where Stripe deposits actually land. The Purchase entry credits this account for the fee amount so the QB bank balance matches the net Stripe payout.
+  </Step>
+  <Step title="Save">
+    From now on, every Stripe webhook for a paid invoice posts a QB Purchase debiting the expense account and crediting the bank account, in addition to the Payment.
+  </Step>
+</Steps>
 
-These tools sit alongside Regentra without conflict — they handle the deposit/fee side; Regentra handles the invoice/payment-record side.
+<Info>
+  Either field unset = fee posting is skipped (Payment is recorded at gross, same as the pre-feature behavior). The mapping is opt-in and backward-compatible: existing orgs are unaffected until you set both accounts.
+</Info>
+
+The full chain on a Stripe payment:
+
+1. Stripe webhook fires → Regentra walks `invoice → payment_intent → latest_charge → balance_transaction` to extract the exact fee in cents
+2. Regentra posts the QB Payment (gross amount) against the invoice — same as before
+3. Regentra posts a QB Purchase debiting the expense account ($3 fee), crediting the deposit bank account ($-3 to net the deposit)
+4. Purchase carries a deterministic `requestId` keyed on the Stripe charge ID — so webhook re-delivery cannot create duplicate Purchase rows
+
+Fee fetch + fee post failures are best-effort: they're logged but never roll back the gross Payment. A QB hiccup means you might see a fee delta in QB for a few cycles, but the customer's AR is always resolved correctly.
+
+If you currently use a third-party reconciliation tool (Acodei, Synder, Bookkeep, the QBO native Stripe app), the native flow will create duplicate entries. Disable the third-party tool's fee sync before enabling Regentra's, or leave the Regentra mapping fields blank.
 
 ## What gets synced (per direction)
 

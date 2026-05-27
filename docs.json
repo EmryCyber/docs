@@ -107,6 +107,7 @@
             "pages": [
               "settings/organization",
               "settings/team-management",
+              "settings/notification-rules",
               "settings/mfa",
               "settings/sso"
             ]

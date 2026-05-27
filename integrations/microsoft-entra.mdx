@@ -50,6 +50,19 @@ The Microsoft Entra ID integration connects your Azure AD tenant to Regentra for
   The initial sync may take several minutes depending on the size of your Entra directory. Subsequent syncs are incremental and faster.
 </Info>
 
+## Per-company sync
+
+For MSP customers operating multiple client tenants, Regentra also exposes a **per-company Sync With M365 button** on the PSA Company detail page (**PSA → Companies → [company]**). This pulls a fresh snapshot of users + devices for that one customer without waiting for the next 6-hour cycle.
+
+The button handles two states:
+
+- **Not yet connected to a tenant** — click redirects to Microsoft for admin consent on the customer's tenant; on return, the initial sync queues automatically
+- **Already connected** — click queues an Inngest sync job that runs in the background; the page shows "Sync queued" and contacts + devices refresh on the next load
+
+Per-company syncs are blocked for archived companies (see [archive flow](/psa/companies-contacts#archiving-and-deleting-companies)) — restore the customer first if you need to re-pull their tenant data.
+
+Intune fetch failures are surfaced explicitly in the audit log (no more silently-swallowed errors) — if a sync completes with 0 devices when you expect more, check the audit log for the underlying Graph API response.
+
 ## SSO for staff login
 
 When Entra SSO is enabled, your team members can sign in to [app.regentra.io](https://app.regentra.io) using their Microsoft credentials. This uses the OAuth2 authorization code flow. See [SSO settings](/settings/sso) for configuration details.
