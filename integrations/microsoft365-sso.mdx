@@ -14,8 +14,8 @@ The Microsoft 365 SSO integration allows your team to sign in to Regentra using 
 ## Setup
 
 <Steps>
-  <Step title="Open Settings → Security">
-    In Regentra, navigate to **Settings → Security**.
+  <Step title="Open Authentication & SSO">
+    In Regentra, navigate to **Settings → Authentication & SSO**.
   </Step>
   <Step title="Enable SSO">
     Under **Single Sign-On**, toggle SSO on.
@@ -35,7 +35,7 @@ The Microsoft 365 SSO integration allows your team to sign in to Regentra using 
     No. Regentra honors whatever Conditional Access policy your tenant enforces — including MFA. If your tenant requires MFA, the user gets prompted by Microsoft before the redirect back to Regentra. Regentra also enforces app-level MFA when configured per-user.
   </Accordion>
   <Accordion title="Can I require everyone to sign in via SSO?">
-    Yes — under Settings → Security, set 'Force SSO for users with @yourdomain emails'. Password-based sign-in is then disabled for those users.
+    Yes — under **Settings → Authentication & SSO**, set 'Force SSO for users with @yourdomain emails'. Password-based sign-in is then disabled for those users.
   </Accordion>
   <Accordion title="What happens to existing password users?">
     Existing users keep working. They can sign in via password OR Microsoft. The two paths converge on the same Regentra account by email match — no double-account.

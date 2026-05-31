@@ -76,18 +76,14 @@ This is a hard server-side check — not a UI suggestion — and matches the SOC
 
 To unblock, either (a) a different approver reviews and approves the existing version, or (b) the original author hands the draft to a co-author who makes a substantive edit and submits, after which the original author may approve.
 
-## Per-organization applicability profile
+## Per-requirement applicability badges
 
-Compliance programs vary by organization type. Regentra captures applicability metadata at the organization level — for example, whether the org operates a healthcare clearinghouse (§164.308(a)(4)(ii)(A) becomes relevant), is subject to FTC Safeguards, processes payment cards in scope of PCI DSS, or operates within the EU under GDPR.
+Compliance programs vary by organization type — a non-clearinghouse covered entity does not need to satisfy §164.308(a)(4)(ii)(A), and an org that doesn't operate in the EU has no GDPR Article 27 representative obligations. Regentra surfaces this on each framework requirement directly.
 
-Set the profile under **Settings → Organization → Compliance Applicability**. The values feed into:
-
-- Which controls auto-mark **N/A** on framework adoption (e.g., a non-clearinghouse skips the Clearinghouse Functions control without manual N/A)
-- Which policy templates show in the "New Policy → From template" picker
-- Annex filtering on framework views (e.g., HIPAA `annex:hipaa` templates for Privacy Officer, Patient Rights notices)
+On any framework detail page (**Compliance → Frameworks → [framework]**), requirements that apply only to specific organizational roles render with an **applicability badge** — for example `clearinghouse only` or `controller only`. Hover the badge for the long-form explanation. If the role does not match your org, mark the corresponding control **N/A** with a one-line justification.
 
 <Tip>
-  Setting the applicability profile correctly at adoption time saves hours of manual N/A toggling on controls that don't apply to your specific organization shape.
+  The badges are a heads-up, not an auto-N/A. Auditors generally accept an N/A on a flagged requirement as long as the justification names the role mismatch — "we are not a clearinghouse" is sufficient.
 </Tip>
 
 ## Version History

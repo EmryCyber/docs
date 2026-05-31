@@ -15,7 +15,7 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="SLA shows breached but I responded on time">
-    SLA timers run only during configured business hours. If your business hours or timezone are misconfigured, the SLA calculation may not match your expectations. Verify your business hours in **PSA → SLA Policies → [policy name]** and check the timezone in **Settings → Organization → Timezone**.
+    SLA timers run only during configured business hours. If your business hours or timezone are misconfigured, the SLA calculation may not match your expectations. Verify your business hours in **PSA → Configuration → SLA Policies → [policy name]** and check the timezone in **Settings → Timezone & Display**.
   </Accordion>
 
   <Accordion title="Entra sync shows duplicate assets">
@@ -23,15 +23,15 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="Email notifications are not sending">
-    Verify your email configuration in **Settings → Organization → Email**. Regentra requires either Azure Communication Services or Microsoft Graph to be configured for outbound email. Send a test email from the settings page to confirm delivery. If using Microsoft Graph, ensure the Entra ID integration has mail send permissions.
+    Verify your email configuration in **Settings → Email Integration**. Regentra requires either Azure Communication Services or Microsoft Graph to be configured for outbound email. Send a test email from the settings page to confirm delivery. If using Microsoft Graph, ensure the Entra ID integration has mail send permissions.
   </Accordion>
 
   <Accordion title="Portal login is not working">
-    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status in **Settings → Portal → Custom Domain**. If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
+    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status under **PSA → Configuration → Support Portal → Custom Domain** (also reachable through the **Support Portal** tile on the main Settings page). If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
   </Accordion>
 
   <Accordion title="MFA setup fails">
-    TOTP codes are time-based and require your authenticator app's clock to be accurate. Ensure your device's clock is synced with an NTP server (most devices do this automatically). If the code is still rejected, try generating a new QR code from **Settings → Security → MFA** and re-registering in your authenticator app.
+    TOTP codes are time-based and require your authenticator app's clock to be accurate. Ensure your device's clock is synced with an NTP server (most devices do this automatically). If the code is still rejected, try generating a new QR code from **Settings → Authentication & SSO → Multi-Factor Authentication** and re-registering in your authenticator app.
   </Accordion>
 
   <Accordion title="Invoice shows $0">
