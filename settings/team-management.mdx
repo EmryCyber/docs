@@ -72,3 +72,42 @@ Deactivated users immediately lose access. Their historical data (time entries, 
 <Tip>
   Deactivation is reversible. You can reactivate a user from the same page to restore their access without losing any data.
 </Tip>
+
+## External auditor invitations
+
+External auditors do not consume a team seat. Instead they get a
+token-scoped invitation that opens their own portal at
+`/audit/{token}` — no Regentra login, no access to your PSA module,
+no cross-tenant visibility.
+
+<Steps>
+  <Step title="Open the auditor invites page">
+    **Settings → Auditor Access → Invite Auditor**.
+  </Step>
+  <Step title="Fill in the auditor's details">
+    - **Name** + **email** — for audit-log attribution and the
+      invitation email
+    - **Firm name** — surfaced on the auditor's portal banner
+    - **Audit period** (optional) — scope the token to the period; the
+      audit-package download is automatically clamped to that window
+    - **Expiration** — invitation tokens expire on a configurable date
+      and can be revoked at any time
+  </Step>
+  <Step title="Send">
+    The auditor receives an email with a one-time link. On first
+    click, they set a password and gain access to the portal.
+    Subsequent visits go through a login.
+  </Step>
+</Steps>
+
+From the same page you can resend an invitation (regenerates the
+one-time link), revoke an active invitation (immediately invalidates
+the token), and see the complete invitation audit log — who invited
+whom, when, and every status transition.
+
+The auditor portal exposes [Audit Requests](/compliance/audit-requests),
+the controls and policies in scope for the audit period, the audit-
+package ZIP download, and per-section CSV exports. The auditor cannot
+write to your data — they can only approve or flag requests inside
+their portal, leaving all state-changing actions on the customer side
+of the relationship.

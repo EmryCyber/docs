@@ -24,7 +24,7 @@ Tickets are the core unit of work in Regentra's PSA. Every client interaction �
     The issue is fixed. The ticket auto-closes after 24 hours if the customer does not reopen it.
   </Step>
   <Step title="Closed">
-    Final state. No further action is taken. Closed tickets cannot be reopened — create a follow-up instead.
+    Terminal state — work is complete and SLA timers stop accruing. A technician can manually reopen a closed ticket from the status dropdown if the customer comes back, and an inbound customer reply on a closed ticket spawns a linked follow-up ticket.
   </Step>
 </Steps>
 
@@ -88,3 +88,15 @@ Filter tickets by status, priority, assignee, client, SLA status, or date range.
 ## Auto-close behavior
 
 Tickets in **Resolved** status automatically transition to **Closed** after 24 hours. If a customer replies to a resolved ticket within that window, the ticket reopens to **In Progress**.
+
+## Master and child tickets
+
+When the same incident affects several customers — a vendor outage, a regional ISP problem, a phishing wave — promote one ticket to a **master** and link the rest as children. The master's status, assignee, and resolution cascade to its children on demand: when you flip the master to RESOLVED or CLOSED, you're prompted to apply the same status to every linked child (resolved/closed children are left alone so a previously-fixed customer isn't yanked back into a queue).
+
+Mark a ticket as a master from the **Linked Tickets** section on the ticket detail page; link or unlink children from the same panel. Master and child tickets are first-class — they appear in board view, list view, reports, and SLA tracking like any other ticket.
+
+Use cases:
+
+- **Vendor outage**: open one master ticket against the vendor, link every customer ticket reporting the outage. One reply on the master can be cascaded to all children.
+- **Phishing wave**: one master incident ticket; each reported phishing email becomes a child, so the response team works one timeline instead of dozens.
+- **Site-wide maintenance**: master for the maintenance window, children for any customer who logs an issue during it — closes the loop when the window ends.

@@ -9,21 +9,55 @@ Regentra integrates with the tools MSPs already use. Each integration runs at th
 
 <CardGroup cols={2}>
   <Card title="Microsoft Entra ID" icon="microsoft" href="/integrations/microsoft-entra">
-    SSO authentication, user and device sync, and compliance evidence collection from Azure AD.
+    SSO, user/device sync, conditional access + MFA evidence.
+  </Card>
+  <Card title="Microsoft 365 SSO" icon="microsoft" href="/integrations/microsoft365-sso">
+    Staff and portal login through your Microsoft tenant.
   </Card>
   <Card title="Level.io RMM" icon="server" href="/integrations/level-rmm">
-    Device and asset sync from RMM agent data with real-time webhook updates.
+    Device and asset sync with real-time webhook updates.
   </Card>
-  <Card title="Stripe" icon="stripe" href="/integrations/stripe">
-    Payment collection for PSA invoicing and platform subscription management.
+  <Card title="Okta" icon="key" href="/integrations/okta">
+    User provisioning, MFA enrollment, sign-in event poll.
   </Card>
-  <Card title="AWS" icon="aws">
-    Cloud infrastructure evidence collection for compliance frameworks.
+  <Card title="Cisco Duo" icon="shield-check" href="/integrations/duo">
+    MFA enrollment, global policy, admin inventory, auth-log aggregate.
   </Card>
-  <Card title="Google Cloud" icon="google">
-    GCP resource inventory and configuration evidence for compliance.
+  <Card title="Google Workspace" icon="google" href="/integrations/google-workspace">
+    User directory sync via service-account delegation.
+  </Card>
+  <Card title="Proofpoint SAT" icon="graduation-cap" href="/integrations/proofpoint-sat">
+    Training-completion and phishing-simulation results.
+  </Card>
+  <Card title="Huntress Managed SAT" icon="graduation-cap" href="/integrations/huntress-sat">
+    Workforce coverage and phishing-simulation evidence.
+  </Card>
+  <Card title="GitHub" icon="github" href="/integrations/github">
+    Change-management evidence from repository activity.
+  </Card>
+  <Card title="Jira" icon="ticket" href="/integrations/jira">
+    Issue tracking integration for change management.
+  </Card>
+  <Card title="Stripe" icon="credit-card" href="/integrations/stripe">
+    Per-org PSA invoicing and platform subscription billing.
+  </Card>
+  <Card title="QuickBooks Online" icon="book" href="/integrations/quickbooks">
+    Customer + invoice push with Stripe-paid bridging.
+  </Card>
+  <Card title="Microsoft Teams — Chat Bridge" icon="comments" href="/integrations/teams-chat-bridge">
+    Bidirectional bridge between Teams chats and PSA tickets.
+  </Card>
+  <Card title="Regentra Bot — Teams" icon="robot" href="/integrations/regentra-bot">
+    Compliance + ticket commands inside Teams.
   </Card>
 </CardGroup>
+
+<Note>
+  AWS and GCP **evidence collection** runs on a separate code path from the
+  Settings → Integrations card list — it's configured under
+  **Compliance → Settings → Evidence Collection**. The cards above are the
+  ones surfaced on the per-org Integrations page.
+</Note>
 
 ## How integrations work
 

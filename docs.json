@@ -39,6 +39,7 @@
               "compliance/evidence-collection",
               "compliance/access-reviews",
               "compliance/audit-lifecycle",
+              "compliance/audit-requests",
               "compliance/reports"
             ]
           },

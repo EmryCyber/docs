@@ -31,6 +31,14 @@ The Okta integration pulls user provisioning, MFA enrollment, and access-assignm
   </Step>
 </Steps>
 
+## Sync frequency
+
+- **Identity sync** (users, MFA enrollment, group/app assignments) runs every **4 hours** on the hour
+- **System log poll** (sign-in events, factor activity) runs hourly at `:30` — aligned with the Duo auth-log poll to spread load
+- **Manual sync** can be triggered at any time from the integration card
+
+Manual and scheduled syncs are serialized per organization so a Sync Now during a scheduled run waits for it to finish.
+
 ## Frequently asked questions
 
 <AccordionGroup>

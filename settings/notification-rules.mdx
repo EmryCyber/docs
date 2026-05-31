@@ -23,7 +23,13 @@ Notification rules let you decide who gets emailed when something happens in the
     Enter a descriptive name (e.g., "Critical tickets for Acme Health → on-call inbox").
   </Step>
   <Step title="Choose the trigger event">
-    Currently supported: **Ticket Created**, **Ticket Status Changed**, **Ticket Reply Added**, **Ticket Spike Detected** (the built-in 3-in-2h detector).
+    Currently supported:
+    - **Ticket Created** — fires on new ticket from any source
+    - **Ticket Status Changed** — fires on every status transition
+    - **Ticket Reply Added** — fires on every customer-visible reply
+    - **Ticket Spike Detected** — the built-in 3-in-2h detector (see below)
+    - **SLA Warning** — fires when a ticket's SLA timer enters the at-risk window before breach
+    - **Ticket Escalated** — fires when an automation rule or operator moves a ticket to ESCALATED status
   </Step>
   <Step title="Add filters (optional but recommended)">
     - **Priority** — LOW / MEDIUM / HIGH / CRITICAL (one or many)

@@ -58,11 +58,24 @@ Payment status is tracked on the invoice in Regentra:
 
 ## Webhook configuration
 
-Regentra uses Stripe webhooks to receive real-time invoice events (payment succeeded, payment failed). During setup, Regentra automatically configures the necessary webhook endpoint in your Stripe account.
+Regentra uses Stripe webhooks to receive real-time invoice events. Regentra generates a per-org webhook URL with a random token in the path (so two orgs never share a route), but you have to **paste that URL into Stripe yourself** — Stripe does not let third parties create endpoints in your account on your behalf.
 
-<Info>
-  If you need to manually configure the webhook, the endpoint URL is available in **Settings → Integrations → Stripe → Webhook URL**. Subscribe to these events: `invoice.paid`, `invoice.payment_succeeded`, and `invoice.payment_failed`.
-</Info>
+<Steps>
+  <Step title="Copy the webhook URL from Regentra">
+    On the Stripe card, copy the **Webhook URL** value. It looks like `https://app.regentra.io/api/webhooks/stripe/{token}` with a long random token unique to your org.
+  </Step>
+  <Step title="Add the endpoint in Stripe">
+    In the Stripe Dashboard → **Developers → Webhooks → Add endpoint**, paste the URL.
+  </Step>
+  <Step title="Subscribe to the events">
+    The critical event is `invoice.paid` — that's the one that flips a Regentra invoice to PAID and triggers the QuickBooks payment bridge if QB is connected. You can also subscribe to `invoice.payment_succeeded` and `invoice.payment_failed` for the audit log, but only `invoice.paid` drives state transitions.
+  </Step>
+  <Step title="Paste the Signing Secret back into Regentra">
+    Stripe shows the endpoint's **Signing Secret** (starts with `whsec_`). Paste it into the Webhook Signing Secret field on the Regentra card and Save. The signature is verified on every webhook call — a missing or wrong secret causes inbound events to be rejected.
+  </Step>
+</Steps>
+
+In hourly reconciliation, Regentra also calls `invoices.retrieve` for any PSA invoice flagged as SENT to catch the case where Stripe delivered `invoice.paid` while Regentra was briefly unreachable. This makes the integration self-healing — a missed webhook does not strand the invoice.
 
 ## Auto-sync of Stripe products to the Service Catalog
 

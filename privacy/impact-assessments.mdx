@@ -1,87 +1,204 @@
 ---
 title: "Privacy Impact Assessments"
-description: "Evaluate privacy risks before launching new products, vendors, or data uses — and maintain an audit-ready register of all PIAs."
+description: "Run PIAs using Regentra's canonical PIA procedure template, the Risk Register for documented residual risk, and the Privacy controls dashboard for ongoing operations."
 ---
 
-Before launching a new product feature, adding a vendor, or changing how you use data (especially for AI, profiling, or sensitive personal information), assess the privacy risks. GDPR mandates this for high-risk processing; CCPA's recent Risk Assessment rule mandates it for certain uses. Regentra guides you through the assessment, documents mitigations, and maintains a register auditors and regulators can review.
+A Privacy Impact Assessment (PIA) — also called a Data Protection
+Impact Assessment under GDPR — is the documented analysis of how a
+processing activity affects data subjects, what mitigations are in
+place, and what residual risk you accept. GDPR Article 35, the CCPA
+Risk Assessment rule (operative 2026), and HIPAA's reasonable-
+safeguard expectation all create circumstances in which a PIA is
+mandatory.
 
-## What it does
+Regentra supports the PIA lifecycle through three concrete
+capabilities — the same pattern as the rest of the privacy program:
 
-- **Threshold screening** — determine whether a full PIA is required (or if processing is routine and already assessed)
-- **Risk identification** — document data flows; identify risks from the data subject's perspective (re-identification, discrimination, autonomy, harm)
-- **Mitigation design** — select technical, organizational, and contractual controls; calculate residual risk
-- **Supervisory review** — for high-residual-risk processing, coordinate prior consultation with regulators (GDPR requirement)
-- **PIA register** — maintain a timestamped, searchable register of all PIAs, approvals, and review dates
+1. **A canonical Privacy Impact Assessment Procedure template** that
+   operationalizes the analysis. Adopt it, adapt the threshold
+   questionnaire and approval routing to your org, and use it as the
+   binding runbook for every PIA.
+2. **The Risk Register** at **Compliance → Risk Register** for
+   recording the inherent and residual risk identified by each PIA,
+   with treatment plans and owners.
+3. **Policy templates** for the upstream policies a PIA depends on —
+   the *Privacy Program Policy*, *Uses and Disclosures Policy*,
+   *Minimum Necessary Policy*, and *Consent Management Policy*.
 
-## How to conduct a privacy impact assessment
+There is **no dedicated "PIA module" inside Regentra today** — the
+analysis itself happens in the procedure document, and the residual
+risk it identifies is tracked in the Risk Register. A first-class PIA
+record type is on the roadmap; until it ships, this is the audit-
+defensible path.
+
+## The PIA procedure template
+
+The **Privacy Impact Assessment Procedure** is one of the canonical
+templates in Regentra's policy library. It is framework-neutral —
+regulatory citations live on the version metadata — and covers:
+
+- The threshold questionnaire (when a full PIA is required vs. when
+  a low-risk attestation suffices)
+- Processing-activity documentation: data sources, types, downstream
+  flows, cross-border transfers, retention, legal basis
+- Necessity and proportionality analysis
+- Risk identification from the data subject's perspective
+- Mitigation design — technical, organizational, and contractual
+- Residual risk evaluation and the prior-consultation trigger under
+  GDPR Article 36
 
 <Steps>
-  <Step title="Identify the processing activity">
-    Go to **Privacy → Impact Assessments** and click **New PIA**. Give it a name (e.g. "Customer Behavioral Segmentation via ML Model"). Assign the processing owner. Specify processing purpose, categories of data subjects, and legal basis.
+  <Step title="Adopt the procedure template">
+    Go to **Compliance → Policies → Canonical Library** and search for
+    *Privacy Impact Assessment Procedure*. Click **Adopt** to copy it
+    into your org. Open it in the editor.
   </Step>
-  <Step title="Complete the threshold questionnaire">
-    Regentra prompts: Does this involve automated decision-making? Large-scale processing of special-category data? Selling or sharing personal information? AI for significant decisions? Behavioral advertising? Systematic monitoring? If any answer is yes, proceed to a full PIA. If all are no and processing is routine, mark it low-risk and set a re-assessment date.
+  <Step title="Customize the threshold questionnaire">
+    The default questionnaire follows GDPR Article 35 and CCPA
+    Risk Assessment criteria. Adjust the trigger questions to match
+    your org's actual processing inventory.
   </Step>
-  <Step title="Document data flows and necessity">
-    In the PIA form, describe data sources, data types, downstream flows, cross-border transfers, retention periods, and legal basis. Then assess: is this processing necessary and proportionate? Could you achieve the same goal with less intrusive methods? Are you respecting data minimization?
+  <Step title="Set the approval chain">
+    Name the Privacy Officer / DPO as the primary approver, Legal as
+    secondary, and the Security Officer for any PIA touching
+    automated decision-making or AI. Save and publish.
   </Step>
-  <Step title="Identify risks from the data subject's perspective">
-    Evaluate:
-    - **Re-identification risk** — can de-identified data be reverse-engineered?
-    - **Discrimination and bias** — does an ML model perpetuate bias in consequential decisions?
-    - **Autonomy and deception** — dark patterns? Profiling without knowledge?
-    - **Chilling effects** — could surveillance chill speech, association, or other rights?
-    - **Concrete harm** — financial, employment, reputational, physical?
-    - **Special populations** — children, patients, employees, other vulnerable groups?
-
-    Record risk level (low / medium / high) for each.
-  </Step>
-  <Step title="Design and approve mitigations">
-    For each risk, select a mitigation: data minimization, de-identification, access controls, encryption, retention limits, transparency, consent, opt-out rights, human-review gates, model-fairness testing, vendor contractual controls, or process redesign. Assign owner and completion date. Regentra links each mitigation to controls.
-  </Step>
-  <Step title="Evaluate residual risk and escalate if needed">
-    After mitigations, what risk remains? If residual risk is **high** under GDPR or CCPA, you may need supervisory-authority approval before proceeding. Regentra surfaces a **Request Prior Consultation** button to contact your lead regulator and document feedback.
-  </Step>
-  <Step title="Approve and publish">
-    Privacy Officer and Legal review and approve. Regentra generates an approval certificate with signatures, dates, and reviewers. The PIA enters your register.
-  </Step>
-  <Step title="Re-assess on material change">
-    If the processing changes materially (new data type, vendor, use, or population), click **Re-assess**. Regentra snapshots the prior version and creates a new assessment.
+  <Step title="Acknowledge with stakeholders">
+    Wrap the procedure into a [policy campaign](/compliance/acknowledgment-campaigns)
+    targeting product, engineering, Privacy Officer, Legal, and
+    Security. Their acknowledgments become the evidence the procedure
+    is operative.
   </Step>
 </Steps>
 
+## Running a PIA
+
+The actual PIA happens *inside* the procedure document — your team
+fills out a copy of the procedure's worksheet appendix for each
+processing activity being assessed. Until the first-class PIA record
+type ships, follow this pattern:
+
+1. **Start a worksheet copy** — duplicate the procedure's analysis
+   appendix in your document store (or as an internal Regentra
+   policy with a `pia:` tag) and tie it to the processing activity
+   name.
+2. **Complete the threshold questionnaire** to determine whether a
+   full PIA or a low-risk attestation is the right vehicle.
+3. **Document the processing** — data sources, types, downstream
+   flows, cross-border transfers, retention periods, legal basis.
+4. **Identify risks from the data subject's perspective** — re-
+   identification, discrimination/bias, autonomy, chilling effects,
+   concrete harm, special populations (children, patients,
+   employees).
+5. **Design mitigations** — technical (encryption, de-identification),
+   organizational (access controls, training), contractual (DPA
+   clauses, processor SLAs).
+6. **Open a Risk Register entry** — see below — with the inherent
+   risk before mitigations and the residual risk after. Link the
+   PIA worksheet from the risk's evidence field.
+7. **Route for approval** under the procedure's approval chain.
+8. **Set a re-assessment date** appropriate to the risk level (high
+   risk: 12 months; medium: 24; low: 36).
+
+## Tracking residual risk in the Risk Register
+
+The [Risk Register](/risk-trust/risk-register) is the durable record
+of every risk the PIA process surfaces. Use `category: PRIVACY` (or
+`AI_EMERGING_TECH` for PIAs covering automated decision-making and
+ML systems) so privacy-specific risks aggregate cleanly on the
+register dashboard.
+
+For each PIA, create at least one risk entry with:
+
+- **Inherent likelihood × impact** scored on the 1–5 matrix before
+  mitigations
+- **Treatment plan** — the mitigations the PIA designed
+- **Residual likelihood × impact** after the mitigations land
+- **Owner** — typically the processing owner, with the Privacy
+  Officer as backup
+- **Evidence** — link the PIA worksheet, DPA, vendor questionnaire,
+  ML fairness test results, and any consultation correspondence
+
+If residual risk is **HIGH** on the matrix, GDPR Article 36 requires
+prior consultation with your supervisory authority before processing
+begins. The Risk Register's status field captures the consultation
+state (`OPEN → IN_TREATMENT → CLOSED`).
+
 ## When a PIA is required
 
-PIAs are mandatory under GDPR Article 35 if processing involves:
+The procedure template's threshold questionnaire codifies the regimes;
+the short version:
+
+**Mandatory under GDPR Article 35** if processing involves:
 
 - Automated decision-making with legal or similarly significant effect
 - Systematic monitoring of a public area
-- Large-scale processing of special-category data (health, biometric, racial/ethnic origin, political opinion, union membership, genetic data)
+- Large-scale processing of special-category data (health, biometric,
+  racial/ethnic origin, political opinion, union membership, genetic
+  data, sexual orientation)
 - Matching or combining datasets at scale
 
-Also mandatory under CCPA's Risk Assessment rule (operative 2026) for processing that presents heightened privacy risk — automated decision-making, profiling for targeted advertising, large-scale processing of sensitive personal information, behavioral advertising.
+**Mandatory under CCPA's Risk Assessment rule** (operative 2026) for
+processing that presents heightened privacy risk — automated decision-
+making, profiling for targeted advertising, large-scale processing of
+sensitive personal information, behavioral advertising.
 
-As a best practice, conduct a PIA anytime you launch a new product, add a vendor, or materially change data practices, regardless of regime.
+**Best practice** — conduct a PIA anytime you launch a new product,
+add a vendor that processes personal data, or materially change data
+practices, regardless of regime. The threshold-vs-full path on the
+questionnaire keeps low-risk PIAs lightweight.
+
+## Related templates and pages
+
+- **Privacy Program Policy** — names the Privacy Officer and scopes
+  the program. Adopt this first.
+- **Uses and Disclosures Policy** — the upstream policy that defines
+  permitted uses, which PIAs reference and validate.
+- **Minimum Necessary Policy** — the principle PIAs apply against
+  every data flow.
+- **Consent Management Policy** — covers consent as a legal basis,
+  withdrawal, and recordkeeping.
+- **Vendor Risk Management Policy** + **Vendor Onboarding Procedure**
+  — for every PIA that introduces a new processor.
+- [Risk Register](/risk-trust/risk-register) — where residual risk
+  lands.
+- [Audit Requests](/compliance/audit-requests) — when an auditor asks
+  for "the PIA for X processing", link the procedure + worksheet +
+  Risk Register entry through a single request.
 
 ## Frequently asked questions
 
 <AccordionGroup>
+  <Accordion title="Is there a dedicated PIA module in Regentra today?">
+    Not yet. The procedure + Risk Register pattern is the supported
+    path. A first-class PIA record type is on the roadmap; until it
+    ships, this combination is the audit-defensible workflow.
+  </Accordion>
   <Accordion title="Do I need a PIA for routine operations like email or payroll?">
-    These are often low-risk and may have already been assessed. If processing involves no automated decision-making, no special-category data, and no new vendors or data flows, mark low-risk with a re-assessment date (e.g. 2 years). But if you're profiling employees or migrating to a new vendor, conduct a fresh PIA.
+    Usually no — the threshold questionnaire is designed to filter
+    these out as low-risk with a re-assessment date (typically 2–3
+    years). But if you're introducing profiling, switching vendors, or
+    expanding into a new jurisdiction, run a fresh PIA.
   </Accordion>
-  <Accordion title="Can I share my PIA with a regulator?">
-    Yes. GDPR Article 36 requires sharing your PIA via prior consultation if high risk is identified. Regentra flags which assessments require prior consultation and generates audit-ready exports.
+  <Accordion title="How do I evidence the PIA to an auditor?">
+    Bundle three artifacts in a single [audit request](/compliance/audit-requests):
+    (1) the published PIA procedure with its acknowledgment campaign,
+    (2) the completed worksheet for the specific processing, and (3)
+    the linked Risk Register entry with inherent + residual scores
+    and treatment plan.
   </Accordion>
-  <Accordion title="What if my PIA identifies a serious risk I cannot mitigate?">
-    Privacy Officer and Legal should escalate to executive leadership and the Board. You may need to abandon the processing, redesign it, or accept the risk and document the business justification. Regentra's escalation workflow records the decision with full context.
+  <Accordion title="What if a PIA identifies a serious unmitigable risk?">
+    Escalate per the procedure's approval chain. Options: abandon the
+    processing, redesign it, accept the risk with executive
+    documentation, or trigger prior consultation under GDPR Article
+    36. The Risk Register captures the decision with the residual-
+    risk score and the approving role.
   </Accordion>
-  <Accordion title="Who should be involved?">
-    The processing owner (product/engineering), Privacy Officer, Legal, Security Officer, and ideally representatives of affected individuals. Regentra's collaboration features let you invite cross-functional reviewers and track comments.
-  </Accordion>
-  <Accordion title="How do I link a PIA to controls?">
-    Regentra auto-suggests controls when you select mitigations (encryption suggests encryption controls; consent suggests consent controls). Manually link additional controls. This creates bidirectional traceability between your PIA and [Controls](/compliance/controls).
-  </Accordion>
-  <Accordion title="Do I publish my PIA publicly?">
-    Generally no — it's an internal risk-assessment document. Some public-sector organizations are required to publish a PIA summary. Regentra lets you designate a PIA as public and generates a redacted summary.
+  <Accordion title="Who should be involved in a PIA?">
+    The processing owner (product / engineering), Privacy Officer,
+    Legal, Security Officer, and — for high-impact PIAs — a
+    representative of affected individuals (patient advocate,
+    customer-advisory member, or works council per local law). The
+    procedure template specifies this in its roles section.
   </Accordion>
 </AccordionGroup>

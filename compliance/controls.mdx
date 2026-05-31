@@ -24,8 +24,9 @@ Every control has a status that reflects its current implementation state:
 | **In Progress** | Implementation is underway but not complete |
 | **Implemented** | The control is fully in place and operational |
 | **Needs Review** | The control was previously implemented but requires review — due to expiring evidence, policy changes, or a scheduled review cycle |
-| **Flagged for Review** | Operator parked the control mid-assessment to come back to later. Distinct from Not Started so flagged items show up in a "follow-up needed" filter. Mirrors the HHS SRA Tool's "Flag for later" workflow. |
 | **N/A** | The control does not apply to this organization's environment |
+
+The HHS SRA Tool's "Flag for later" semantic is exposed separately on the **assessment** workflow (see [Risk Assessment → Control assessments](/compliance/risk-assessment)) — assessment statuses include `FLAGGED_FOR_REVIEW`, distinct from the implementation status on the control itself.
 
 <Info>
   Controls default to **Not Started** when a framework is adopted. Updating statuses is how you track progress toward full compliance.
