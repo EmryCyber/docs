@@ -1,0 +1,260 @@
+---
+title: "Huntress Managed SAT Integration"
+description: "Pull workforce-coverage and phishing-simulation results from Huntress Managed SAT (formerly Curricula) into Regentra as compliance evidence."
+---
+
+The Huntress Managed Security Awareness Training integration imports two
+metrics from your Huntress SAT account into Regentra:
+
+- **Workforce-coverage rate** — the share of active learners who finished
+  training in the rolling 365-day window.
+- **Phishing-simulation rates** — the rolling 90-day compromise rate and
+  report rate across completed campaigns.
+
+Both metrics are stored as `MonitoringSignal` evidence rows and surface
+on the relevant control cards in **Compliance → Controls**.
+
+## What syncs
+
+| Signal | Window | Mapped controls |
+| --- | --- | --- |
+| Workforce-coverage rate | Rolling 365 days | Security reminders, workforce privacy training |
+| Phishing compromise + report rates | Rolling 90 days (completed campaigns only) | Security reminders, workforce privacy training, incident response and reporting |
+
+The phishing **report rate** is the operational evidence that personnel
+are reporting suspected security events through the proper channel — it
+maps to the incident-reporting control, not to anti-malware tooling.
+
+<Info>
+  Per-learner records, learner emails, and assignment names are not
+  persisted in Regentra. Only the aggregate counts that drive the rate
+  calculations are stored, so the integration never copies workforce PII
+  out of Huntress.
+</Info>
+
+## Required OAuth scopes
+
+The Huntress API Client must grant exactly these five read-only scopes.
+If any is missing, the token call returns `invalid_scope` and Regentra
+flags the credential as `auth_failed` until you reissue it.
+
+| Scope | What it unlocks in Regentra |
+| --- | --- |
+| `account:read` | Account name, plan, and the `activeLearners` count used as the workforce denominator |
+| `assignments:read` | Lists in-progress and completed assignments (training catalog discovery) |
+| `assignments:learner-activity` | Per-learner activity records — the numerator for the coverage calculation |
+| `learners:read` | Learner records used to deduplicate completions across multiple assignments |
+| `phishing-campaigns:read` | Campaign aggregates: `attemptStats.sent`, `compromised`, `reported` |
+
+Regentra **does not** request write scopes. The API Client cannot create
+assignments, modify learners, or launch campaigns from your side.
+
+## Setup
+
+The full step-by-step lives inline on the Huntress SAT card in
+**Settings → Integrations**. The short version:
+
+<Steps>
+  <Step title="Enable API access on your account">
+    Email **support@huntress.com** and ask them to enable API access for
+    your tenant. This is a one-time provisioning step that typically
+    takes about one business day.
+  </Step>
+  <Step title="Create the API Client">
+    In Huntress → **Settings → API Clients → Create Client**, choose
+    **Client Credentials** as the grant type, and grant the five
+    read-only scopes listed above.
+  </Step>
+  <Step title="Paste credentials into Regentra">
+    On the Huntress SAT card, paste the Client ID and Client Secret.
+    **Leave Account ID blank** unless the API Client has access to
+    multiple accounts — Regentra auto-detects the account when there is
+    exactly one.
+  </Step>
+  <Step title="Test before Save">
+    Click **Test Connection** *before* **Save**. A green result confirms
+    the OAuth token works and the account is visible. After Save, click
+    **Sync Now** to pull the first round of evidence.
+  </Step>
+</Steps>
+
+## Account ID auto-detect
+
+When you leave the Account ID field blank, Regentra calls `/accounts` at
+test/sync time and behaves as follows:
+
+| Visible accounts | Behavior |
+| --- | --- |
+| Exactly one | Use it, backfill the credential row, all future syncs use the stored ID directly |
+| Zero | Hard error — the API Client is provisioned but no accounts are attached. Re-open the support ticket. |
+| Two or more | Hard error listing the available IDs. Paste one into the Account ID field and save again. |
+
+If you typed an Account ID at save time, Regentra validates it precisely
+on every sync — a 404 means the ID is wrong, an account was removed, or
+the API Client lost access.
+
+## How the metrics are calculated
+
+### Workforce-coverage rate
+
+```
+coverage = round(distinctTrainedLearners / activeLearners × 100)
+```
+
+- **Numerator (`distinctTrainedLearners`)** — the count of unique
+  learner IDs whose `completedAt` timestamp falls in the last 365 days
+  across any assignment. A learner who completed three assignments in
+  the window is counted once.
+- **Denominator (`activeLearners`)** — `meta.counts.activeLearners` on
+  the `/accounts/{id}` response. This is Huntress's authoritative
+  workforce size.
+
+| Result | Status |
+| --- | --- |
+| `coverage ≥ 90%` | Pass |
+| `70% ≤ coverage < 90%` | Warning |
+| `coverage < 70%` | Fail |
+| `activeLearners == 0` | Warning (no workforce to measure) |
+
+### Phishing compromise + report rates
+
+Only campaigns with `status: "completed"` ending in the last 90 days are
+included. Campaigns with `attemptStats.sent == 0` are skipped to avoid
+zero-effort tests inflating the denominator.
+
+```
+compromiseRate = round(sum(compromised) / sum(sent) × 100)
+reportRate     = round(sum(reported)    / sum(sent) × 100)
+```
+
+| Result | Status |
+| --- | --- |
+| `compromiseRate ≤ 5%` | Pass |
+| `5% < compromiseRate ≤ 15%` | Warning |
+| `compromiseRate > 15%` | Fail |
+| `sum(sent) == 0` | Warning (no recent campaigns) |
+
+Report rate is recorded alongside compromise rate for evidence
+completeness but does not drive the pass/warning/fail status — the
+compromise rate is the primary signal because it measures harm risk
+directly, while report rate measures the secondary reporting behavior.
+
+## Sync schedule
+
+- **Automatic:** daily at **7:00 AM Eastern Time** (cron
+  `TZ=America/New_York 0 7 * * *`)
+- **Manual:** the **Sync Now** button on the card queues an immediate
+  run that returns within a minute or two
+
+Manual and scheduled syncs are serialized per organization, so clicking
+**Sync Now** during a scheduled run waits for the current run to finish
+rather than racing it.
+
+## Auth failure backoff
+
+If a sync run fails for an auth reason — bad credentials, missing
+scopes, revoked Client — Regentra flags the credential as `auth_failed`
+and **skips it on subsequent scheduled runs for 24 hours**. This stops
+the daily cron from burning Huntress API budget on a known-broken
+credential.
+
+After 24 hours, the credential is retried automatically, so rotating an
+API Client clears the backoff on the next scheduled tick (or sooner if
+you click **Sync Now**).
+
+Auth failures include 401 Unauthorized, `invalid_client`,
+`invalid_grant`, and missing-scope errors. Any other failure (e.g. a
+single assignment 404'ing mid-sync) does **not** trigger the backoff —
+those propagate as a regular `error` status and retry on the next tick.
+
+## Rate-limit budget
+
+Huntress documents two limits per organization (not per token):
+
+- **1,500 requests/hour** sustained
+- **200 requests/minute** burst
+
+A daily sync for a 500-learner tenant typically uses 20–40 requests, so
+the budget is not a concern in practice. Regentra logs a warning to the
+audit trail when `X-RateLimit-Remaining` drops below 100 — if you see
+that warning, check whether another integration or a custom script is
+sharing the same Client.
+
+## Pagination caps
+
+Regentra caps each endpoint to prevent runaway syncs on very large
+tenants:
+
+| Endpoint | Cap | What happens at the cap |
+| --- | --- | --- |
+| `/accounts/{id}/assignments` | 5,000 | The sync truncates with `truncated: true` in metadata |
+| `/assignments/{id}/learner-activity` | 1,000 per assignment | Per-assignment truncation, sync continues |
+| `/accounts/{id}/phishing-campaigns` | 5,000 | The sync truncates with `truncated: true` in metadata |
+
+If a sync run truncates, the evidence row records the flag so auditors
+can see the coverage rate is computed against a partial denominator.
+Contact support if your tenant routinely truncates — we adjust the caps
+per-org rather than rolling them out globally.
+
+## Security model
+
+- **Transport** — all calls are HTTPS-only against `mycurricula.com`.
+  Regentra refuses non-HTTPS URLs and rejects any hostname not on the
+  allowlist, which prevents a corrupted credential from redirecting
+  traffic.
+- **Token storage** — the Client Secret is encrypted at rest with
+  AES-256-GCM using an org/provider/column-bound additional
+  authenticated data (AAD) value, so a database write attack cannot
+  lift one tenant's secret into another tenant's row.
+- **Token lifetime** — access tokens are fetched fresh on every sync run
+  (typically once a day) and are not cached, so a leaked token has at
+  most a single sync run of useful lifetime.
+- **OAuth fallback** — Regentra first tries HTTP Basic Authentication
+  for the token call (`Authorization: Basic <base64>`) and falls back
+  to credentials-in-body only if the server rejects Basic with
+  `401 invalid_client` or `405 method_not_allowed`. New Huntress API
+  Clients accept Basic.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Test Connection returns 'Missing required scopes'">
+    The API Client was created with fewer than five scopes. Open it in
+    Huntress, add the missing scopes, and click **Test Connection**
+    again. You do not need to issue a new client.
+  </Accordion>
+  <Accordion title="Test Connection returns 'no accounts visible to this API Client'">
+    The API Client was provisioned but is not attached to any account.
+    This usually means support enabled API access but skipped the
+    attach step. Reply to the support thread asking them to attach the
+    API Client to your account.
+  </Accordion>
+  <Accordion title="Test Connection lists multiple accounts">
+    Your Client has access to more than one account (common for MSP
+    parents). Copy one of the listed account IDs, paste it into the
+    **Account ID** field, and Test again.
+  </Accordion>
+  <Accordion title="Last Sync shows 'auth_failed' but credentials look right">
+    The Client Secret was probably rotated in Huntress and the old
+    value is still in Regentra. Paste the new secret, Test, then Save.
+    The 24-hour backoff clears on the next successful sync.
+  </Accordion>
+  <Accordion title="Coverage rate is much lower than expected">
+    The denominator is Huntress's `activeLearners` count — verify that
+    in Huntress under **Settings → Account**. If it is correct, the
+    most common cause is that learners completed assignments more than
+    365 days ago and have not retaken anything since; Regentra's window
+    is rolling 365 days, not "ever".
+  </Accordion>
+  <Accordion title="Phishing rate shows 'Warning (no recent campaigns)'">
+    No campaigns ended in the last 90 days, or every recent campaign
+    had `sent == 0`. Launch a campaign in Huntress and run **Sync Now**
+    after it completes.
+  </Accordion>
+  <Accordion title="Sync metadata shows 'truncated: true'">
+    Your tenant exceeded the per-endpoint cap (5,000 assignments or
+    5,000 campaigns). The metrics still compute against the truncated
+    page, but the denominator is partial. Contact support so we can
+    adjust the cap for your org.
+  </Accordion>
+</AccordionGroup>

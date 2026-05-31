@@ -1,0 +1,332 @@
+---
+title: "Cisco Duo Integration"
+description: "Pull MFA enrollment, global authentication policy, admin inventory, lockout settings, and authentication logs from Cisco Duo as compliance evidence."
+---
+
+The Cisco Duo integration imports five compliance signals from your Duo
+tenant on two cadences — a four-hourly identity sync and an hourly
+authentication-log poll. Each signal lands as a `MonitoringSignal`
+evidence row on the relevant control card.
+
+## What syncs
+
+| Signal | Cadence | Mapped controls |
+| --- | --- | --- |
+| User MFA enrollment + status mix | Every 4 hours on the hour | Logical access, user authentication, unique identification |
+| Global authentication policy | Every 4 hours on the hour | Logical access, user authentication, mandatory MFA |
+| Admin inventory (with Owner names) | Every 4 hours on the hour | Authorization & supervision, termination, access authorization, privileged access, account & personnel records |
+| Account lockout + password policy | Every 4 hours on the hour | Logical access, system monitoring, password & lockout policy |
+| Authentication log aggregate | Hourly at `:30` | System activity review, monitoring & logging, audit logging |
+
+The auth-log signal is an aggregate — counts of success / failure /
+FRAUD events, unique users, factor distribution, and the top 10 deny
+reasons. Per-event records and usernames are **not** persisted in
+Regentra, so the integration never copies authentication PII into the
+evidence store.
+
+## Required Admin API permissions
+
+The four-hour sync and hourly poll both reuse the same Admin API
+application. Grant exactly these read-only permissions on the
+application page in the Duo Admin Panel:
+
+| Duo permission | What it unlocks in Regentra |
+| --- | --- |
+| **Grant read information** | Account metadata + `/admin/v1/check` for connection test |
+| **Grant read log** | `/admin/v2/logs/authentication` — the auth-log poll |
+| **Grant read resource** | `/admin/v1/users`, `/admin/v2/policies`, `/admin/v1/settings` |
+| **Grant administrators — Read** | `/admin/v1/admins` — the admin inventory |
+
+<Warning>
+  Do **not** grant **Grant applications**, **Grant set Admin API
+  permissions**, or any write permission. *Grant applications* exposes
+  plaintext client secrets of every Duo app in your tenant (a
+  cross-application credential disclosure), and *Grant set Admin API
+  permissions* is a privilege-escalation surface. Regentra never asks
+  for them.
+</Warning>
+
+## Setup
+
+The full step-by-step lives inline on the Cisco Duo card in
+**Settings → Integrations**. The short version:
+
+<Steps>
+  <Step title="Protect an Admin API application in Duo">
+    In the Duo Admin Panel → **Applications → Protect an Application** →
+    search **Admin API** → **Protect**. Name it something obvious like
+    *Regentra Compliance* so it is easy to identify later.
+  </Step>
+  <Step title="Grant the four read-only permissions">
+    On the application's settings page, enable the four permissions
+    above. Leave everything else unchecked. Save.
+  </Step>
+  <Step title="Copy the three credentials">
+    The application page shows the **Integration key** (`DI…`), the
+    **Secret key**, and the **API hostname** in the format
+    `api-XXXXXXXX.duosecurity.com`. The Secret key is shown only here —
+    if you miss it, you have to reset and recopy.
+  </Step>
+  <Step title="Paste into Regentra and Test before Save">
+    On the Cisco Duo card, paste the three values, click
+    **Test Connection**, then **Save**, then **Sync Now**. The Test
+    Connection call hits `/admin/v1/check`, which returns the server
+    time — that lets Regentra detect clock skew before the first real
+    sync (see Troubleshooting below).
+  </Step>
+</Steps>
+
+## What lands in evidence
+
+### User MFA enrollment
+
+The signal records:
+
+- Total users, plus a breakdown by Duo status (`active`, `bypass`,
+  `disabled`, `locked out`, `pending deletion`).
+- Enrolled vs. unenrolled — a user is "enrolled" if `is_enrolled` is
+  true or they have at least one factor attached (phone, hardware
+  token, WebAuthn credential, desktop token, U2F).
+- Enrollment share = enrolled / total.
+- **Bypass count and member list** — bypass users have been explicitly
+  granted MFA exemption, which is exactly what auditors want to see.
+- Users with a successful login in the last 30 days (activity proxy).
+
+| Result | Status |
+| --- | --- |
+| `bypass > 5%` of total or `enrollmentShare < 80%` | Fail |
+| `0 < bypass ≤ 5%` or `80% ≤ enrollmentShare < 95%` | Warning |
+| Otherwise | Pass |
+
+### Global authentication policy
+
+Regentra calls `/admin/v2/policies`, filters for the policy with
+`is_global_policy: true`, and inspects its `authentication_policy`
+section.
+
+| Result | Status |
+| --- | --- |
+| Global policy enforces 2FA on every authentication | Pass |
+| Global policy allows 1FA / no policy found | Fail |
+
+This is the load-bearing signal for the mandatory-MFA control — without
+a global-enforcement policy, per-application enforcement is a
+configuration-by-configuration audit instead of a tenant-wide one.
+
+### Admin inventory
+
+The signal records every Duo administrator, their role
+(`Owner`, `Administrator`, `Application Manager`, `Help Desk`,
+`Read-only`, `Phishing Manager`), active/inactive status, and last
+login. Owner names are surfaced explicitly so auditors can confirm
+least-privilege without opening the Duo console.
+
+| Result | Status |
+| --- | --- |
+| `total admins > 10` or `Owner count > 5` | Fail |
+| `total admins == 0` | Warning |
+| Otherwise | Pass |
+
+### Account settings
+
+Regentra calls `/admin/v1/settings` and records the lockout policy
+plus the password complexity hints. The status check is on lockout
+only — password policy is informational because Duo defers password
+authentication to the upstream IdP in most deployments.
+
+| Result | Status |
+| --- | --- |
+| `lockout_threshold > 0` and `lockout_expire_duration > 0` | Pass |
+| Either is 0 or missing | Warning |
+
+### Authentication log aggregate
+
+The hourly poll calls `/admin/v2/logs/authentication`, cursors through
+all events in the polling window, and aggregates:
+
+- Total, succeeded, failed, FRAUD, errored counts
+- Unique users (counted by `event.user.key`)
+- Factor distribution (`duo_push`, `passcode`, `phone_call`, `sms`,
+  `webauthn_credential`, …)
+- Top 10 non-success reasons (`no_response`, `user_marked_fraud`, …)
+
+```
+failureRate = failed / total
+```
+
+| Result | Status |
+| --- | --- |
+| Any `fraud > 0` | Fail (user-reported unauthorized attempt) |
+| `failureRate > 25%` | Fail |
+| `5% < failureRate ≤ 25%` | Warning |
+| Otherwise | Pass |
+
+The cursor (`nextAfter`) is persisted between polls so each tick only
+processes new events. On the first poll the window is the last 24
+hours; on subsequent polls the window starts five minutes before the
+last successful poll to catch in-flight events at the boundary. If the
+cursor goes more than 30 days stale (extended outage), Regentra resets
+to the 24-hour lookback rather than chasing through a month of
+backlog.
+
+## Sync schedule
+
+- **Identity sync** — every 4 hours on the hour
+  (`0 */4 * * *`, runs at 00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
+- **Authentication log poll** — hourly at the half-hour (`30 * * * *`)
+- **Manual sync** — the **Sync Now** button on the card queues an
+  immediate identity sync (auth-log polling stays on its own schedule)
+
+Both jobs are serialized per organization, so a Sync Now during a
+scheduled run waits for it to finish.
+
+The auth log poll runs at `:30` rather than `:00` to spread load away
+from other hourly integrations (Okta is on the same `:30` slot for the
+same reason).
+
+## HMAC-SHA512 request signing
+
+Every Admin API call is signed with HMAC-SHA512 using the Secret key.
+The canonical string is:
+
+```
+<UTC date>
+<HTTP method, uppercase>
+<host, lowercase>
+<request path>
+<sorted, URL-encoded params>
+```
+
+Then `signature = HMAC-SHA512(canonical, skey)` and the request goes
+out with `Authorization: Basic base64(ikey:signature)`.
+
+Two consequences worth knowing:
+
+1. **The local clock matters.** Duo rejects signed requests with a
+   stale `Date` header (error code `40103`). If your container clock
+   drifts by more than ~60 seconds, every sync fails until the clock is
+   fixed. The Test Connection step calls `/admin/v1/check` and surfaces
+   the server time so you can spot skew before the first real sync.
+2. **The Secret key is not a bearer token.** Even if it leaks, it
+   cannot be replayed against a different host or with a forged date.
+   But it can be used to mint fresh signatures, so treat it as a
+   high-value secret.
+
+## Auth failure backoff
+
+If a sync fails with a 401-range error, missing-permission error, or a
+clock-skew error (`40103` / `40104`), Regentra flags the credential as
+`auth_failed` and **skips it on subsequent scheduled runs for 24
+hours**. Rationale: a revoked Secret key, a clock-skew problem, or a
+removed permission produces persistent failures, and we do not want the
+4-hour cron to burn Duo API budget on a known-broken credential.
+
+After 24 hours, the credential is retried automatically. Rotating the
+Secret key in Duo and pasting the new one into Regentra clears the
+backoff on the next successful sync.
+
+A 429 rate-limit response is **not** an auth failure — it flags the
+credential as `rate_limited` and retries on the next cron tick. The
+underlying Duo SDK also does its own exponential backoff (1s, 2s, 4s,
+8s, 16s, 32s with jitter) inside a single retry attempt.
+
+## Pagination caps
+
+Regentra hard-caps each endpoint to prevent runaway syncs on very large
+tenants:
+
+| Endpoint | Cap | Pagination style |
+| --- | --- | --- |
+| `/admin/v1/users` | 100 pages × 300 records = 30,000 users | Offset |
+| `/admin/v1/admins` | 100 pages × 300 records = 30,000 admins | Offset |
+| `/admin/v2/policies` | 100 pages × 300 records | Offset |
+| `/admin/v2/logs/authentication` | 25 pages × 1,000 events = 25,000 events per poll | Opaque cursor |
+
+If a sync run truncates, the evidence row records the flag so auditors
+can see the metric is computed against a partial denominator. Contact
+support if your tenant routinely truncates — caps are adjustable
+per-org.
+
+## Security model
+
+- **Transport** — all calls are HTTPS-only against
+  `*.duosecurity.com`. Regentra refuses non-HTTPS URLs and rejects any
+  hostname not matching the `.duosecurity.com` suffix. DNS resolution
+  is checked at request time to defeat rebinding to private IPs.
+- **Credential storage** — the Integration key and Secret key are
+  encrypted at rest with AES-256-GCM using an org/provider/column-bound
+  additional authenticated data (AAD) value. A database-level write
+  attack cannot lift one tenant's secret into another tenant's row
+  without the AAD mismatch tripping the auth tag.
+- **No write surface** — Regentra requests only read permissions; the
+  Admin API cannot create users, disable factors, or change policies
+  from Regentra's side.
+- **Auth log PII** — per-event records are not persisted. Only the
+  aggregate counts (success/failure rates, factor distribution, top-10
+  deny reasons) land in the evidence store.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Test Connection returns 40103 — Invalid Date">
+    The container's clock is more than ~60 seconds out of sync with
+    Duo's clock. On a self-hosted deployment, verify chrony / ntpd is
+    running. On Azure Container Apps and Vercel, host-level NTP is
+    managed for you, so a 40103 here usually means the credential has a
+    stale stored skew flag — reset the credential by saving fresh
+    values.
+  </Accordion>
+  <Accordion title="Test Connection returns 40301 — Permission denied">
+    One of the four required permissions is missing or the
+    permissions were saved before Duo finished applying them. Re-open
+    the application in Duo, confirm all four are checked, save, wait
+    ~30 seconds, and Test again.
+  </Accordion>
+  <Accordion title="Test Connection returns 40002 — Invalid request">
+    The API Hostname field is wrong — usually a copy-paste artifact
+    (extra `https://`, trailing slash, or the admin portal URL pasted
+    instead of the API host). The hostname should look like
+    `api-XXXXXXXX.duosecurity.com`, nothing else.
+  </Accordion>
+  <Accordion title="Last Sync shows 'auth_failed' after rotating the Secret key">
+    Paste the new Secret key, click **Test Connection**, then **Save**.
+    The 24-hour backoff clears on the next successful sync — you do
+    not need to wait the full 24 hours.
+  </Accordion>
+  <Accordion title="MFA enrollment percentage is much lower than expected">
+    Check the bypass count. Bypass users count as *not* enrolled in the
+    enrollment-share denominator even though they can authenticate
+    without MFA, which is the audit-friendly behavior. If your tenant
+    uses bypass for service accounts, expect the rate to be
+    proportionally lower.
+  </Accordion>
+  <Accordion title="Global policy signal shows 'Fail' even though MFA is required">
+    Regentra reads the **global** policy specifically — the one
+    Duo marks `is_global_policy: true`. Per-application policies that
+    enforce 2FA do not count. Open the policy list in Duo and confirm
+    the global policy's *Authentication Policy* section is set to
+    *Enforce 2FA*.
+  </Accordion>
+  <Accordion title="Admin inventory shows more Owners than expected">
+    Owner names are surfaced in the signal metadata. Cross-reference
+    against your authorization-and-supervision policy; if any are
+    stale, demote them in Duo. Owner count above 5 trips the fail
+    threshold because the role grants every other admin permission.
+  </Accordion>
+  <Accordion title="Auth log poll shows 'rate_limited' status">
+    Another integration or a custom script is sharing the same Admin
+    API application and using the same `/admin/v2/logs/authentication`
+    budget. The endpoint is limited to 1 call per minute per tenant.
+    Either move the other consumer to its own Admin API application or
+    contact support to adjust the poll cadence.
+  </Accordion>
+</AccordionGroup>
+
+## MSP customers with multiple Duo tenants
+
+The current release supports one Duo tenant per Regentra
+organization. MSP customers managing multiple downstream Duo tenants
+should connect each client's Duo to that client's Regentra company
+record rather than sharing a single Admin API application across
+tenants. Duo's Accounts API (parent-account aggregation) is a planned
+follow-up — track the [changelog](/changelog) for updates.
