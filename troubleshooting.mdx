@@ -15,7 +15,7 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="SLA shows breached but I responded on time">
-    SLA timers run only during configured business hours. If your business hours or timezone are misconfigured, the SLA calculation may not match your expectations. Verify your business hours in **PSA → Configuration → SLA Policies → [policy name]** and check the timezone in **Settings → Timezone & Display**.
+    SLA timers run only during configured business hours. If your business hours or timezone are misconfigured, the SLA calculation may not match your expectations. Verify your business hours in **PSA → SLA Policies → [policy name]** and check the timezone in **Settings → Timezone & Display**.
   </Accordion>
 
   <Accordion title="Entra sync shows duplicate assets">
@@ -27,7 +27,7 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="Portal login is not working">
-    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status under **PSA → Configuration → Support Portal → Custom Domain** (also reachable through the **Support Portal** tile on the main Settings page). If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
+    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status under **PSA → Support Portal** (also reachable through the **Support Portal** tile on the main Settings page), then open the **Custom Domain** tab. If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
   </Accordion>
 
   <Accordion title="MFA setup fails">
