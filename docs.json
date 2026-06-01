@@ -94,6 +94,7 @@
               "integrations/teams-chat-bridge",
               "integrations/regentra-bot",
               "integrations/level-rmm",
+              "integrations/ninjaone",
               "integrations/okta",
               "integrations/duo",
               "integrations/google-workspace",

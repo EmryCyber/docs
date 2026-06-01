@@ -1,0 +1,321 @@
+---
+title: "NinjaOne RMM Integration"
+description: "Pull device inventory, antivirus posture, patch SLA, disk encryption attestation, and backup activity from NinjaOne into Regentra. Devices land in PSA assets; compliance evidence lands in each compliance-enabled customer's tenant."
+---
+
+The NinjaOne integration is Regentra's RMM-class device-source. One MSP
+credential per NinjaOne regional tenant feeds two outputs simultaneously:
+
+- **PSA asset sync** — every NinjaOne customer organization you map to a
+  PortalCompany contributes its approved devices to that company's
+  Asset list in the PSA module. Updated every 4 hours.
+- **Compliance evidence sweep** — for each mapped customer that has
+  been promoted to a Regentra compliance tenant, five aggregate-only
+  signals refresh every 6 hours: disk encryption posture, antivirus
+  posture, patch SLA, backup activity, and device inventory. Each
+  signal maps to multiple Internal Controls in the CCF catalog.
+
+NinjaOne customers who are NOT compliance-promoted still flow into
+PSA assets; they just don't generate evidence signals. This lets an
+MSP sell compliance to a subset of their book without contaminating
+the compliance-enabled customers' evidence with other customers'
+device counts.
+
+## What you give Regentra
+
+| Field | Where it lives in NinjaOne |
+| --- | --- |
+| Region | Picks the regional NinjaOne tenant (US / US-East 2 / EU / CA / OC). Match the host you sign into. |
+| Client ID | Administration → Apps → API → Client App IDs |
+| Client Secret | Shown once at API client creation — copy immediately |
+
+A single OAuth scope is required: **`monitoring`** (read-only). Regentra
+deliberately does not request `management` (write access) or `control`
+(remote-control sessions) — both are out of scope for compliance evidence
+collection.
+
+## Required permissions in NinjaOne
+
+When you create the API Client:
+
+| Setting | Value |
+| --- | --- |
+| Application Platform | API Services (machine-to-machine) |
+| Allowed Grant Types | Client Credentials |
+| Scopes | Monitoring only |
+| Redirect URIs | Leave blank |
+
+System Administrator role is required to create the API client itself.
+The client, once created, has no role of its own — it sees whatever the
+`monitoring` scope grants on that tenant.
+
+## Setup
+
+The full step-by-step lives inline on the NinjaOne card in
+**Settings → Integrations**. The short version:
+
+<Steps>
+  <Step title="Pick your region first">
+    NinjaOne hard-partitions OAuth credentials by region (US /
+    US-East 2 / EU / CA / OC). Pick the region that matches the URL
+    you sign into NinjaOne with. A wrong region 401s every later API
+    call — Regentra's Test Connection catches this before save.
+  </Step>
+  <Step title="Create the API Client in NinjaOne">
+    In NinjaOne → **Administration → Apps → API → Client App IDs →
+    Add**. Application Platform = **API Services**. Enable
+    **Client Credentials** grant type. Enable the **Monitoring**
+    scope only.
+  </Step>
+  <Step title="Copy the Client ID and Client Secret">
+    NinjaOne reveals the Client Secret exactly once. Copy both
+    values immediately into Regentra's Client ID and Client Secret
+    fields.
+  </Step>
+  <Step title="Test before Save">
+    Click **Test Connection** before Save. A green result confirms
+    the region + scopes + credentials are correct against NinjaOne's
+    regional API and surfaces the number of organizations visible.
+  </Step>
+  <Step title="Save">
+    Save the credentials. Regentra generates an audit log entry on
+    your MSP organization recording the connect event. The
+    integration card shows **Connected**.
+  </Step>
+</Steps>
+
+## Mapping NinjaOne organizations to PSA companies
+
+NinjaOne organizes its customer device fleets under "organizations"
+inside your tenant. Each NinjaOne organization binds to exactly one
+Regentra PortalCompany — or is explicitly marked "don't sync" so it
+stays out of both PSA and compliance.
+
+After your first save, click **Review organization mappings →** on
+the integration card. Regentra walks NinjaOne's `/organizations`
+endpoint and surfaces every customer org with:
+
+- The current mapping state (Pending review / Mapped / Ignored)
+- A suggested PortalCompany if Regentra can match by exact name
+  (case-insensitive)
+- Action buttons: **Use existing**, **Create new**, **Don't sync**
+
+For each row:
+
+- **Use existing** binds the NinjaOne org to a PortalCompany you
+  already have in PSA.
+- **Create new** creates a fresh PortalCompany using the NinjaOne
+  org's name. If a PortalCompany with that name already exists,
+  Regentra reuses it instead of duplicating.
+- **Don't sync** records the mapping as IGNORED so re-discovery
+  doesn't keep prompting you. Devices from that NinjaOne org never
+  flow into Regentra.
+
+The mapping survives credential reconnect — disconnecting and
+reconnecting NinjaOne doesn't force you to re-map every customer.
+
+## PSA asset sync
+
+| | |
+| --- | --- |
+| Cadence | Every 4 hours at **:15** (offset from the Entra identity sync at **:00**) |
+| Trigger | Inngest cron + per-company manual sync button |
+| Scope | Every MAPPED IntegrationOrgMapping for the credential |
+| Writes | `Asset` rows on the MSP org with `externalSource = "ninjaone"`, linked to the bound `PortalCompany` |
+| Dedup | NinjaOne wins over Level, Intune, and Entra. Devices appearing in multiple sources are retired from the lower-priority source. |
+
+Devices are filtered to **approved** before pulling — `pending` and
+`rejected` devices stay in NinjaOne but are skipped by sync.
+
+If the sync hits NinjaOne's 10,000-device-per-org ceiling, the audit
+log records `truncatedAny: true` so you can see the shortfall
+without checking each customer manually.
+
+### Per-company sync
+
+The PSA Company detail page (when bound to a NinjaOne org) exposes a
+**Sync With NinjaOne** button next to the existing **Sync With M365**
+button. It queues an Inngest event scoped to one mapping so a single
+customer can be refreshed on demand without waiting for the next
+4-hour cron tick.
+
+## Compliance evidence sweep
+
+For every NinjaOne organization mapped to a PortalCompany that has
+been **promoted to a Regentra compliance tenant**, the evidence sweep
+collects five aggregate-only signals every 6 hours.
+
+| | |
+| --- | --- |
+| Cadence | Every 6 hours at **:30** |
+| Trigger | Inngest cron (no manual trigger today) |
+| Scope | Every MAPPED IntegrationOrgMapping where `PortalCompany.convertedToOrganizationId` is set |
+| Writes | `MonitoringSignal` + `Evidence` rows on the customer's compliance org (NOT on the MSP org) |
+
+The five signals:
+
+| Signal | What it measures | Pass / warning / fail |
+| --- | --- | --- |
+| `disk_encryption` | In-scope volumes encrypted (BitLocker / FileVault / equivalent). | Pass ≥ 95% encrypted; warning 80-95%; fail < 80%. |
+| `antivirus_posture` | Real-time-protection state + signature freshness across managed devices. | Pass 100% RTP enabled AND signature ≤ 7 days; warning 7-30 days; fail any RTP off OR signature > 30 days. |
+| `patch_sla` | Critical + Important OS / software patches outstanding. | Pass 0 missing; warning 1-5; fail ≥ 6 OR any failed install. |
+| `backup_activity` | Successful `BACKUP` activity events in a rolling 7-day window per device. | Pass every device with backup activity has ≥ 1 success; warning some devices only failed; fail ≥ 10% of devices without success. |
+| `device_inventory` | Total approved device count + offline tally. | Pass ≥ 1 device and < 50% offline; warning otherwise. |
+
+### What lands in `MonitoringSignal.metadata`
+
+**Aggregates only.** Every signal metadata object carries counts,
+percentages, vendor distributions, and bucket counts — never hostnames,
+IPs, serial numbers, drive letters, or last-logged-on-user values. The
+Trust Center reads from the same table; per-device identifiers in
+metadata would leak customer device inventory if the customer's Trust
+Center is public.
+
+This is enforced by an automated test that scans every aggregator's
+output against a PII deny list.
+
+### Tenant isolation
+
+The evidence sweep is a two-stage Inngest pipeline:
+
+1. A scheduled cron runs on the MSP scope, lists active NinjaOne
+   credentials, joins to mappings whose PortalCompany has been
+   compliance-promoted, and emits one event per (mspCredentialOrgId,
+   customerComplianceOrgId, mappingId, region, externalOrgId) tuple.
+2. A per-customer worker reads the event, decrypts the MSP credential,
+   pulls the customer's data from NinjaOne, and writes signals into
+   the **customer's compliance tenant** — not the MSP's. Concurrency
+   is keyed on the customer's compliance org so two customers' sweeps
+   run in parallel.
+
+The worker's source carries automated tests that assert:
+
+- Every credential lookup uses the MSP's organization id.
+- Every `collectEvidence` call's destination is the customer's
+  compliance organization id.
+- Every audit log row lands on the customer's compliance organization.
+- Variable naming never conflates the two ids.
+
+### First-sync dry-run
+
+The first compliance sweep after you connect NinjaOne writes signals
+but suppresses the auto-ticket bridge — the operator-visible flag
+`firstEvidenceSyncedAt` is `NULL` until the first successful sweep.
+This means: a 50-customer MSP turning NinjaOne on doesn't wake up to
+250 HIGH-priority tickets on day one if every customer happens to
+have failing antivirus or outstanding patches.
+
+After the first sweep completes, the flag is stamped and subsequent
+sweeps route findings to the MSP's PSA queue through the standard
+bridge.
+
+## Internal Control mappings
+
+| Signal | Internal controls |
+| --- | --- |
+| `disk_encryption` | IC-024 (Encryption at Rest), IC-052 (Endpoint Configuration) |
+| `antivirus_posture` | IC-013 (Protection from Malicious Software), IC-051 (Endpoint Protection) |
+| `patch_sla` | IC-038 (Vulnerability Management), IC-053 (Patch Management) |
+| `backup_activity` | IC-060 (Data Backup), IC-061 (Backup Testing) |
+| `device_inventory` | IC-031 (Asset Inventory), IC-032 (Asset Classification) |
+
+Each Internal Control crosswalks to its framework requirements in
+the CCF (HIPAA, SOC 2, NIST CSF, ISO 27001, CMMC, PCI DSS, GDPR, FTC
+Safeguards). One NinjaOne signal evidences the same control across
+every adopted framework simultaneously.
+
+## Disconnecting NinjaOne
+
+Disconnect from the integration card. Regentra:
+
+1. Zeros all encrypted credential columns and flips `isActive=false`.
+2. Retires every Asset row with `externalSource = "ninjaone"` in the
+   MSP org (rows preserved for historical traceability;
+   `status="RETIRED"` takes them out of the active list).
+3. Writes an audit log row on **every customer compliance tenant**
+   that the disconnect affects, so each customer's auditor sees the
+   `NINJAONE_DISCONNECTED` event in their trail.
+4. Leaves existing `MonitoringSignal` rows alone — they age out
+   naturally via their 7-day `expiresAt`. The auditor needs to see
+   "the integration was disconnected with N signals already collected"
+   at the moment of disconnect; wiping them would erase that record.
+5. Leaves `IntegrationOrgMapping` rows alone, so a future reconnect
+   doesn't force you to re-map every customer.
+
+If you reconnect the credential (same region) using
+new credentials at NinjaOne's side, the mapping table is preserved
+and the next cron run resumes evidence collection on every previously
+mapped customer.
+
+## Rate limits and pagination
+
+NinjaOne enforces per-tenant rate limits (1500 requests/hour
+sustained, 200/min burst). Regentra's sync workers stay comfortably
+under that cap on every cadence we ship:
+
+- 4-hour PSA sync: one `/organizations` list + one `/devices-detailed`
+  page per mapped customer.
+- 6-hour compliance sweep: six endpoints per customer.
+
+Both syncs honor `X-RateLimit-Remaining` and log a warning if it
+drops below 100. Discovery requests cap at 5,000 organizations and
+10,000 devices per organization; if you exceed either, the sync
+records a `truncated: true` marker in metadata so you can see the
+shortfall in the audit log.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Test Connection returns 401 invalid_client">
+    Either the Client ID or Client Secret is wrong, or the region
+    doesn't match the host where the credentials were issued. Confirm
+    the region in NinjaOne's URL bar and re-test.
+  </Accordion>
+  <Accordion title="Test Connection succeeds but lists 0 organizations">
+    The API client was created at the system level but isn't attached
+    to any customer organization. In NinjaOne, edit the API client and
+    confirm it's tenant-scoped or has org assignments — the
+    `monitoring` scope needs visibility on at least one customer org
+    to be useful.
+  </Accordion>
+  <Accordion title="Mapping page says 'NinjaOne is not configured for any region yet'">
+    The page reads the region from your saved credential. If you
+    haven't saved a credential, save one first; the page will then
+    auto-detect the region and load the mapping list.
+  </Accordion>
+  <Accordion title="My customer isn't showing up in mappings even though they exist in NinjaOne">
+    Hit **Refresh from NinjaOne** at the top of the mappings page. If
+    the customer still doesn't appear, confirm in NinjaOne that the
+    customer org exists and the API client has visibility (the
+    `monitoring` scope honors tenant-level permission scoping).
+  </Accordion>
+  <Accordion title="Compliance signals aren't appearing for one customer">
+    The compliance sweep only runs for customers whose PortalCompany
+    has been **promoted to a Regentra compliance tenant**. Confirm
+    the customer's PSA company has a linked compliance organization
+    (Compliance → Clients → [customer]). If the customer hasn't
+    purchased compliance, NinjaOne data flows into PSA assets only.
+  </Accordion>
+  <Accordion title="First sync didn't create any tickets even though signals are failing">
+    By design. The first sweep after connect is a dry run: signals
+    land in the compliance tenants but the auto-ticket bridge is
+    suppressed so you can review findings before they hit your PSA
+    queue. After the first successful sweep, subsequent runs route
+    findings to your queue normally.
+  </Accordion>
+</AccordionGroup>
+
+## What this integration does NOT do
+
+- **No remote control sessions.** Regentra never requests the
+  `control` scope, even if NinjaOne offers it.
+- **No write-back to NinjaOne.** Regentra never requests the
+  `management` scope. Future read-write features (e.g., setting a
+  `regentra_compliance` custom field per device) would require an
+  explicit opt-in toggle in the integration card.
+- **No per-event device telemetry.** The activity log is sampled
+  only as aggregates for the backup-activity signal; individual
+  device events are not persisted in Regentra.
+- **No NinjaOne webhook ingestion (yet).** When webhooks ship in a
+  later phase, they'll mirror the Stripe / Level webhook security
+  posture (HMAC-signed payloads, replay window, idempotency).
