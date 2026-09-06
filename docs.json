@@ -164,7 +164,7 @@
   },
   "feedback": {
     "thumbsRating": true,
-    "suggestEdit": true
+    "suggestEdit": false
   },
   "search": {
     "prompt": "Search Regentra docs..."
