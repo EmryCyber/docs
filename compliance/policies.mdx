@@ -79,9 +79,9 @@ Self-approval is **allowed**, not blocked. In a solo-admin or two-person MSP, th
 
 ## Per-requirement applicability badges
 
-Compliance programs vary by organization type — a non-clearinghouse covered entity does not need to satisfy §164.308(a)(4)(ii)(A), and an org that doesn't operate in the EU has no GDPR Article 27 representative obligations. Regentra surfaces this on each framework requirement directly.
+Compliance programs vary by organization type — a requirement that only binds business associates doesn't apply to a covered entity, and vice versa. Regentra surfaces this on each framework requirement directly.
 
-On any framework detail page (**Compliance → Frameworks → [framework]**), requirements that apply only to specific organizational roles render with an **applicability badge** — for example `clearinghouse only` or `controller only`. Hover the badge for the long-form explanation. If the role does not match your org, mark the corresponding control **N/A** with a one-line justification.
+On any framework detail page (**Compliance → Frameworks → [framework]**), requirements that apply only to specific organizational roles render with an **applicability badge** — for example `business-associate only` or `covered-entity only` (other roles used across frameworks include merchant, service-provider, and multi-tenant-service-provider). Hover the badge for the long-form explanation. If the role does not match your org, mark the corresponding control **N/A** with a one-line justification.
 
 <Tip>
   The badges are a heads-up, not an auto-N/A. Auditors generally accept an N/A on a flagged requirement as long as the justification names the role mismatch — "we are not a clearinghouse" is sufficient.
@@ -98,22 +98,7 @@ Regentra maintains a **complete version history** for every policy. Each time a 
 
 ## Signature Campaigns
 
-Signature campaigns let you send policies to employees for formal acknowledgment.
-
-<Steps>
-  <Step title="Create a campaign">
-    From the policy detail page, click **Create Campaign**. Select the policy and choose your target audience — all employees, a specific department, or individual users.
-  </Step>
-  <Step title="Configure the campaign">
-    Set a deadline for signatures and customize the notification message. You can require employees to confirm they have read the full document.
-  </Step>
-  <Step title="Launch the campaign">
-    Click **Send**. Each recipient gets a notification (email and in-app) with a link to review and sign the policy.
-  </Step>
-  <Step title="Track completion">
-    Monitor the campaign dashboard to see who has signed, who has not, and overall completion percentage.
-  </Step>
-</Steps>
+Signature campaigns let you send one or more policies to employees for formal acknowledgment. Campaigns are created from **Campaigns** in the sidebar, not from an individual policy's detail page — see [Acknowledgment Campaigns](/compliance/acknowledgment-campaigns) for the full walkthrough of building recipient lists, setting a due date, and sending.
 
 ## Campaign Tracking and Reminders
 
@@ -124,7 +109,7 @@ The campaign dashboard shows real-time completion status:
 - **Overdue** — employees who have missed the deadline
 
 <Info>
-  You can send manual reminders to pending employees or configure automatic reminders at intervals you define (e.g., 3 days before deadline, 1 day after deadline).
+  Reminder emails go out automatically on a fixed schedule — 7 days before the deadline, 1 day before, and on the due date itself, then every 3rd day after the deadline (copying the recipient's manager) until it's signed. There's no manual "send reminder now" button and the schedule isn't user-configurable.
 </Info>
 
 Completed signature records are stored as **compliance evidence** and can be attached to relevant controls. This creates a direct audit trail from framework requirement to policy to employee acknowledgment.

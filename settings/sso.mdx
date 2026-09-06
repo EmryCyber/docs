@@ -11,63 +11,51 @@ Enable SSO so your team members sign in to [app.regentra.io](https://app.regentr
 
 ### Setup
 
+There's no Azure app registration to create and no Tenant ID / Client ID / Client Secret to enter — staff SSO authenticates through Regentra's own multi-tenant Azure AD app, and setup is a single click.
+
 <Steps>
-  <Step title="Register the Regentra app in Azure AD">
-    In the Azure portal, go to **Azure Active Directory → App registrations → New registration**. Set the redirect URI to the value provided in Regentra's SSO settings page.
+  <Step title="Open Authentication & SSO settings">
+    Go to **Settings → Authentication & SSO**.
   </Step>
-  <Step title="Configure API permissions">
-    Grant the app the following delegated permissions: `openid`, `profile`, `email`, `User.Read`.
+  <Step title="Connect with Microsoft">
+    Click **Connect with Microsoft**. You're redirected to a Microsoft sign-in — Regentra detects your Azure tenant automatically from that sign-in. Only a normal sign-in is required; no admin consent or extra Azure permissions are needed.
   </Step>
-  <Step title="Create a client secret">
-    Under **Certificates & secrets**, generate a new client secret. Copy the value immediately — it is only shown once.
-  </Step>
-  <Step title="Enter details in Regentra">
-    Go to **Settings → Authentication & SSO** and enter:
-    - **Tenant ID** — Your Azure AD tenant ID
-    - **Client ID** — The Application (client) ID from the app registration
-    - **Client Secret** — The secret value you generated
-  </Step>
-  <Step title="Test SSO">
-    Click **Test Connection** to verify the OAuth flow. Regentra redirects to Microsoft login and back.
-  </Step>
-  <Step title="Enable SSO">
-    Toggle SSO on. Team members will see a **Sign in with Microsoft** button on the login page.
+  <Step title="SSO is on">
+    Once connected, the card shows **Entra ID Single Sign-On** with an **Enabled** badge and your (partially masked) tenant ID. Use the toggle to pause SSO without losing the connection, or **Disconnect** to remove it entirely.
   </Step>
 </Steps>
 
 <Note>
-  Enabling SSO does not disable email/password login. Users can sign in with either method unless you enforce SSO-only in the security settings.
+  Enabling SSO does not disable email/password login. Users can sign in with either method — Regentra has no separate "SSO-only, no passwords" enforcement setting.
 </Note>
 
 ## Portal SSO
 
-Portal SSO is configured separately for each client. This allows your client's end users to sign in to the support portal using their own Entra ID credentials.
+Portal SSO lets portal contacts synced from Entra sign in to the support portal with their own Microsoft work accounts, instead of a portal password. It's two separate pieces: connecting a client's Microsoft 365 tenant, and turning the portal-wide sign-in toggle on.
 
 <Steps>
-  <Step title="Switch to the client context">
-    Select the client in the sidebar switcher.
+  <Step title="Connect the client's Microsoft 365 tenant">
+    Switch into the client, go to **PSA → Companies**, open the company, and find the **Microsoft 365** card. Click **Connect** — this redirects the client's own Microsoft admin to grant consent; you never enter a tenant ID by hand.
   </Step>
-  <Step title="Navigate to portal settings">
-    Open **PSA → Support Portal** (or click the **Support Portal** tile on the main Settings page), then switch to the **Authentication** tab.
-  </Step>
-  <Step title="Enable Entra SSO">
-    Enter the client's Azure AD tenant ID. The OAuth flow uses Regentra's multi-tenant app registration — no additional app registration is needed in the client's tenant.
-  </Step>
-  <Step title="Admin consent">
-    The client's Azure AD admin must grant consent for the Regentra portal app. Share the admin consent link from the portal settings page.
+  <Step title="Turn on the portal sign-in toggle">
+    Still in the client's context, open **PSA → Support Portal** (or click the **Support Portal** tile on the main Settings page) and find the **Portal Single Sign-On (Entra ID)** card. The toggle is disabled until a Microsoft 365 connection exists; once one does, switch it on.
   </Step>
 </Steps>
 
+<Note>
+  There's no separate "Authentication" tab or a field to type in a tenant ID for portal SSO — the Support Portal settings page is a single scrolling page of cards, and this one is just an on/off switch gated on the Microsoft 365 connection above.
+</Note>
+
 ## SSO and MFA interaction
 
-When SSO is active, MFA is handled by Azure AD's conditional access policies — not by Regentra's own [passkeys or TOTP MFA](/settings/mfa). This means:
+SSO does not blanket-skip Regentra's own MFA — Regentra checks whether Azure AD's sign-in response actually proves MFA happened (via the token's authentication-methods claim), and only skips its own [passkey or TOTP challenge](/settings/mfa) when it can:
 
-- If Azure AD enforces MFA, users complete the MFA challenge during the Microsoft login flow
-- Regentra does not prompt for a second MFA step
-- Users who sign in via email/password (non-SSO) still use Regentra's built-in passkey or TOTP MFA
+- If Azure AD's conditional access enforced MFA on that specific sign-in, Regentra treats that as satisfying its own MFA requirement and doesn't re-prompt.
+- If Regentra can't confirm the IdP performed MFA (Azure AD didn't enforce it, or the proof is missing from the token), and this user still requires MFA — because of their role or your org's MFA setting — Regentra falls back to its own passkey/TOTP challenge (or a trusted-device cookie, if you have one) after the SSO sign-in completes.
+- Admin-tier roles (Admin, Super Admin, MSP Admin) still always require MFA regardless of SSO, per [Who needs MFA](/settings/mfa#who-needs-mfa) — SSO doesn't exempt them, it can only satisfy the requirement when Azure AD's own proof is strong enough.
 
 <Info>
-  For the strongest security posture, enforce MFA in Azure AD conditional access policies and enable SSO-only login in Regentra to eliminate password-based access entirely.
+  For the strongest security posture, enforce MFA in Azure AD conditional access policies so SSO logins carry that proof and skip Regentra's own prompt too. Regentra doesn't have a setting to disable password-based login entirely once SSO is connected.
 </Info>
 
 ## Account lockout

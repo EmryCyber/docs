@@ -11,19 +11,17 @@ Risk assessment is the process of identifying, analyzing, and evaluating risks t
   <Step title="Navigate to Risk Assessment">
     Open the **Compliance** module and select **Risk Assessment** from the sidebar.
   </Step>
-  <Step title="Start a new assessment">
-    Click **New Assessment**. Choose the assessment type:
-    - **Security Risk Assessment (SRA)** — required for HIPAA, aligned with HHS guidance
-    - **General Risk Assessment** — suitable for SOC 2, NIST CSF, ISO 27001, and other frameworks
+  <Step title="Start a new assessment (Setup)">
+    Click **New Assessment**. Name the assessment, note who's conducting it, choose a **Methodology** — NIST SP 800-30 Rev 1 (recommended), NIST SP 800-66 Rev 2, HHS SRA Tool v3.6, ISO 27001 / ISO 27005, or a custom Qualitative Analysis — and set the next review date.
   </Step>
-  <Step title="Define the scope">
-    Specify which systems, data types, and business processes are in scope. For HIPAA SRAs, this includes all systems that create, receive, maintain, or transmit electronic protected health information (ePHI).
+  <Step title="Define scope & assets">
+    Describe which systems, applications, and locations are in scope (the default text is written for a HIPAA ePHI scope and can be edited for other frameworks), list the asset inventory, and optionally note any threats already known.
   </Step>
-  <Step title="Identify threats and vulnerabilities">
-    Work through the assessment questionnaire to identify threats (what could go wrong) and vulnerabilities (weaknesses that could be exploited). Regentra provides a curated threat catalog to guide this process.
+  <Step title="Review and create">
+    Confirm the summary and click **Create Assessment**.
   </Step>
-  <Step title="Score and finalize">
-    Review the calculated risk scores, add any additional context, and finalize the assessment.
+  <Step title="Add findings and score">
+    From the assessment's Findings tab, add risk findings from the pre-populated threat library or as custom entries, rate each by likelihood and impact, attach supporting evidence, and define remediation plans with owners.
   </Step>
 </Steps>
 
@@ -50,7 +48,7 @@ Each cell is the inherent risk for that combination. Notable cells that surprise
 - **Low × High = High** (a low-probability but catastrophic event is still a high-priority finding)
 
 <Note>
-  Regentra also accepts a fourth "Critical likelihood" tier (for findings the operator wants to flag as effectively-certain). Any cell in the Critical likelihood row is at minimum the same level as the corresponding High likelihood row, never lower.
+  Regentra also accepts a fourth "Critical" tier on both likelihood and impact (for findings the operator wants to flag as effectively-certain, or catastrophic). Any row/column using Critical produces a result at least as high as the corresponding High row/column, never lower.
 </Note>
 
 <Tip>
@@ -84,7 +82,7 @@ Most compliance frameworks require risk assessments to be reviewed and updated o
 - **ISO 27001** — requires risk assessment updates when significant changes occur or at planned intervals
 
 <Warning>
-  Regentra tracks when your last assessment was completed and alerts you when a review is due. Do not let assessments go stale — outdated risk assessments are a common audit finding and regulatory citation.
+  Do not let assessments go stale — outdated risk assessments are a common audit finding and regulatory citation.
 </Warning>
 
-Regentra sends dashboard notifications and optional email reminders as your review date approaches, so your team can plan the next assessment cycle in advance.
+Each assessment's next-review date is tracked and shown on the Compliance Calendar, so your team can plan the next assessment cycle in advance.

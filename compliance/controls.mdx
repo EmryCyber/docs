@@ -81,7 +81,11 @@ Throughout the controls list and dashboard, the domain grouping Regentra uses (e
 
 ### Cross-framework citations (NIST CSF, HPH CPG, HICP)
 
-Below the Framework Mappings, each control card shows an **Also referenced as** panel sourced from the HHS/ONC SRA Tool v3.6.1. For every HIPAA §ref the control covers, the panel lists:
+These citations aren't on the standalone control detail page above — they
+show up on the **Controls (SRA)** tab of an individual [Risk
+Assessment](/compliance/risk-assessment), where each control card shows an
+**Also referenced as** panel sourced from the HHS/ONC SRA Tool v3.6.1. For
+every HIPAA §ref the control covers, the panel lists:
 
 - **NIST CSF 2.0** subcategory IDs (e.g., `ID.RA`, `PR.AC-7`, `DE.CM-7`)
 - **HPH CPG** numeric references (Health and Public Health Critical Performance Goals)
@@ -91,13 +95,13 @@ These cross-references mean a customer reviewing a control sees every external f
 
 ## SRA Tool question reference
 
-For each control whose `hipaaRef` matches a question in the HHS/ONC SRA Tool v3.6.1 workbook, the control card shows a collapsible **HHS SRA Tool questions for §164.xxx** panel listing every SRA question that probes that §ref. Each question renders:
+Also on that same **Controls (SRA)** tab: for each control whose `hipaaRef` matches a question in the HHS/ONC SRA Tool v3.6.1 workbook, the control card shows a collapsible **HHS SRA Tool questions for §164.xxx** panel listing every SRA question that probes that §ref. Each question renders:
 
 - The question text and its `SRA-S{section}-Q{n}` code
-- HHS's `Required` / `Addressable` flag (when present)
+- HHS's `Required` flag (when present)
 - The full multi-choice answer set with HHS's per-answer markers (✓ compliant per HHS, ! risk indicated, · skip)
 
-This is a **read-only reference** — Regentra does not currently track which answers operators select. Operators running the SRA Tool workbook in parallel use this panel to see "for this control, here are the HHS questions to answer" alongside Regentra's control checklist + evidence. See [Risk Assessment → Alignment with the HHS/ONC SRA Tool](/compliance/risk-assessment#alignment-with-the-hhsonc-sra-tool) for the broader picture.
+This is a **read-only reference** — Regentra does not currently track which answers operators select. Operators running the SRA Tool workbook in parallel use this panel to see "for this control, here are the HHS questions to answer" alongside Regentra's control checklist + evidence. See [Risk Assessment](/compliance/risk-assessment) for the broader picture.
 
 ## Gap Analysis
 
@@ -123,5 +127,5 @@ The gap analysis view shows you where your compliance program stands and where t
 </Tip>
 
 <Warning>
-  Setting a control to **N/A** removes it from your compliance score calculation. Only mark controls as N/A when the requirement genuinely does not apply to the organization's environment — auditors will ask for justification.
+  Setting a control to **N/A** counts it as fully satisfied in your compliance score calculation, the same as **Implemented** — it does not get excluded from the count. Only mark controls as N/A when the requirement genuinely does not apply to the organization's environment — auditors will ask for justification.
 </Warning>

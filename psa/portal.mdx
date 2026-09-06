@@ -15,13 +15,13 @@ Each client gets a dedicated support portal — a white-label interface where th
     Customers see real-time status updates on their open and resolved tickets.
   </Card>
   <Card title="Live chat" icon="comments">
-    Real-time messaging with your technicians. Chat sessions convert to tickets when closed.
+    Real-time messaging with your technicians. Starting a chat creates a ticket immediately, with the opening message as its first reply.
   </Card>
   <Card title="Knowledge base" icon="book">
     Public KB articles are searchable and browsable from the portal.
   </Card>
   <Card title="Asset view" icon="laptop">
-    Customers see devices associated with their account, synced from Entra ID and Level.io.
+    Customers see devices associated with their account, synced from Entra ID, Level.io, and NinjaOne.
   </Card>
 </CardGroup>
 
@@ -34,16 +34,16 @@ Customize the portal appearance under **PSA → Support Portal** (also reachable
 - **Custom CSS** — Override any portal style with your own CSS for full control
 
 <Tip>
-  Branding is configured per client, so you can white-label the portal differently for each customer.
+  There is one support portal per MSP organization — every one of your clients signs in to the same branded portal (differentiated by their own login, not by separate per-client branding). Branding fields live on your organization, not per client.
 </Tip>
 
 ## Custom domain setup
 
-Host the portal on your client's domain (e.g., `support.clientname.com`):
+Host your portal on your own domain (e.g., `support.yourmspname.com`), used by all of your clients:
 
 <Steps>
   <Step title="Add the domain">
-    Open **PSA → Support Portal**, switch to the **Custom Domain** tab, and enter the desired subdomain.
+    Open **PSA → Support Portal**, scroll to the **Custom Domain** section, and enter the desired subdomain.
   </Step>
   <Step title="Configure DNS">
     Add a CNAME record pointing your subdomain to the Regentra portal endpoint provided in the setup wizard.
@@ -61,10 +61,10 @@ Host the portal on your client's domain (e.g., `support.clientname.com`):
 
 <Tabs>
   <Tab title="Email / Password">
-    End users register with their email and set a password. A verification email is sent on first signup.
+    There's no open self-registration — a technician creates the portal contact (manually or via Entra sync) and sends an invite; the end user follows the emailed link to set their own password.
   </Tab>
   <Tab title="Entra SSO">
-    Customers with Microsoft Entra ID can sign in using their existing corporate credentials. Enable this in the portal settings for each client. See [Microsoft Entra ID Integration](/integrations/microsoft-entra) for setup.
+    Customers with Microsoft Entra ID can sign in using their existing corporate credentials. This is a single portal-wide toggle in **PSA → Support Portal**, not configured per client. See [Microsoft Entra ID Integration](/integrations/microsoft-entra) for setup.
   </Tab>
 </Tabs>
 
@@ -72,9 +72,9 @@ Host the portal on your client's domain (e.g., `support.clientname.com`):
 
 Portal contacts are the end users who can access the portal. Contacts can be:
 
-- **Manually created** in the portal settings
+- **Manually created** on the PSA → [Contacts](/psa/companies-contacts) page
 - **Synced from Microsoft Entra ID** — Users from the client's Entra tenant are automatically imported as portal contacts
 
 <Info>
-  Synced contacts update automatically every 6 hours. Changes to user attributes in Entra (name, email, department) are reflected in the portal on the next sync.
+  Synced contacts update automatically every 4 hours. Changes to user attributes in Entra (name, email, department) are reflected in the portal on the next sync.
 </Info>

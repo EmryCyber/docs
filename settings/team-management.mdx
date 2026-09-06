@@ -11,16 +11,16 @@ Team management controls who has access to your Regentra organization and what t
   <Step title="Navigate to team settings">
     Go to **Settings → Team Members**.
   </Step>
-  <Step title="Click Invite Member">
-    Enter the person's email address and select a role.
+  <Step title="Click Add Member">
+    Enter the person's full name and email address, and select a role.
   </Step>
-  <Step title="Send invitation">
-    The invitee receives an email with a link to create their account and join your organization.
+  <Step title="Add & Send Welcome Email">
+    The account is created immediately, and the new member receives a welcome email with a link to set their password and sign in.
   </Step>
 </Steps>
 
 <Note>
-  Invitations expire after 7 days. If the link expires, you can resend the invitation from the team management page.
+  The set-password link in the welcome email expires after 72 hours. There's no in-app way to resend it once it expires — if a new member misses the window, an admin needs to trigger a password reset for them from the login page instead.
 </Note>
 
 ## Roles
@@ -85,13 +85,11 @@ no cross-tenant visibility.
     **Settings → Auditor Access → Invite Auditor**.
   </Step>
   <Step title="Fill in the auditor's details">
-    - **Name** + **email** — for audit-log attribution and the
-      invitation email
-    - **Firm name** — surfaced on the auditor's portal banner
-    - **Audit period** (optional) — scope the token to the period; the
-      audit-package download is automatically clamped to that window
-    - **Expiration** — invitation tokens expire on a configurable date
-      and can be revoked at any time
+    - **Auditor Email** (required) and **Auditor Name** (optional)
+    - **Expires In** — pick from 7, 14, 30, 60, 90, or 180 days, or 1 year
+    - **Scope** — check which sections the auditor can see: Frameworks,
+      Controls, Evidence, Policies, Risk Assessments, Vendors, Incidents,
+      and Training
   </Step>
   <Step title="Send">
     The auditor receives an email with a one-time link. On first
@@ -100,14 +98,16 @@ no cross-tenant visibility.
   </Step>
 </Steps>
 
-From the same page you can resend an invitation (regenerates the
-one-time link), revoke an active invitation (immediately invalidates
-the token), and see the complete invitation audit log — who invited
-whom, when, and every status transition.
+From the same page you can preview the auditor's portal yourself, copy
+the invite link (in case you'd rather share it another way than the
+automatic email), and revoke an active invitation — which immediately
+invalidates the token. Each invite card shows its status, when it was
+created and expires, and how many times and when the auditor has
+accessed it.
 
 The auditor portal exposes [Audit Requests](/compliance/audit-requests),
-the controls and policies in scope for the audit period, the audit-
+the sections you checked off as the invite's scope, an audit-
 package ZIP download, and per-section CSV exports. The auditor cannot
-write to your data — they can only approve or flag requests inside
-their portal, leaving all state-changing actions on the customer side
-of the relationship.
+write to your data — on a request they can only approve it or flag it
+with a note back to you, leaving all other state-changing actions on
+the customer side of the relationship.

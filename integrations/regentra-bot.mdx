@@ -13,7 +13,7 @@ The bot routes inbound messages to the correct MSP using the **Microsoft Entra t
 2. Regentra looks up the registered organization for that tenant ID.
 3. **If the matched organization is an MSP-managed client**, the ticket routes to that MSP, attributed to the client.
 4. **If the matched organization is standalone or itself an MSP**, the ticket routes to that organization.
-5. **If no organization matches**, the bot replies *"Sorry, I couldn't identify your organization."* No ticket is created.
+5. **If no organization matches**, the bot replies *"Sorry, I couldn't identify your organization. Please contact your IT administrator to set up the Regentra integration."* No ticket is created.
 
 <Warning>
 Adding a client only as a **Portal Company** or **Portal Contact** is **not** sufficient. Routing requires the client to be provisioned as a managed organization with their Entra tenant ID captured. Portal Company / Portal Contact records enrich ticket attribution but don't bridge the bot.
@@ -81,24 +81,23 @@ The procedure differs slightly between **App Centric Management (ACM)** tenants 
 Once the bot is installed and their tenant is bridged, here's the experience:
 
 <Steps>
-  <Step title="Welcome message">
-    On first open, the bot greets the user: *"Hi! I'm the Regentra support bot. Send me a message to create a support ticket or check your ticket status."*
-  </Step>
-  <Step title="Main menu">
-    Any message triggers the menu:
-    - **1.** New Ticket — start a support request
-    - **2.** Check Status — view open tickets
+  <Step title="Welcome card">
+    On first open (or any message when there's no active conversation), the
+    bot greets the user with a card — *"Hi \{name\}! 👋 I'm the Regentra
+    support bot."* — under **What would you like to do?**, with three
+    buttons: **🎫 Create New Ticket**, **📋 View My Tickets**, and **❓ Help**.
   </Step>
   <Step title="Ticket creation">
-    The bot asks for, in order:
-    - **Title** — subject of the issue
-    - **Description** — details
-    - **Priority** — 1 = Low, 2 = Medium, 3 = High, 4 = Critical
+    Tapping **Create New Ticket** walks the user through a 3-step card flow:
+    - **Step 1 of 3 — Title** — a short summary of the issue
+    - **Step 2 of 3 — Description** — details
+    - **Step 3 of 3 — Priority** — one tap on 🔴 Critical, 🟠 High, 🟡 Medium,
+      or 🟢 Low (stored as 4/3/2/1 respectively)
 
     On confirmation, the bot replies with the ticket number and the conversation becomes a live thread.
   </Step>
   <Step title="Ongoing conversation">
-    Subsequent messages in the thread are added to the ticket as replies. Pasted images and screenshots are uploaded as ticket attachments. Technician replies in the PSA appear in the user's Teams chat in real time. Type **end** or **cancel** to close the conversation.
+    Subsequent messages in the thread are added to the ticket as replies. Pasted images and screenshots are uploaded as ticket attachments. Technician replies in the PSA appear in the user's Teams chat in real time. Type **end**, **cancel**, **quit**, **exit**, or **stop** to close the conversation.
   </Step>
 </Steps>
 

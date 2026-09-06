@@ -18,26 +18,27 @@ Regentra provides three report types for measuring service desk performance. Eac
     - Billable hours logged
     - CSAT score (per technician)
   </Tab>
-  <Tab title="Client Service Report">
+  <Tab title="Client Report">
     Service delivery summary for a specific client:
 
-    - Total tickets opened and resolved
-    - SLA compliance percentage
-    - Average response and resolution times
-    - Top ticket categories
-    - Billable hours and invoice totals
+    - Total ticket count, with a breakdown by status, priority, category, and source
+    - SLA compliance percentage, plus a list of breached tickets
+    - Average resolution time
+    - Top requesters (contacts with the most tickets)
+    - Billable vs. total hours logged
     - CSAT score (per client)
+    - Automation value — tickets auto-resolved, technician hours avoided, and an estimated dollar value
   </Tab>
   <Tab title="Service Desk Overview">
     Aggregate view of the entire service desk:
 
-    - Total ticket volume and trend
-    - Open vs resolved vs breached breakdown
+    - Total ticket volume, daily average, and trend
+    - Breakdown by status, priority, source (channel), and category
     - SLA compliance across all clients
-    - Technician utilization rates
-    - Average time to first response
     - Average time to resolution
-    - Channel breakdown (email, portal, chat, SMS)
+    - Backlog (open/unsolved count) and ticket aging
+    - Technician leaderboard (resolved, avg resolution, CSAT, SLA%) and a per-client breakdown
+    - Tickets auto-resolved by automation, and the technician hours that saved
   </Tab>
 </Tabs>
 
@@ -45,10 +46,12 @@ Regentra provides three report types for measuring service desk performance. Eac
 
 Select from preset ranges or define a custom period:
 
-- **Last 7 days**
-- **Last 30 days**
-- **Last quarter**
-- **Custom range** — Pick specific start and end dates
+- **Last 7d**
+- **Last 30d** (default)
+- **This Month**
+- **Last Month**
+- **This Quarter**
+- **Custom** — Pick specific start and end dates
 
 All reports respect your organization's configured timezone.
 
@@ -56,7 +59,7 @@ All reports respect your organization's configured timezone.
 
 <Steps>
   <Step title="Select report type">
-    Navigate to **Reports** in the sidebar and switch to the **PSA** tab to see PSA-specific reports.
+    Navigate to **PSA Reports** in the sidebar (distinct from the compliance **Reports** page).
   </Step>
   <Step title="Set parameters">
     Choose the date range and, if applicable, the technician or client to report on.
@@ -79,7 +82,7 @@ Regentra can generate and email two kinds of monthly reports automatically, from
 
 <Tabs>
   <Tab title="Client monthly report">
-    A branded, client-facing report for one company — the previous full calendar month's service data, formatted the same way as the Client Service Report above. Pick the **Company**, then check off the specific **Recipient Contacts** who should receive it (not "everyone at the company" — you choose exactly who). Recipients are re-verified against that company's contact list every time the report sends, so removing or deactivating a contact stops delivery to them automatically. You can add an optional note from your MSP that's included in the email.
+    A branded, client-facing report for one company — the previous full calendar month's service data, formatted the same way as the Client Report above. Pick the **Company**, then check off the specific **Recipient Contacts** who should receive it (not "everyone at the company" — you choose exactly who). Recipients are re-verified against that company's contact list every time the report sends, so removing or deactivating a contact stops delivery to them automatically. You can add an optional note from your MSP that's included in the email.
   </Tab>
   <Tab title="Overview monthly digest">
     An internal Service Desk Overview PDF sent to every admin who has opted in via their **Monthly Report** email preference (Settings → Notifications). No recipients to pick — it's resolved per admin at send time.

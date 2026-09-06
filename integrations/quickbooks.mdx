@@ -37,7 +37,7 @@ Plus continuous sync via Intuit webhooks for incoming payments and invoice statu
     From a Portal Company detail page, click **Sync to QuickBooks** to push it as a QB Customer. Regentra dedupes by primary email so re-syncs don't create duplicates.
   </Step>
   <Step title="(Optional) Turn on auto-push for Stripe-imported invoices">
-    If you also import invoices from Stripe (see [Stripe → Importing invoices created directly in Stripe](/integrations/stripe#importing-invoices-created-directly-in-stripe)), the mapping page has an **Auto-push invoices** toggle, off by default. See [below](#auto-pushing-invoices-created-from-a-stripe-import) for exactly what it does.
+    If you also import invoices from Stripe (see [Stripe → Importing invoices created directly in Stripe](/integrations/stripe#importing-invoices-created-directly-in-stripe)), the mapping page has an "Auto-push to QuickBooks" card with an **Automatically push invoices to QuickBooks** checkbox, off by default. See [below](#auto-pushing-invoices-created-from-a-stripe-import) for exactly what it does.
   </Step>
 </Steps>
 
@@ -129,7 +129,7 @@ If you currently use a third-party reconciliation tool (Acodei, Synder, Bookkeep
 
 ## Auto-pushing invoices created from a Stripe import
 
-If you invoice through Stripe directly and also use QuickBooks as your books of record, turning on **Auto-push invoices** (Settings → Integrations → QuickBooks → Configure mapping, off by default) automatically pushes newly-imported Stripe invoices to QuickBooks — you don't have to click **Send to QuickBooks** on each one.
+If you invoice through Stripe directly and also use QuickBooks as your books of record, turning on **Automatically push invoices to QuickBooks** (Settings → Integrations → QuickBooks → Configure mapping → "Auto-push to QuickBooks", off by default) automatically pushes newly-imported Stripe invoices to QuickBooks — you don't have to click **Send to QuickBooks** on each one.
 
 <Note>
   Turning this on stamps the moment you enabled it. Only Stripe invoices created **after** that moment auto-push. Invoices you import from further back — through a manual backfill, or the background healing sweep catching up on older history — still import into Regentra for visibility, but don't auto-push; use the bulk send described below for those.

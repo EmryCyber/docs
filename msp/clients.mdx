@@ -15,9 +15,14 @@ Your MSP's own organization appears as a distinct row at the top of **MSP → Cl
 
 ## Adding a new client
 
+Clicking **New Client** on **MSP → Clients** opens a chooser with two distinct options — pick the one that matches what the client actually needs:
+
+- **Compliance Client** — provisions a full managed organization with its own compliance workspace and user logins. Counts against your compliance-tenant allocation and requires an active compliance subscription or trial.
+- **PSA Company** — creates a customer record for ticketing, assets, and billing inside your PSA org. No app login, and it doesn't consume a compliance-tenant slot. You can promote it to a Compliance Client later from the PSA company detail page.
+
 <Steps>
   <Step title="Start provisioning">
-    Navigate to **MSP → Clients** and click **Provision Client**.
+    Navigate to **MSP → Clients**, click **New Client**, and choose **Compliance Client**. (If the client list is empty, a **Provision Client** shortcut on the empty state goes straight to this same form.)
   </Step>
   <Step title="Enter client details">
     Provide the client's **Organization Name**, **Industry**, and the first admin user's **First Name**, **Last Name**, and **Admin Email**. The admin receives an email to set their password and finish setup.
@@ -48,7 +53,7 @@ When you switch clients, all compliance and PSA views update to show that client
 
 Each client tenant includes:
 
-- **Controls** — Framework-specific controls with status tracking (Not Started, In Progress, Implemented, Not Applicable)
+- **Controls** — Framework-specific controls with status tracking (Not Started, In Progress, Implemented, Not Applicable, Needs Review)
 - **Policies** — Document policies mapped to controls
 - **Risk assessments** — Risk register with likelihood, impact, and mitigation tracking
 - **Evidence collection** — Upload and link evidence to controls for audit readiness

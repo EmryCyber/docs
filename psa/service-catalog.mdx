@@ -7,7 +7,7 @@ Build a catalog of services and products your team charges for. Catalog items ap
 
 ## What it does
 
-- **Item creation** — Name, description, unit price, currency, and unit (hour, license, seat/month, etc.)
+- **Item creation** — Name, description, unit price, currency, and a free-text display unit (e.g. hour, license, user/month)
 - **Stripe sync** — Push items to Stripe as Products and Prices; pull items from Stripe to keep in sync
 - **Invoice picker** — When creating an invoice, pick from the catalog to auto-fill description and amount
 - **Pricing consistency** — One catalog drives both PSA invoices and Stripe pricing
@@ -41,10 +41,10 @@ Build a catalog of services and products your team charges for. Catalog items ap
     At the top of the catalog list, click **Sync from Stripe**.
   </Step>
   <Step title="Confirm the import">
-    Click **Import** in the modal. All Products and Prices from your Stripe account are pulled into the PSA.
+    Confirm the browser prompt. All Products and Prices from your Stripe account are pulled into the PSA.
   </Step>
   <Step title="Review imported items">
-    New items are created; items with matching Stripe IDs are updated. You'll see a summary (e.g. "5 imported, 2 updated").
+    New items are created; items with matching Stripe IDs are updated. You'll see a summary (e.g. "Imported from Stripe: 5 new, 2 updated").
   </Step>
 </Steps>
 

@@ -16,21 +16,26 @@ Both timers respect business hours. Time outside your configured working hours d
 
 ## Creating an SLA policy
 
+Each SLA policy covers **one priority level**. To cover all four priorities (Critical, High, Medium, Low), create one policy per priority — for example, a "Critical Response SLA" policy with a 15-minute response target and a 4-hour resolution target, then a separate policy for High, and so on.
+
 <Steps>
   <Step title="Navigate to SLA Policies">
-    In the PSA module sidebar, click **SLA Policies**, then click **Create Policy**.
+    In the PSA module sidebar, click **SLA Policies**, then click **New Policy**.
   </Step>
-  <Step title="Set priority targets">
-    Define response and resolution times for each priority level (Critical, High, Medium, Low). For example: Critical = 15 min response, 4 hour resolution.
+  <Step title="Name the policy and pick its priority">
+    Give it a name (e.g. "Critical Response SLA") and choose the single ticket priority it applies to.
+  </Step>
+  <Step title="Set response and resolution targets">
+    Enter the response time and resolution time, both in minutes.
+  </Step>
+  <Step title="Choose scope and At-Risk threshold">
+    Under **Applies To**, leave it as "All customers (generic fallback)" or pick one client to scope this policy to just that client's tickets at the matching priority — a per-customer policy wins over the generic default. Set the **At-Risk Threshold** percentage (default 80%) that determines when a ticket flips to the At Risk status. A generic (non-customer-scoped) policy can also be marked **Default Policy** to auto-apply to new tickets at that priority.
   </Step>
   <Step title="Configure business hours">
-    Set your working hours and days. SLA timers only run during these hours.
+    Toggle **24x7x365** for a round-the-clock SLA, or set start/end times, business days, and a timezone. SLA timers only run during these hours unless 24x7x365 is on.
   </Step>
-  <Step title="Set timezone">
-    Select the timezone used for business hours calculation. This determines when the SLA clock starts and stops each day.
-  </Step>
-  <Step title="Save and assign">
-    Save the policy and assign it to one or more clients. Each client can have a different SLA policy.
+  <Step title="Save">
+    Click **Create Policy**.
   </Step>
 </Steps>
 
@@ -52,21 +57,15 @@ Both timers respect business hours. Time outside your configured working hours d
 The SLA resolution timer **pauses** in two situations:
 
 - **Waiting on Customer** — the technician has replied and is waiting on the client. The timer resumes when the customer responds or the technician moves the ticket back to In Progress.
-- **Waiting Approval** — the ticket is on hold for an [approval decision](/psa/tickets#ticket-approvals). The timer resumes when the approver responds (or the request expires and the ticket returns to its prior status).
+- **Waiting Approval** — the ticket is on hold for an [approval decision](/psa/tickets#ticket-approvals). The timer resumes when the approver responds, or when a technician manually moves the ticket to a different status. The approval link expires after 7 days; an expired, undecided request does not automatically resume the timer — a technician needs to change the ticket's status manually, or send a new approval request.
 
 Both pauses only skip time outside your resolution target that isn't the technician's to control — time spent waiting on someone outside your team never counts against you.
 
 Response time is not paused — it is measured only once (time from creation to first reply).
 
-## Escalation rules
+## Escalation notifications
 
-Configure automatic escalation when an SLA is at risk or breached:
-
-- **Reassign** the ticket to a senior technician or team lead
-- **Notify** a manager via email or in-app notification
-- **Change priority** to escalate urgency
-
-Escalation rules are configured per SLA policy under the **Escalation** tab.
+An hourly job checks every open ticket's SLA status. When a ticket first becomes **At Risk** or **Breached**, Regentra automatically notifies the assigned technician by email and in-app notification; if the ticket is unassigned, or the status is Breached, every admin/MSP admin on the org is notified too. This escalation notification is automatic and isn't configured per policy — the **At-Risk Threshold** on each SLA policy is what controls how early the At Risk notification fires.
 
 ## SLA compliance reporting
 

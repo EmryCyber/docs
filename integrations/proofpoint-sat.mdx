@@ -34,7 +34,7 @@ The Region value is one of three short codes: `US`, `EU`, or `AP`. Look at the U
 - Starts with `ap` → **AP**
 
 <Warning>
-  Don't paste the full admin URL (e.g. `us2-XXXXXXX.ws01-securityeducation.com`) into the Region field. That's the admin portal, not the reporting API host — the integration will reject it.
+  Don't paste the full admin URL (e.g. `us2-XXXXXXX.ws01-securityeducation.com`) into the Region field. That's the admin portal, not the reporting API host — Regentra detects this specific mistake and refuses to test against it. You can also enter a full `*.securityeducation.com` or `*.proofpoint.com` reporting-API URL instead of a region code, but any other host is rejected the same way.
 </Warning>
 
 ## Troubleshooting
@@ -43,8 +43,8 @@ The Region value is one of three short codes: `US`, `EU`, or `AP`. Look at the U
   <Accordion title="Test Connection returns 401">
     Most likely the secret was copied with whitespace, or the integration key was created with the wrong access type. Re-issue the key with *Security Awareness Reporting* access type and paste fresh.
   </Accordion>
-  <Accordion title="Test Connection returns 404">
-    The Region is wrong. Double-check the URL prefix you log in with (us, eu, or ap) and re-save. The integration will not auto-detect region.
+  <Accordion title="Region field error names your admin console URL">
+    If you pasted your Proofpoint admin console URL into the Region field, Regentra catches it before testing and tells you so directly, suggesting the region code to use instead based on your tenant's URL prefix (`us`/`eu`/`ap`). Enter that region code and re-test — the integration does not auto-detect region from an admin URL.
   </Accordion>
   <Accordion title="I see training data but no phishing simulations">
     Phishing simulations only sync if your PSAT plan includes the simulation feature AND the integration key has Reporting access. If your plan doesn't include simulations, the relevant cells stay blank — Regentra still uses the training data to evidence security-awareness controls.

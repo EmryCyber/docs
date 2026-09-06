@@ -27,7 +27,7 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="Portal login is not working">
-    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status under **PSA → Support Portal** (also reachable through the **Support Portal** tile on the main Settings page), then open the **Custom Domain** tab. If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
+    If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status under **PSA → Support Portal** (also reachable through the **Support Portal** tile on the main Settings page), in the **Custom Domain** section near the bottom of the page. If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
   </Accordion>
 
   <Accordion title="MFA / passkey setup fails">
@@ -48,7 +48,7 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="Logging out unexpectedly / session expired">
-    Regentra sessions use a sliding 4-hour inactivity window — staying active keeps you signed in — but every session also has a **hard 12-hour cap** from when you first logged in, regardless of activity. If you hit that cap mid-task, you'll be signed out and need to log back in; there's currently no in-app warning before this happens, so if you're mid-way through a long session, save your work periodically.
+    Regentra sessions use a sliding inactivity window — staying active keeps you signed in — sized by your organization's **Session Duration** setting (**Settings → Authentication & SSO**): 1 hour by default, or 4 or 12 hours if an admin has changed it. Regardless of that setting, every session also has a **hard 12-hour cap** from when you first logged in, regardless of activity. If you hit that cap mid-task, you'll be signed out and need to log back in; there's currently no in-app warning before this happens, so if you're mid-way through a long session, save your work periodically.
   </Accordion>
 
   <Accordion title="After a failed SSO login I'm stuck on a broken screen">

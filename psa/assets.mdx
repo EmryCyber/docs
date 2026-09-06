@@ -1,46 +1,31 @@
 ---
 title: "Asset Inventory"
-description: "Track hardware, software, and devices; sync from Level.io and Entra ID; manage warranties and link assets to tickets."
+description: "Track hardware, software, and devices; sync from Level.io, NinjaOne, and Entra ID; manage warranties and link assets to tickets."
 ---
 
 Maintain a complete inventory of your customers' hardware, software, and devices. Sync automatically from RMM and identity providers, track warranties, and link assets to support tickets.
 
 ## What it does
 
-- **Manual entry** — Add workstations, laptops, servers, mobile devices, software licenses, and more
-- **Automatic sync** — Import devices from [Level.io RMM](/integrations/level-rmm) and user devices from [Microsoft Entra ID](/integrations/microsoft-entra)
+- **Automatic sync** — Import devices from [Level.io RMM](/integrations/level-rmm), [NinjaOne RMM](/integrations/ninjaone), and user devices (including Intune-managed device detail) from [Microsoft Entra ID](/integrations/microsoft-entra)
 - **Stale detection** — Flag assets that haven't been synced or updated in 30+ days
-- **Warranty tracking** — Record warranty dates and coverage details per asset
+- **Warranty tracking** — Record warranty dates, purchase date, serial number, manufacturer, model, location, and assigned contact on any asset
 - **Ticket linking** — Associate assets with [Tickets](/psa/tickets); see open tickets per asset
 - **Contact assignment** — Link each asset to a portal [contact](/psa/companies-contacts) for ownership tracking
 
-## How to add an asset manually
+## Editing an asset
 
-<Steps>
-  <Step title="Open the Asset Inventory page and click Add Asset">
-    In the PSA module sidebar, click **Configurations** (the page itself is titled *Asset Inventory*), then click **Add Asset**.
-  </Step>
-  <Step title="Choose asset type">
-    Workstation, Laptop, Server, Network device, Mobile, Printer, Medical Device, Software, or Other.
-  </Step>
-  <Step title="Fill asset details">
-    Enter name/model, serial number, location, purchase date, and assigned contact (optional).
-  </Step>
-  <Step title="Add warranty information">
-    Enter warranty start date, end date, and coverage notes (optional).
-  </Step>
-  <Step title="Save the asset">
-    Click **Create Asset**. The asset appears in the Active tab and is searchable.
-  </Step>
-</Steps>
+Open an asset from the Asset Inventory list to reach its detail page. From there you can edit its type, status, serial number, manufacturer, model, location, assigned contact, purchase date, warranty expiry, and notes, then click **Save**. Assets are populated by the RMM/directory syncs below; there is currently no "add a new asset" form in the UI.
 
 ## Automatic sync from integrations
 
 **[Level.io RMM](/integrations/level-rmm)** — Once connected, devices managed by Level.io sync into your inventory. Updates run nightly; new devices and removed devices reflect automatically.
 
-**[Microsoft Entra ID](/integrations/microsoft-entra)** — When you import a [company from Entra](/psa/companies-contacts), devices in that tenant sync as assets. Desktops, laptops, and mobile devices are included.
+**[NinjaOne RMM](/integrations/ninjaone)** — Map a company to its NinjaOne organization under Settings → Integrations → NinjaOne mappings. The mapped sync runs on a schedule (every 4 hours); on the company detail page, a **NinjaOne RMM** card shows the synced device count and a **Resync now** button to pull devices immediately after mapping a new company. When more than one RMM is connected for the same device, NinjaOne's data takes priority over Level's.
 
-Both syncs preserve historical data; archiving a device in the RMM or Entra updates its status without deleting the record.
+**[Microsoft Entra ID](/integrations/microsoft-entra)** — When you import a [company from Entra](/psa/companies-contacts), devices in that tenant sync as assets. Desktops, laptops, and mobile devices are included; Intune-managed devices bring richer detail (serial number, compliance state, assignment) where available.
+
+All syncs preserve historical data; archiving a device in an RMM or in Entra updates its status without deleting the record.
 
 ## Filtering by company
 
@@ -52,7 +37,7 @@ Four tabs:
 
 - **Active** — Status = ACTIVE and synced within the last 30 days
 - **All** — All assets regardless of status or sync age
-- **Stale** — Last synced or updated more than 30 days ago (likely offline or decommissioned)
+- **Stale** — Last synced or updated more than 30 days ago, excluding assets already marked Retired, Disposed, or Inactive (likely offline or decommissioned)
 - **Disabled User** — Assets assigned to an Inactive contact
 
 ## Warranty alerts
@@ -81,9 +66,9 @@ Use asset linking to:
     Yes. Edit any field. Manual edits to non-synced fields (like warranty) are never overwritten. Synced fields may be overwritten on the next sync if the source record changed.
   </Accordion>
   <Accordion title="What happens if an asset is deleted from Level.io?">
-    The status updates to Retired or Disposed. The record remains in the PSA for historical reference.
+    The status updates to Retired. The record remains in the PSA for historical reference.
   </Accordion>
   <Accordion title="Can I export the asset inventory?">
-    Filter and view in the PSA today. Bulk export isn't yet available; contact support if needed.
+    Yes. Go to Settings → **Import / Export** (Data Export & Import) and export **Assets** as CSV, Excel, or PDF.
   </Accordion>
 </AccordionGroup>

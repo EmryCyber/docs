@@ -123,8 +123,8 @@ least-privilege without opening the Duo console.
 
 | Result | Status |
 | --- | --- |
-| `total admins > 10` or `Owner count > 5` | Fail |
 | `total admins == 0` | Warning |
+| `total admins > 10` or `Owner count > 5` | Warning |
 | Otherwise | Pass |
 
 ### Account settings
@@ -282,11 +282,14 @@ per-org.
     the application in Duo, confirm all four are checked, save, wait
     ~30 seconds, and Test again.
   </Accordion>
-  <Accordion title="Test Connection returns 40002 — Invalid request">
-    The API Hostname field is wrong — usually a copy-paste artifact
-    (extra `https://`, trailing slash, or the admin portal URL pasted
-    instead of the API host). The hostname should look like
-    `api-XXXXXXXX.duosecurity.com`, nothing else.
+  <Accordion title="Test Connection returns 40401 — Resource not found">
+    This usually means the credential is an **Auth API** key pair
+    pasted into an **Admin API** integration, or the API Hostname
+    field is wrong — a copy-paste artifact (extra `https://`, trailing
+    slash, or the admin portal URL pasted instead of the API host).
+    The hostname should look like `api-XXXXXXXX.duosecurity.com`,
+    nothing else, and the credentials must come from an Admin API
+    application.
   </Accordion>
   <Accordion title="Last Sync shows 'auth_failed' after rotating the Secret key">
     Paste the new Secret key, click **Test Connection**, then **Save**.
@@ -310,7 +313,7 @@ per-org.
   <Accordion title="Admin inventory shows more Owners than expected">
     Owner names are surfaced in the signal metadata. Cross-reference
     against your authorization-and-supervision policy; if any are
-    stale, demote them in Duo. Owner count above 5 trips the fail
+    stale, demote them in Duo. Owner count above 5 trips the warning
     threshold because the role grants every other admin permission.
   </Accordion>
   <Accordion title="Auth log poll shows 'rate_limited' status">

@@ -3,10 +3,14 @@ title: "Hudu Integration"
 description: "Import networks, VLANs, VLAN zones, and IP addresses from Hudu into Regentra's Networks & IPAM module."
 ---
 
-Hudu is IT documentation software many MSPs already use to track client networks, VLANs, and IP assignments. Regentra can pull that network topology in — a one-way, one-time-or-repeatable import into the [Networks & IPAM](/psa/assets) module, not a live sync.
+Hudu is IT documentation software many MSPs already use to track client networks, VLANs, and IP assignments. Regentra can pull that network topology in — a one-way, one-time-or-repeatable import into the [Networks & IPAM](/psa/networks) module, not a live sync.
 
 <Note>
   This is a one-way import: Regentra reads from Hudu, it never writes back. Nothing you do in Regentra changes your Hudu documentation.
+</Note>
+
+<Note>
+  Hudu is being enabled for self-serve connection in an upcoming release. If your Settings → Integrations page still shows the Hudu card as "Coming Soon," ask your Regentra contact to enable it for your organization in the meantime.
 </Note>
 
 ## What gets imported
@@ -30,30 +34,30 @@ Notes fields ARE imported, but every imported note is scanned for credential-sha
     Go to **Settings → Integrations → Hudu** and enter your **Hudu URL** (e.g. `https://yourcompany.huducloud.com`) and the **API Key** you generated.
   </Step>
   <Step title="Save">
-    Save the credentials. The integration card shows **Connected** once Regentra can reach your Hudu instance.
+    Save the credentials — the integration card shows **Connected** right away. Click **Test Connection** afterward to confirm Regentra can actually reach your Hudu instance.
   </Step>
 </Steps>
 
 ## Mapping Hudu companies to Regentra companies
 
-Hudu organizes records under its own customer companies, which don't automatically match your Regentra companies. Before anything imports, go to **PSA → Networks → Import from Hudu** and map each Hudu company:
+Hudu organizes records under its own customer companies, which don't automatically match your Regentra companies. Before anything imports, go to **PSA → Networks → Import from Hudu** and click **Discover companies** to pull the company list from Hudu, then map each one to an existing PSA company:
 
-- **Use existing** — bind the Hudu company to a company you already have in PSA.
-- **Create new** — create a new PSA company from the Hudu company's name.
-- **Don't sync** — mark the company as ignored so its records are permanently skipped.
+- If Regentra finds an exact name match, the row offers a one-click **Use \<company name\>** button.
+- Otherwise, click **Map** and pick the matching company from the dropdown of your existing PSA clients.
+- Click **Ignore** to mark a company as skipped so its records are permanently excluded from every future import.
 
-Only records belonging to a **mapped** company are ever imported. Records for a company you haven't mapped are skipped, not imported to the wrong client — the import summary tells you which companies were skipped so nothing is silently lost.
+Regentra doesn't create new PSA companies from this screen — only records belonging to a company **mapped** to an existing PSA client are ever imported. Records for a company you haven't mapped are skipped, not imported to the wrong client — the import summary tells you which companies were skipped so nothing is silently lost.
 
 ## Preview, then import
 
 The import always runs in two steps:
 
 <Steps>
-  <Step title="Preview">
-    Click **Preview**. Regentra reads your mapped Hudu companies' networks, VLAN zones, VLANs, and IP addresses and shows you how many records would be created or updated, per record type — nothing is written yet.
+  <Step title="Run preview">
+    Click **Run preview**. Regentra reads your mapped Hudu companies' networks, VLAN zones, VLANs, and IP addresses and shows you how many records would be created or updated, per record type — nothing is written yet.
   </Step>
   <Step title="Run import">
-    Review the preview, then click **Run Import**. Regentra creates or updates the records for real and shows a final summary: created, updated, skipped, and any errors or warnings per record type.
+    Review the preview, then click **Run import**. Regentra creates or updates the records for real and shows a final summary: created, updated, and any errors per record type.
   </Step>
 </Steps>
 

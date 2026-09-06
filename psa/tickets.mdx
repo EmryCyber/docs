@@ -18,7 +18,7 @@ Tickets are the core unit of work in Regentra's PSA. Every client interaction �
     The technician has replied and is awaiting a customer response. SLA resolution timer pauses in this state.
   </Step>
   <Step title="Waiting Approval">
-    The ticket is on hold pending an [approval decision](#ticket-approvals) from a customer contact or another approver. SLA resolution timer pauses here too. This status can only be entered and exited through the approval flow — it isn't a choice in the manual status dropdown.
+    The ticket is on hold pending an [approval decision](#ticket-approvals) from a customer contact or another approver. SLA resolution timer pauses here too. This status can only be entered through the approval flow — it isn't a selectable choice in the manual status dropdown — though a technician can still manually move the ticket to a different status from the dropdown while an approval is pending or has expired.
   </Step>
   <Step title="Escalated">
     Ticket has been escalated to a senior technician or team lead due to complexity or SLA risk.
@@ -27,7 +27,7 @@ Tickets are the core unit of work in Regentra's PSA. Every client interaction �
     The issue is fixed. The ticket auto-closes after 24 hours if the customer does not reopen it.
   </Step>
   <Step title="Closed">
-    Terminal state — work is complete and SLA timers stop accruing. A technician can manually reopen a closed ticket from the status dropdown if the customer comes back, and an inbound customer reply on a closed ticket spawns a linked follow-up ticket.
+    Terminal state — work is complete and SLA timers stop accruing. A technician can manually reopen a closed ticket from the status dropdown if the customer comes back. An inbound email reply always reopens the same closed ticket; an inbound SMS reply reopens it if it arrives within 30 minutes of closing, otherwise a new ticket is created; a portal reply on a closed ticket is added without reopening it.
   </Step>
 </Steps>
 
@@ -44,7 +44,7 @@ Tickets can be created through five channels:
 | **Manual** | Technician creates a ticket from the PSA dashboard |
 | **Email inbound** | Emails sent to your support address automatically create tickets |
 | **Portal** | Customers submit tickets through the branded support portal |
-| **Live chat** | Chat conversations convert to tickets when the session ends |
+| **Live chat** | Starting a chat in the customer portal creates a ticket immediately, with the opening message as its first reply |
 | **SMS** | Inbound SMS messages create tickets (requires phone number configuration) |
 
 When a technician creates a ticket manually, a [company](/psa/companies-contacts) is required — pick an existing one or create a new one on the spot (creating a new company counts against the Free-Tier client limit, same as adding one from the Companies page). The only exception is a ticket created from a compliance control's remediation link, which legitimately has no customer company. Typing a contact name and email that doesn't match an existing contact creates a real, findable [portal contact](/psa/companies-contacts) record under the resolved company — it's never a free-text stub on the ticket alone.
@@ -83,25 +83,25 @@ See [Automations & AI](/psa/automations-and-ai#ai-and-ticket-priority) for the f
     Kanban-style columns organized by ticket status. Drag tickets between columns to update status. Best for visual triage and daily standups.
   </Tab>
   <Tab title="List view">
-    Tabular layout with sortable columns for priority, assignee, SLA status, and created date. Best for bulk operations and filtered searches.
+    A row-per-ticket layout, newest first, showing ticket number, priority, status, title, contact, and assignee. Best for scanning and filtered searches; combine with the filters below to narrow the list.
   </Tab>
 </Tabs>
 
 ## Filtering and search
 
-Filter tickets by status, priority, assignee, client, SLA status, or date range. Combine filters to narrow results. Full-text search covers ticket subjects, descriptions, and reply content.
+Filter tickets by status, priority, assignee, client, SLA status, or date range. Combine filters to narrow results. Search (3+ characters) matches the ticket title, description, and the requester's name or email; a ticket number matches at any length.
 
 The **All Tickets** stat card at the top of the list always shows your organization's total ticket count, regardless of any filters you have active. Clicking it clears every filter and the search box, taking you back to the fully unfiltered list. When filters are applied, a small "N matching" line under the card shows how many tickets match your current view.
 
 ## Auto-close behavior
 
-Tickets in **Resolved** status automatically transition to **Closed** after 24 hours. If a customer replies to a resolved ticket within that window, the ticket reopens to **In Progress**.
+Tickets in **Resolved** status automatically transition to **Closed** after 24 hours. If a customer replies to a resolved ticket within that window, the ticket reopens to **Open**.
 
 ## Master and child tickets
 
 When the same incident affects several customers — a vendor outage, a regional ISP problem, a phishing wave — promote one ticket to a **master** and link the rest as children. The master's status, assignee, and resolution cascade to its children on demand: when you flip the master to RESOLVED or CLOSED, you're prompted to apply the same status to every linked child (resolved/closed children are left alone so a previously-fixed customer isn't yanked back into a queue).
 
-Mark a ticket as a master from the **Linked Tickets** section on the ticket detail page; link or unlink children from the same panel. Master and child tickets are first-class — they appear in board view, list view, reports, and SLA tracking like any other ticket.
+Click **Promote to Master** in the ticket detail page's header toolbar to make a ticket a master, or **Link to Master** to attach it as a child of an existing master; a child can be unlinked from the same toolbar control. A master ticket's linked children are listed in the **Linked Children** panel on its detail page. Master and child tickets are first-class — they appear in board view, list view, reports, and SLA tracking like any other ticket.
 
 Use cases:
 
@@ -125,13 +125,14 @@ Some work needs a customer's sign-off before you proceed — a parts purchase, a
   </Step>
 </Steps>
 
-The approver's decision page shows only the ticket title, number, the requester's name, your organization name, and the message you wrote — never the rest of the ticket's contents. Once they decide, the ticket automatically returns to **Open** and the outcome is recorded on the ticket.
+The approver's decision page shows only the ticket title, number, the customer contact's name, the technician who requested approval, your organization name, and the message you wrote — never the rest of the ticket's contents. Once they decide, the ticket automatically returns to **Open** and the outcome is recorded on the ticket.
 
 A few things worth knowing:
 
 - Only one approval request can be pending on a ticket at a time.
 - **Waiting Approval** pauses the SLA resolution clock, the same way Waiting on Customer does.
-- The status is entirely approval-flow-driven — it doesn't appear as a choice in the manual status dropdown, and it can't be set by an automation rule.
+- The status can only be entered through the approval flow — it doesn't appear as a selectable choice in the manual status dropdown, and it can't be set by an automation rule. A technician can still manually move the ticket to a different status while an approval is pending.
+- The approval link expires after 7 days. An expired, undecided request doesn't automatically change the ticket's status — a technician needs to change it manually, or send a new approval request (allowed again once the old one has expired).
 - The whole flow is **requester-blind**: the customer who opened the ticket sees it as ordinary "In Progress" the entire time and receives no notification when the approval starts or ends. Only the designated approver is contacted.
 
 ## Ticket numbering

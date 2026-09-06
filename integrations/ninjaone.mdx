@@ -98,15 +98,13 @@ endpoint and surfaces every customer org with:
 - The current mapping state (Pending review / Mapped / Ignored)
 - A suggested PortalCompany if Regentra can match by exact name
   (case-insensitive)
-- Action buttons: **Use existing**, **Create new**, **Don't sync**
+- **Map** / **Change** (opens a panel to bind or create), and
+  **Don't sync**
 
 For each row:
 
-- **Use existing** binds the NinjaOne org to a PortalCompany you
-  already have in PSA.
-- **Create new** creates a fresh PortalCompany using the NinjaOne
-  org's name. If a PortalCompany with that name already exists,
-  Regentra reuses it instead of duplicating.
+- If Regentra found an exact-name match, a one-click **Use \<company name\>** button binds it immediately.
+- Otherwise, click **Map** to open the panel: **Bind to existing PSA company** (pick from a dropdown, then **Bind**) or **Or create a new PSA company** (type a name, then **Create**) — creating reuses a PortalCompany with that name instead of duplicating it if one already exists.
 - **Don't sync** records the mapping as IGNORED so re-discovery
   doesn't keep prompting you. Devices from that NinjaOne org never
   flow into Regentra.
@@ -138,6 +136,41 @@ The PSA Company detail page (when bound to a NinjaOne org) exposes a
 button. It queues an Inngest event scoped to one mapping so a single
 customer can be refreshed on demand without waiting for the next
 4-hour cron tick.
+
+## Alert webhook (optional) — real-time PSA tickets
+
+Beyond the polling syncs above, NinjaOne can push device/condition alerts to
+Regentra in real time and have them land as PSA tickets, instead of waiting
+on the next scheduled sync.
+
+<Steps>
+  <Step title="Copy the Webhook URL">
+    After saving your NinjaOne credentials, a **Webhook URL** appears on the
+    integration card. No separate Webhook Secret is needed — NinjaOne's
+    Notification Channel dialog only has Name and URL fields, and the random
+    token embedded in the URL itself is the credential.
+  </Step>
+  <Step title="Create a Webhook notification channel in NinjaOne">
+    In NinjaOne, go to **Administration → Apps → Notification channels → +
+    Add channel → Webhook** (not the Apps → API screen you used for OAuth
+    credentials). Turn Notifications on, give it a name, paste the Webhook
+    URL, and save.
+  </Step>
+  <Step title="Attach the channel to Conditions">
+    The channel won't fire until you attach it to specific Conditions. Open
+    a Device, NMS Device, or Policy's Conditions screen and add the channel
+    under that condition's Channels selector.
+  </Step>
+  <Step title="Verify it's live">
+    Attach the channel to one device's "Agent Offline" condition, then
+    disconnect that agent for about a minute. The integration card's "Last
+    received" timestamp should update within a minute, with a matching row
+    in the Activity log.
+  </Step>
+</Steps>
+
+A triggered condition creates a PSA ticket (idempotent — a redelivery of the
+same event never creates a duplicate ticket).
 
 ## Compliance evidence sweep
 
@@ -313,9 +346,8 @@ shortfall in the audit log.
   `management` scope. Future read-write features (e.g., setting a
   `regentra_compliance` custom field per device) would require an
   explicit opt-in toggle in the integration card.
-- **No per-event device telemetry.** The activity log is sampled
-  only as aggregates for the backup-activity signal; individual
-  device events are not persisted in Regentra.
-- **No NinjaOne webhook ingestion (yet).** When webhooks ship in a
-  later phase, they'll mirror the Stripe / Level webhook security
-  posture (HMAC-signed payloads, replay window, idempotency).
+- **No per-event device telemetry in the compliance evidence.** The
+  activity log is sampled only as aggregates for the backup-activity
+  signal; individual device events are not persisted as evidence. (The
+  optional alert webhook above is a separate path, feeding PSA tickets
+  rather than compliance evidence.)

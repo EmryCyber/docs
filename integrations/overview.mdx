@@ -100,14 +100,16 @@ Integrations sync data on a schedule (typically every 6 hours) and can also be t
 
 ## Connection status
 
-Each integration shows its current status on the integrations page:
+Each integration card shows one of three badges:
 
 | Status | Meaning |
 | --- | --- |
-| **Connected** | Credentials are valid and the last sync succeeded |
-| **Error** | The last sync failed — check credentials or service availability |
-| **Not configured** | The integration has not been set up yet |
+| **Connected** | Credentials have been saved for this integration |
+| **Not Connected** | The integration has not been set up yet |
+| **Coming Soon** | The integration isn't available to connect yet |
+
+Saving credentials marks a card **Connected** right away — it doesn't by itself confirm Regentra can reach the service. Click **Test Connection** to verify that. If a background sync later fails, an expanded card shows a "Background sync failed" banner with the error and next steps.
 
 <Tip>
-  If an integration shows an error, click into it to see the error details. Common issues include expired OAuth tokens (re-authorize) and revoked API keys (regenerate).
+  If a connection stops working, expand the integration to see the error details. Common issues include expired OAuth tokens (re-authorize) and revoked or rotated API keys (regenerate and re-save).
 </Tip>

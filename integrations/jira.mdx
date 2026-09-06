@@ -1,15 +1,13 @@
 ---
 title: "Jira Integration"
-description: "Pull change tickets and approval workflows from Jira for change-management control evidence."
+description: "Connect a Jira Cloud API token so Regentra can verify access to your site."
 ---
 
-The Jira integration pulls change tickets and approval workflows from your Jira Cloud instance into Regentra. This data evidences your change-management control.
+Regentra can store a Jira Cloud API token for your organization and verify it's valid. This is a credential-connection integration today — Regentra does not yet automatically pull change tickets, approval status, or linked pull requests from Jira.
 
-## What it provides
-
-- **Change tickets** — Issues with the type or label that represents a change (you configure the JQL filter)
-- **Approval status** — Approvers and resolution timestamps
-- **Linked PRs** — Pull requests linked to Jira issues (when Jira is connected to GitHub) for cross-reference evidence
+<Note>
+  Automated evidence collection from Jira (change tickets, approvals, linked PRs) is not implemented yet, and there is no JQL filter field on the card. Connecting today saves and validates your credentials for when that ships.
+</Note>
 
 ## Setup
 
@@ -18,13 +16,14 @@ The Jira integration pulls change tickets and approval workflows from your Jira 
     Sign in to [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens). Click **Create API token**, give it a label like *Regentra Compliance*, and copy the token.
   </Step>
   <Step title="Enter credentials in Regentra">
-    In Regentra, go to **Settings → Integrations** and find the Jira card. Paste the token along with:
+    In Regentra, go to **Settings → Integrations** and find the Jira card. Enter:
 
-    - **Jira domain** — e.g. `mycompany.atlassian.net`
-    - **Email address** — the email of the Atlassian user that owns the token
+    - **Jira Domain** — e.g. `mycompany.atlassian.net`
+    - **Email Address** — the email of the Atlassian user that owns the token
+    - **API Token** — the token you generated
   </Step>
   <Step title="Save and test">
-    Save and test the connection.
+    Click **Save Credentials**, then **Test Connection**. A successful test confirms the credentials are valid and shows the connected user's display name.
   </Step>
 </Steps>
 
@@ -32,12 +31,9 @@ The Jira integration pulls change tickets and approval workflows from your Jira 
 
 <AccordionGroup>
   <Accordion title="What permissions does the user need?">
-    Read access to the projects you want pulled — that's it. The token inherits the user's role, so don't pick a Jira admin if a project-member account works. Treat the token like a password: rotate when the user leaves.
+    Any valid Atlassian account with an API token can connect — the token inherits that user's role. Treat it like a password: rotate it when the user leaves.
   </Accordion>
   <Accordion title="Does it work for Jira Server / Data Center?">
-    Cloud only today. Server / Data Center uses different auth (Basic + cookies / PAT) and isn't on the roadmap.
-  </Accordion>
-  <Accordion title="Can I narrow what gets synced?">
-    Yes. The card has a JQL field — set it to e.g. `project = OPS AND issuetype = Change` to limit sync to operational change tickets.
+    Cloud only today. Server / Data Center uses different auth (Basic + cookies / PAT) and isn't supported.
   </Accordion>
 </AccordionGroup>

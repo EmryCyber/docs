@@ -138,3 +138,5 @@ Click **Revoke** on any key from **Settings → API Keys**. A revoked key stops 
 ## Errors
 
 Every authentication failure — a missing key, a malformed key, an unknown key, a revoked key, an expired key, or a key missing the required scope — returns the same `401 Unauthorized` with no further detail in the response body. This is deliberate: it prevents anyone probing the API from learning which of those cases applies. If your automation is unexpectedly failing, check the key's status and scopes in Regentra directly rather than trying to infer the cause from the response.
+
+Requests are also rate-limited — per source IP before a key is even validated, and per key once it resolves — and return `429 Too Many Requests` if you exceed those limits. If your organization's plan doesn't include PSA, authenticated requests fail with `403 Forbidden` instead of `401`.

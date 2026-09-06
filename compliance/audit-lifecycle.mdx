@@ -10,7 +10,7 @@ The audit lifecycle in Regentra spans four phases: planning an audit period, rec
 - **Create audit periods** — Define an audit window (start/end date), framework scope, and audit type (Type 1 or Type 2)
 - **Record auditor information** — Capture the external auditor's name and email for coordination
 - **Respond to information requests** — Manage [audit requests (IRLs)](/compliance/audit-requests) from auditors with a `NOT_READY → INTERNAL_REVIEW → AUDIT_READY → APPROVED / FLAGGED` workflow
-- **Log findings and issues** — Issues can be sourced from the audit, [Control Tests](/compliance/control-tests), [Access Reviews](/compliance/access-reviews), or manual entry
+- **Log findings and issues** — When you create an issue, tag its source as the audit, [Control Tests](/compliance/control-tests), [Access Reviews](/compliance/access-reviews), or manual entry
 - **Track issue status** — Move issues from Open → In Progress → Resolved as your team remediates
 - **Assign and monitor** — Assign owners, set due dates, and see progress in dashboards
 
@@ -49,7 +49,7 @@ The audit lifecycle in Regentra spans four phases: planning an audit period, rec
   <Step title="Open Compliance Issues">
     In the Compliance module sidebar, click **Issues** (under the EVIDENCE & REPORTING caption).
   </Step>
-  <Step title="Click New Issue (or generate from findings)">
+  <Step title="Click New Issue">
     Choose title, description, severity (Critical / High / Medium / Low), and source (Audit, Test Failure, Access Review, or Manual).
   </Step>
   <Step title="Link to control and audit period">
@@ -84,7 +84,7 @@ Each issue can reference:
 When an issue is marked **Resolved**, attach evidence that demonstrates the fix. This is critical for auditor sign-off and for SOC 2 Type 2 audits, where auditors verify that controls operated throughout the period.
 
 <Note>
-  Compliance issues created from failed [Control Tests](/compliance/control-tests) automatically link to the control and test. Issues from [Access Reviews](/compliance/access-reviews) findings also auto-link to the review evidence.
+  When you create an issue, you can select its source (Audit, Test Failure, Access Review, or Manual) and optionally link it to a control, an audit period, and an assignee — but issues are always created manually; nothing generates them automatically from a failed [Control Test](/compliance/control-tests) or an [Access Review](/compliance/access-reviews) finding.
 </Note>
 
 ## Integration with audit reports

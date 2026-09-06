@@ -33,11 +33,11 @@ description: "Answers to common questions about Regentra's compliance frameworks
   </Accordion>
 
   <Accordion title="What's the difference between Resolved and Closed tickets?">
-    **Resolved** means the technician has fixed the issue, but the ticket stays open for 24 hours in case the customer needs to respond. If no response is received, the ticket auto-closes. **Closed** is the terminal state — work is complete and SLA timers stop accruing. A technician can manually reopen a closed ticket from the status dropdown if needed, and an inbound customer reply on a closed ticket creates a new follow-up ticket linked back to the original.
+    **Resolved** means the technician has fixed the issue, but the ticket stays open for 24 hours in case the customer needs to respond. If no response is received, the ticket auto-closes. **Closed** is the terminal state — work is complete and SLA timers stop accruing. A technician can manually reopen a closed ticket from the status dropdown if needed. A customer email reply to a resolved or closed ticket reopens that same ticket automatically; an SMS reply does the same within 30 minutes of the ticket's last update, and starts a brand-new ticket after that window. The customer portal doesn't offer a reply box once a ticket is closed.
   </Accordion>
 
   <Accordion title="How does the AI ticket draft feature work?">
-    When a technician opens a ticket, Regentra's AI searches your knowledge base for relevant articles using retrieval-augmented generation (RAG). It combines the KB content with the ticket's subject, description, and conversation history to generate a suggested reply. The technician reviews the draft and can edit, send, or discard it. The AI never sends replies automatically.
+    When a technician opens a ticket, Regentra's AI retrieves similar past tickets and relevant knowledge base articles using retrieval-augmented generation (RAG). It combines that content with the ticket's subject, description, and conversation history to generate a suggested reply. By default, the technician reviews the draft and can edit, send, or discard it — the AI doesn't send it on its own. An organization can optionally turn on **AI Auto-Response** (Settings → Regentra AI), which sends the draft to the customer automatically once a minimum confidence score and other safety checks are met; a technician is always notified when that happens.
   </Accordion>
 
   <Accordion title="How does billing work for MSPs?">
@@ -49,7 +49,7 @@ description: "Answers to common questions about Regentra's compliance frameworks
   </Accordion>
 
   <Accordion title="Why was I logged out?">
-    Regentra sessions stay active on a sliding 4-hour window while you're using the app, but every session also has a hard 12-hour cap from when you first signed in — you'll be signed out at that point even if you were actively working, and will need to log back in. If you're an Admin, MSP Admin, or Super Admin, you'll also always be asked to complete MFA (a passkey or an authenticator-app code) — this can't be skipped for those roles regardless of your organization's MFA setting.
+    Regentra sessions stay active on a sliding inactivity window while you're using the app — 1 hour by default, or up to 4 or 12 hours if your organization admin has raised the **Session Duration** setting — but every session also has a hard 12-hour cap from when you first signed in — you'll be signed out at that point even if you were actively working, and will need to log back in. If you're an Admin, MSP Admin, or Super Admin, you'll also always be asked to complete MFA (a passkey or an authenticator-app code) — this can't be skipped for those roles regardless of your organization's MFA setting.
   </Accordion>
 
   <Accordion title="Where can I get help?">

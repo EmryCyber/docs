@@ -8,17 +8,16 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
 ## What it does
 
 **Automations:**
-- **Trigger events** — react to ticket creation, status changes, replies, and SLA escalations
+- **Trigger events** — react to ticket creation, status changes, replies, assignment, SLA escalation, invoice generation, CSAT received, or a quote being accepted/declined
 - **Conditions** — match on priority, status, category, contact email, company, and more
-- **Actions** — auto-assign, change priority, update status, add internal notes, send notifications
+- **Actions** — auto-assign, change priority, update status, add internal notes, send notifications, or send a webhook
 - **Rule priority** — execute rules in order; stop processing after a match if enabled
 - **Execution logs** — view every time a rule ran, whether it matched, and what it did
 
-**AI Reviews:**
-- **Pending reviews** — see unreviewed AI-suggested replies, sorted by confidence
-- **Condition matching** — understand why the AI suggested each action
-- **Override ratings** — mark suggestions as Correct, Wrong, or let the AI learn from overrides
-- **Execution audit** — track what AI suggestions were accepted vs. rejected by your team
+**AI Reviews (admin-only):**
+- **Pending reviews** — see tickets where a technician has already acted on an AI draft, sorted by confidence (lowest first), awaiting a manager's confirm-or-override
+- **Manager confirm/override** — mark the tech's decision Correct, or override it with Override: AI Was Right / Override: AI Was Wrong
+- **Audit trail** — every review is written to the audit log, and Recent Reviews shows the tech's action next to the manager's
 
 ## How to create an automation rule
 
@@ -30,13 +29,13 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
     Enter a name (e.g. "Auto-assign Critical tickets to Tom") and optional description.
   </Step>
   <Step title="Choose a trigger event">
-    Ticket Created, Status Changed, Reply Added, or SLA Escalation.
+    Ticket Created, Ticket Status Changed, Ticket Reply Added, Ticket Assigned, SLA Escalation, Invoice Generated, CSAT Received, or Quote Decided.
   </Step>
   <Step title="Add conditions (optional)">
     Click **+ Add Condition**. For each, choose a field (e.g. Priority), operator (Equals), and value (CRITICAL). All conditions must match for the rule to execute.
   </Step>
   <Step title="Add actions">
-    Click **+ Add Action**. Choose: Assign Ticket, Change Priority, Change Status, Add Internal Note, or Send Notification. Configure the payload (e.g. which technician).
+    Click **+ Add Action**. Choose: Assign Ticket, Change Priority, Change Status, Add Internal Note, Send Notification, or Send Webhook. Configure the payload (e.g. which technician).
   </Step>
   <Step title="Set priority and options">
     Lower Priority = executed first. Check **Enabled** to activate. Check **Stop after match** to prevent other rules from running if this one matches.
@@ -60,27 +59,34 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
   </Step>
 </Steps>
 
-## How to review AI suggestions
+## How a technician handles an AI draft
+
+On a ticket with a suggested reply, the technician reviews the draft text directly on the ticket (editing it in place changes nothing about the review process below — it's just the reply text) and either clicks **Send to Customer** (then confirms with **Confirm and Send**, **Send & Resolve**, or **Send & Close**) or **Discard**. This decision — accepted as-is, edited, or discarded — is what later shows up as the "tech action" in AI Reviews.
+
+## How admin review works (AI Reviews)
+
+**AI Reviews** is a retrospective quality-control page for admins, not a pre-send approval gate — by the time a ticket shows up here, the technician has already sent or discarded the reply.
 
 <Steps>
-  <Step title="Open AI Draft Reviews">
+  <Step title="Open AI Reviews">
     In the PSA sidebar, click **AI Reviews** (admin-only entry, near the bottom of the sidebar).
   </Step>
-  <Step title="View pending suggestions">
-    The Pending Reviews tab shows tickets with unreviewed AI replies, sorted by confidence (low confidence first).
+  <Step title="View pending reviews">
+    The **Pending Reviews** card lists tickets whose AI draft was acted on by a technician but not yet reviewed by a manager, sorted by confidence (lowest first).
   </Step>
-  <Step title="Open a ticket and review the AI reply">
-    Click a ticket to view the suggested reply, its confidence score, and the trigger.
+  <Step title="Open a ticket">
+    Click a ticket to go to its detail page, where a **Manager Review** card shows the tech's action (Accepted / Edited / Discarded / Auto-sent) and the AI's confidence score.
   </Step>
-  <Step title="Accept, edit, or reject the reply">
-    - **Accept** — send the reply as-is to the customer
-    - **Edit** — modify and send your version. The system logs the override.
-    - **Reject** — don't send the reply. The system logs the rejection.
-  </Step>
-  <Step title="Provide feedback (optional)">
-    Add a reason for rejection or edit. This feedback trains the AI model over time.
+  <Step title="Confirm or override">
+    - **Correct** — the tech's decision was the right call.
+    - **Override: AI Was Right** — the tech rejected or discarded a draft that was actually good.
+    - **Override: AI Was Wrong** — the tech accepted a draft that was actually bad.
   </Step>
 </Steps>
+
+<Note>
+  Overriding a rating updates that ticket's stored quality score, which weights how likely it is to be pulled back in as an example for future AI drafts — it isn't a fine-tuning or retraining step on the underlying model.
+</Note>
 
 ## Understanding AI confidence
 
@@ -132,9 +138,9 @@ If a signal has no override and no platform default, Regentra falls back to a gl
     Yes. Click the play/pause icon next to the rule. It's disabled immediately and won't execute on new tickets.
   </Accordion>
   <Accordion title="Are AI reviews separate from automations?">
-    Yes. AI reviews are for manual approval of AI-suggested replies. Automations execute immediately with no manual review. They can work together: an automation might trigger an AI suggestion, which then appears in the review queue.
+    Yes. AI Reviews is an after-the-fact quality check on drafts technicians already accepted, edited, or discarded — it does not gate whether a reply is sent. Automations execute immediately with no manual review either way.
   </Accordion>
   <Accordion title="Does the AI learn from my overrides?">
-    Yes. When you mark a suggestion Correct or Wrong, or edit it, that feedback trains the model. Over time, suggestions should improve.
+    Not in the sense of retraining the model. Marking a review Correct or Override updates that ticket's stored quality score, which influences whether it's pulled in as an example for future AI drafts (via retrieval), rather than fine-tuning the underlying AI model.
   </Accordion>
 </AccordionGroup>

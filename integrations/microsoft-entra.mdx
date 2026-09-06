@@ -44,7 +44,7 @@ The Microsoft Entra ID integration connects your Azure AD tenant to Regentra for
 ## Sync frequency
 
 - **Identity sync** (users, contacts, devices) runs every **4 hours** on the hour
-- **Evidence collection sync** (conditional access policies, MFA status, device compliance signals) runs every **6 hours**, offset 15 minutes from the identity sync to avoid Graph API contention
+- **Evidence collection sync** (conditional access policies, MFA status, device compliance signals) runs every **6 hours** (`America/New_York` clock)
 - **Manual sync** can be triggered at any time from the integration settings page
 
 <Info>
@@ -74,8 +74,8 @@ Portal SSO is configured separately for each client. When a client's Entra tenan
 
 ## Device sync deduplication
 
-If you also use the [Level.io RMM integration](/integrations/level-rmm), devices may appear from both sources. Regentra deduplicates assets by matching on serial number and hostname. When a match is found, the records are merged — Entra provides compliance state and Intune data, while Level.io provides RMM agent details and warranty information.
+If you also use the [Level.io RMM integration](/integrations/level-rmm) (or NinjaOne), devices may appear from both sources. Regentra resolves this by source priority rather than merging fields: NinjaOne outranks Level, which outranks Intune, which outranks Entra. When a Level (or NinjaOne) sync matches an existing Entra/Intune asset by serial number or hostname, the Entra/Intune record is retired — its status flips to **Retired**, and the higher-priority source's record becomes the one active asset for that device.
 
 <Tip>
-  If you see duplicate assets after enabling both integrations, they will be automatically merged on the next sync cycle.
+  If you see duplicate assets after enabling both integrations, the lower-priority (Entra/Intune) record will be automatically retired on the next sync cycle once a matching serial number or hostname is found.
 </Tip>

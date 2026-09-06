@@ -12,7 +12,7 @@ The knowledge base is a shared article library that serves two purposes: it give
     In the PSA module sidebar, click **Knowledge Base**, then click **New Article**.
   </Step>
   <Step title="Write the article">
-    Use the markdown editor to write your article. Supports headings, lists, code blocks, images, and links.
+    Use the rich text editor to write your article. The toolbar supports bold/italic, headings (H1-H3), bulleted and numbered lists, block quotes, a horizontal rule, code blocks, and inline images.
   </Step>
   <Step title="Choose visibility">
     Pick one of three audiences:
@@ -23,8 +23,8 @@ The knowledge base is a shared article library that serves two purposes: it give
   <Step title="Assign to a folder">
     Organize the article into a folder for easier navigation.
   </Step>
-  <Step title="Publish">
-    Save and publish. The article is immediately available based on its visibility setting.
+  <Step title="Save, then publish">
+    Click **Save** — the article is created as a **Draft** and isn't available yet. Open it again and click **Publish** to make it available based on its visibility setting; the same button toggles a published article back to Draft.
   </Step>
 </Steps>
 
@@ -45,15 +45,15 @@ Beyond markdown articles, the Knowledge Base can also hold uploaded files — PD
 
 Use document attachments for internal reference material that doesn't make sense as a markdown article — vendor-supplied PDFs, network diagrams, or signed client documents you want your team to find alongside your written articles. Document uploads are a staff-facing tool; they don't appear in the customer portal the way visibility-tagged markdown articles do.
 
-## Linking tickets to KB articles
+## Turning a resolved ticket into a KB article
 
-When a technician resolves a ticket, Regentra prompts them to create or link a KB article:
+On a **Resolved** or **Closed** ticket's detail page, a "Create a KB article?" card offers to have AI draft a knowledge base article from the ticket. Click **Generate Draft** to review a title, excerpt, tags, and content preview.
 
 <Info>
-  This prompt appears automatically when a ticket is moved to **Resolved** status. If the resolution involved a common issue, the technician can capture the fix as a new article or link an existing one. This builds your KB organically over time.
+  If a similar existing article is found, the card flags it (with a similarity percentage) and offers **Update Existing Article** instead of creating a duplicate. Otherwise, click **Create New Article** to save the draft as a new article. New articles created this way are always **Internal (staff only)** — you can change visibility afterward by editing the article.
 </Info>
 
-Linked articles appear on the ticket detail page, creating a reference between the support interaction and the documented solution.
+There's no persistent link stored between the ticket and the article it was generated from — the connection is a one-time AI draft, not a lasting reference field you can browse from either side later.
 
 ## Portal-facing KB
 
@@ -69,7 +69,7 @@ A well-maintained KB reduces ticket volume by enabling self-service resolution.
 
 Regentra's AI draft feature uses retrieval-augmented generation (RAG) to suggest replies:
 
-1. When a technician opens a ticket, the AI searches your KB for relevant articles
+1. When a technician clicks **Analyze with AI** on a ticket, the AI searches your KB for relevant articles
 2. It combines the KB content with the ticket context (subject, description, conversation history)
 3. A draft reply is generated and shown to the technician for review
 4. The technician can edit, send as-is, or discard the draft

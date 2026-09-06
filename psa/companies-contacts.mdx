@@ -28,7 +28,7 @@ Companies are your MSP customers. Contacts are the individuals inside those comp
 </Steps>
 
 <Tip>
-  After a company is created, the detail page has a **Sync With M365** button that re-runs the per-company Entra sync on demand. Use it to pull a fresh snapshot of users + devices for that one customer without waiting for the next scheduled cycle. See [Microsoft Entra ID](/integrations/microsoft-entra#per-company-sync).
+  After a company is connected to Microsoft 365, the detail page has a **Resync now** button that re-runs the per-company Entra sync on demand. Use it to pull a fresh snapshot of users + devices for that one customer without waiting for the next scheduled cycle. See [Microsoft Entra ID](/integrations/microsoft-entra#per-company-sync).
 </Tip>
 
 ## Company hierarchy
@@ -70,7 +70,7 @@ While archived, the company is blocked from receiving new resources:
 **Restore** is symmetric: from the Archive view, click **Restore** on any archived row to clear the archive state and reactivate the QB Customer link.
 
 <Note>
-  Archive requires Admin, MSP Admin, or Compliance Admin. The action is idempotent — clicking Archive on an already-archived company is a no-op.
+  Archive requires Super Admin, Admin, MSP Admin, or Compliance Admin. The action is idempotent — clicking Archive on an already-archived company is a no-op.
 </Note>
 
 ### Stage 2 — Permanent delete (irreversible)
@@ -86,10 +86,10 @@ Before permanent delete is allowed, the system **blocks** the action when any of
 The confirmation modal shows the full impact:
 
 - **Records that will become unassigned** (kept in the DB but lose their company link): tickets, assets, contacts, invoices, KB articles, KB folders, quotes, projects, password folders, password entries
-- **Records that will be permanently deleted** (cascade): per-customer SLA policies
+- **Records that will be permanently deleted** (cascade): per-customer SLA policies, and all of that company's [Networks, VLANs, VLAN zones, and IP addresses](/psa/networks) — network topology is treated as sensitive data, so it's hard-deleted rather than left unassigned
 - **QuickBooks Customer** is set to `Active=false` (best-effort soft-delete)
 
-To complete the deletion, the Super Admin must **type the exact company name** into the confirmation field — the Submit button stays disabled until the typed value matches the row's `name` exactly (case-sensitive). The server re-validates the match inside the same transaction as the delete, so there is no race window.
+To complete the deletion, the Super Admin must **type the exact company name** into the confirmation field — the Submit button stays disabled until the typed value matches the row's `name` exactly (case-sensitive), and the server rejects a mismatched name before touching any data. Separately, the delete itself only proceeds if the company is still archived at the moment it runs (checked inside the same transaction), so a concurrent restore can't result in an active company being purged.
 
 <Warning>
   Permanent delete cannot be undone. Neon database snapshots provide a ~24-hour recovery window for catastrophic mistakes; after that, the row is gone. Use Archive for any case where there is even a 1% chance you might want the customer back.

@@ -48,22 +48,23 @@ operational surface for "what does the auditor want next?"
 
 ## Status workflow
 
-Every request moves through a five-state machine. Three are working
-states; two are terminal.
+Every request moves through a five-state machine.
 
 ```
-NOT_READY → INTERNAL_REVIEW → AUDIT_READY → APPROVED
-                                          ↘
-                                            FLAGGED → (loops back to NOT_READY or INTERNAL_REVIEW)
+NOT_READY → INTERNAL_REVIEW → AUDIT_READY → APPROVED → (auditor can reopen) → FLAGGED
+                                   ↖               ↘
+                             (customer withdraws)     FLAGGED
+                                                       ↙        ↘
+                                          INTERNAL_REVIEW      AUDIT_READY
 ```
 
 | Status | Who sees it | What it means |
 | --- | --- | --- |
 | **NOT_READY** | Operator only | Just created; the owner is still gathering evidence. Auditor cannot see the request. |
-| **INTERNAL_REVIEW** | Operator only | Evidence is attached; a second person on the customer side is checking it before sharing. Still hidden from the auditor. |
-| **AUDIT_READY** | Operator + auditor | Visible to the auditor through their token-scoped portal. Auditor reviews; their decision is the next status. |
-| **APPROVED** | Operator + auditor | Terminal accepted state. The auditor signed off and the request is closed. |
-| **FLAGGED** | Operator + auditor | Auditor needs more or different evidence. The request loops back to the operator with the auditor's comment as the reason. |
+| **INTERNAL_REVIEW** | Operator only | A second person on the customer side is checking the request before sharing. Still hidden from the auditor. |
+| **AUDIT_READY** | Operator + auditor | Visible to the auditor through their token-scoped portal. Auditor reviews; their decision is the next status. The customer can also withdraw it back to NOT_READY. |
+| **APPROVED** | Operator + auditor | The auditor signed off. Not strictly final — the auditor can still reopen the request to FLAGGED later if something needs revisiting. |
+| **FLAGGED** | Operator + auditor | Auditor needs more or different evidence. The customer moves it back to INTERNAL_REVIEW (for another internal check) or directly to AUDIT_READY (resubmit). |
 
 The "INTERNAL_REVIEW before AUDIT_READY" step is the same idea as
 PR review on a code change — your second pair of eyes catches "this
@@ -72,8 +73,8 @@ it. It is optional but strongly recommended.
 
 A FLAGGED request is not a finding. It is a *retry* — the auditor said
 "that's not quite what I asked for; try again" and the customer can
-add evidence, push it back to AUDIT_READY, and continue. Findings live
-on [Compliance Issues](/compliance/audit-lifecycle).
+push it back to AUDIT_READY (or INTERNAL_REVIEW first) and continue.
+Findings live on [Compliance Issues](/compliance/audit-lifecycle).
 
 ## Cadence (recurring requests)
 
@@ -86,15 +87,18 @@ Requests can be one-time or recurring:
 | **QUARTERLY** | Quarterly access reviews, change ticket samples |
 | **ANNUAL** | Annual penetration test, annual policy review attestation |
 
-A recurring request automatically respawns a NOT_READY copy on its
-cadence so the owner can begin collecting next cycle's evidence without
-the auditor having to re-issue the ask.
+Cadence is a tracking field you set when creating or editing a
+request — it labels how often the ask recurs (e.g. "this is a monthly
+attestation") so your team knows to expect it again. The app does not
+currently auto-generate a new request each cycle; when the next
+instance comes due, create it yourself (or reuse the [CSV
+import](#creating-a-request) for a batch of recurring asks).
 
 ## Creating a request
 
 <Steps>
   <Step title="Open Audit Requests">
-    **Compliance → Audit Requests** in the sidebar, then click **New Request**.
+    **Compliance → Audit Requests** in the sidebar, then click **New request**.
   </Step>
   <Step title="Link to an audit period (recommended)">
     Pick the audit period this request belongs to. The period scopes
@@ -127,20 +131,15 @@ the auditor having to re-issue the ask.
   </Step>
 </Steps>
 
-## Attaching evidence
+## Supporting a request
 
-Evidence is added inside the request:
-
-- **Files** — direct uploads (PDFs, screenshots, CSV exports)
-- **Links** — URLs to dashboards, monitoring tools, or live runbooks
-- **Existing controls' evidence** — reference an evidence record that
-  is already attached to a linked control (no second upload)
-- **Existing test results** — pull a control-test run directly into the
-  request
-
-Every attachment carries the uploader, timestamp, and a (server-side)
-hash, so even if the file is replaced later, the audit trail shows what
-the auditor saw at each status transition.
+A request doesn't hold its own file uploads. Instead, put the context
+the auditor needs into the **Description** field, and link every
+[internal control](/compliance/controls) the request evidences —
+that's what ties the request to your compliance record and to
+[Evidence Collection](/compliance/evidence-collection) for that
+control. Use comments (below) to add updates, links, or notes as you
+work the request.
 
 ## Comments and the back-and-forth
 
@@ -157,12 +156,14 @@ the loop.
 
 | Transition | Who can trigger |
 | --- | --- |
-| `NOT_READY → INTERNAL_REVIEW` | Owner or any compliance team member |
-| `INTERNAL_REVIEW → AUDIT_READY` | Compliance Admin / Compliance Officer (the "second pair of eyes" role) |
-| `INTERNAL_REVIEW → NOT_READY` | Same — sends it back to the owner with comments |
+| `NOT_READY → INTERNAL_REVIEW` | Any admin-level user on the customer side (Admin, Super Admin, Compliance Admin, or MSP Admin) |
+| `INTERNAL_REVIEW → AUDIT_READY` | Same admin-level roles — there's no separate "second pair of eyes" role gate; it's on the team to have a different person action this step |
+| `INTERNAL_REVIEW → NOT_READY` | Same — sends it back to the owner |
+| `AUDIT_READY → NOT_READY` | Same — withdraws the request from the auditor's view |
+| `FLAGGED → INTERNAL_REVIEW` or `AUDIT_READY` | Same — restart the loop with whatever the auditor asked for |
 | `AUDIT_READY → APPROVED` | The external auditor through their portal |
-| `AUDIT_READY → FLAGGED` | The external auditor through their portal |
-| `FLAGGED → NOT_READY` or `INTERNAL_REVIEW` | Operator side — restart the loop with whatever the auditor asked for |
+| `AUDIT_READY → FLAGGED` | The external auditor through their portal (a note is required) |
+| `APPROVED → FLAGGED` | The external auditor through their portal — reopens an approved request |
 
 The auditor never directly authors evidence; they only approve or
 flag what's been shared. This separation is what makes the audit
@@ -177,28 +178,26 @@ to the main Regentra app. Through that portal they can:
 - See every request currently in AUDIT_READY, APPROVED, or FLAGGED
   (NOT_READY and INTERNAL_REVIEW requests are hidden — they're
   customer-side prep)
-- Download attachments
-- Read the linked controls and their evidence
+- Read the request's description, linked controls, and any evidence
+  already linked to those controls
 - Comment on a request
-- Approve or flag the request
-- Download a per-request CSV and the full audit-package ZIP for the
-  audit period
+- Approve the request, or flag it with a note explaining what's needed
+- Download the org's portal-scoped CSV exports (controls, policies,
+  vendors, incidents, training, risk assessments) and the full
+  audit-package ZIP
 
 The audit-package ZIP they download is the same artifact your team
-can generate from the admin side, scoped to the auditor's token. See
-the [audit-package builder](/compliance/audit-lifecycle#audit-package)
-for the file inventory.
+can generate from the admin side (the **Export Audit Package** button
+on the [Reports](/compliance/reports) page), scoped to the auditor's
+token.
 
 ## Status dashboard
 
-The Audit Requests page surfaces five lanes (NOT_READY, INTERNAL_REVIEW,
-AUDIT_READY, APPROVED, FLAGGED) with counts and a list of requests in
-each. Filters: by audit period, by owner, by cadence, by type, by
-"overdue only".
-
-A request is "overdue" when its due date is past and its status is
-NOT_READY, INTERNAL_REVIEW, AUDIT_READY, or FLAGGED — APPROVED requests
-never show as overdue regardless of their original due date.
+The Audit Requests page surfaces a Total count plus a count tile for
+each of the five statuses (NOT_READY, INTERNAL_REVIEW, AUDIT_READY,
+FLAGGED, APPROVED); clicking a tile filters the list below to that
+status. A search box filters by title, external ID, owner, or linked
+control.
 
 ## Frequently asked questions
 
@@ -211,27 +210,32 @@ never show as overdue regardless of their original due date.
     separate request.
   </Accordion>
   <Accordion title="Can I bulk-import an IRL from a spreadsheet the auditor sent me?">
-    Not yet — bulk import is on the roadmap. For now, paste each row
-    into a New Request form. The auditor's External ID, title, and
-    description fields are designed to mirror the columns of a typical
-    IRL spreadsheet, so the data maps cleanly even when typed manually.
+    Yes. Click **Import CSV** on the Audit Requests page and upload a
+    CSV with `external_id`, `title`, `type`, `description`,
+    `owner_email`, `due_date`, `evidence_capture_date`, `cadence`, and
+    `framework_codes` columns (header row required, 500-row cap). You
+    can optionally link the import to an auditor invite. Rows with an
+    unrecognized owner email or framework code still import, with a
+    warning, so you can fix them afterward.
   </Accordion>
-  <Accordion title="What happens to a recurring request when the audit period ends?">
-    Recurring requests keep respawning on their cadence regardless of
-    audit-period status — they're tied to *continuous* monitoring, not
-    a single window. Stop the recurrence by flipping the cadence to
-    ONE_TIME on the most recent instance.
+  <Accordion title="What does the Cadence field actually do?">
+    It's a label — ONE_TIME, MONTHLY, QUARTERLY, or ANNUAL — that
+    records how often this ask recurs, for your own team's tracking.
+    It does not create the next cycle's request automatically; when
+    it's due again, create (or re-import) a new request.
   </Accordion>
-  <Accordion title="Can the auditor see who on my team uploaded each piece of evidence?">
-    Yes. Every attachment shows the uploader's name and timestamp in
-    the auditor portal — that's what makes the audit trail defensible.
-    If you have a privacy concern, use a service account for sensitive
-    uploads.
+  <Accordion title="Can the auditor see who on my team posted each comment?">
+    Yes. Every comment shows the author's name and timestamp in the
+    auditor portal (unless it's marked internal-only, which hides it
+    from the auditor entirely) — that's part of what makes the audit
+    trail defensible.
   </Accordion>
   <Accordion title="A request was approved by the auditor. Can I edit it?">
-    No — APPROVED is terminal and the attached evidence is locked. If
-    something changes (a policy version, a screenshot), open a new
-    request that supersedes the old one and reference the original in
-    the description.
+    The title, description, owner, and other fields can still be
+    edited after approval. The auditor can also reopen an APPROVED
+    request back to FLAGGED if something needs revisiting. If a
+    material change happened (a policy version, a new screenshot), it's
+    still good practice to note that in a comment so the change is on
+    the record.
   </Accordion>
 </AccordionGroup>

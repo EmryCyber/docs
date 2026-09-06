@@ -56,7 +56,7 @@ When you enroll a TOTP authenticator, Regentra generates one-time backup codes �
 If you lose access to your authenticator device and have a passkey enrolled, sign in with the passkey instead — no recovery needed. Otherwise:
 
 1. **Use a backup code** at the MFA prompt to sign in.
-2. **Ask an admin to reset your MFA** from **Settings → Team**, if you're out of backup codes too. This clears your enrolled factors so you can set up a new one on your next login.
+2. **Ask an admin to reset your MFA** from **Settings → Team Members**, if you're out of backup codes too. This clears your enrolled factors so you can set up a new one on your next login.
 
 ## Password requirements
 
@@ -72,8 +72,8 @@ After **5 failed sign-in attempts**, an account is locked for **15 minutes** bef
 
 ## Azure AD users and MFA
 
-If your organization uses [Entra ID SSO](/settings/sso) for authentication, MFA is handled by Azure AD's conditional access policies — not by Regentra's passkeys or TOTP. Users who sign in through SSO follow their organization's Azure AD MFA policy instead.
+If your organization uses [Entra ID SSO](/settings/sso) for authentication, Regentra checks whether the sign-in response from Azure AD actually proves MFA happened, rather than assuming it did just because SSO was used. If Azure AD's conditional access enforced MFA on that sign-in, Regentra accepts it as satisfying its own requirement and skips its passkey/TOTP prompt. If it can't confirm that — Azure AD didn't enforce MFA, or the proof is missing — and this user still requires MFA, Regentra falls back to its own passkey or TOTP challenge right after the SSO sign-in.
 
 <Info>
-  Regentra does not duplicate MFA for SSO users. If Azure AD requires MFA, that satisfies Regentra's MFA requirement. Admin-tier roles signing in via SSO still need Azure AD itself to enforce MFA — Regentra can't add a second check on top of an SSO session.
+  Regentra doesn't duplicate MFA unnecessarily, but it also never blanket-trusts SSO as a substitute for MFA. Admin-tier roles always require MFA regardless of SSO — signing in via SSO satisfies that requirement only when Azure AD's own proof is strong enough; otherwise Regentra still prompts them.
 </Info>
