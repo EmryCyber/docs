@@ -64,7 +64,7 @@ The `Priority` filter matches against the value set at ticket creation by the cu
 
 A spike fires when a portal company crosses either of two independent thresholds within a rolling 10-minute window: 5 or more new tickets total, or 3 or more new tickets sharing the same category. Either one fires the **Ticket spike** trigger. Useful for catching site-wide outages early — one rule with this trigger and your on-call inbox covers every customer.
 
-The spike detector runs as part of the same Inngest pipeline that handles `app/ticket.created` events, so the alert email lands within seconds of the ticket that crosses the threshold.
+The spike detector runs as part of the same background pipeline that processes new tickets, so the alert email lands within seconds of the ticket that crosses the threshold.
 
 ## Frequently asked questions
 

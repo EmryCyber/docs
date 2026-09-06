@@ -92,7 +92,7 @@ The confirmation modal shows the full impact:
 To complete the deletion, the Super Admin must **type the exact company name** into the confirmation field — the Submit button stays disabled until the typed value matches the row's `name` exactly (case-sensitive), and the server rejects a mismatched name before touching any data. Separately, the delete itself only proceeds if the company is still archived at the moment it runs (checked inside the same transaction), so a concurrent restore can't result in an active company being purged.
 
 <Warning>
-  Permanent delete cannot be undone. Neon database snapshots provide a ~24-hour recovery window for catastrophic mistakes; after that, the row is gone. Use Archive for any case where there is even a 1% chance you might want the customer back.
+  Permanent delete cannot be undone. Regentra keeps short-term database backups, so if you delete a company by mistake contact support immediately; after that window, the record is gone. Use Archive for any case where there is even a 1% chance you might want the customer back.
 </Warning>
 
 If you have hundreds of stale customers to clear, archive them first. The Archive view supports per-row restore and per-row permanent delete; there is no batch permanent-delete by design.

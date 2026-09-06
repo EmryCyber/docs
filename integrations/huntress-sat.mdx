@@ -11,8 +11,8 @@ metrics from your Huntress SAT account into Regentra:
 - **Phishing-simulation rates** — the rolling 90-day compromise rate and
   report rate across completed campaigns.
 
-Both metrics are stored as `MonitoringSignal` evidence rows and surface
-on the relevant control cards in **Compliance → Controls**.
+Both metrics are stored as evidence entries and surface on the
+relevant control cards in **Compliance → Controls**.
 
 ## What syncs
 
@@ -36,7 +36,7 @@ maps to the incident-reporting control, not to anti-malware tooling.
 
 The Huntress API Client must grant exactly these five read-only scopes.
 If any is missing, the token call returns `invalid_scope` and Regentra
-flags the credential as `auth_failed` until you reissue it.
+flags the credential as **Auth Failed** until you reissue it.
 
 | Scope | What it unlocks in Regentra |
 | --- | --- |
@@ -141,8 +141,7 @@ directly, while report rate measures the secondary reporting behavior.
 
 ## Sync schedule
 
-- **Automatic:** daily at **7:00 AM Eastern Time** (cron
-  `TZ=America/New_York 0 7 * * *`)
+- **Automatic:** daily at **7:00 AM Eastern Time**
 - **Manual:** the **Sync Now** button on the card queues an immediate
   run that returns within a minute or two
 
@@ -153,10 +152,10 @@ rather than racing it.
 ## Auth failure backoff
 
 If a sync run fails for an auth reason — bad credentials, missing
-scopes, revoked Client — Regentra flags the credential as `auth_failed`
-and **skips it on subsequent scheduled runs for 24 hours**. This stops
-the daily cron from burning Huntress API budget on a known-broken
-credential.
+scopes, revoked Client — Regentra flags the credential as **Auth
+Failed** and **skips it on subsequent scheduled runs for 24 hours**.
+This stops the daily sync from burning your Huntress API budget on a
+known-broken credential.
 
 After 24 hours, the credential is retried automatically, so rotating an
 API Client clears the backoff on the next scheduled tick (or sooner if
@@ -187,9 +186,9 @@ tenants:
 
 | Endpoint | Cap | What happens at the cap |
 | --- | --- | --- |
-| `/accounts/{id}/assignments` | 5,000 | The sync truncates with `truncated: true` in metadata |
+| `/accounts/{id}/assignments` | 5,000 | The sync truncates and flags the shortfall |
 | `/assignments/{id}/learner-activity` | 1,000 per assignment | Per-assignment truncation, sync continues |
-| `/accounts/{id}/phishing-campaigns` | 5,000 | The sync truncates with `truncated: true` in metadata |
+| `/accounts/{id}/phishing-campaigns` | 5,000 | The sync truncates and flags the shortfall |
 
 If a sync run truncates, the evidence row records the flag so auditors
 can see the coverage rate is computed against a partial denominator.
@@ -203,9 +202,9 @@ per-org rather than rolling them out globally.
   allowlist, which prevents a corrupted credential from redirecting
   traffic.
 - **Token storage** — the Client Secret is encrypted at rest with
-  AES-256-GCM using an org/provider/column-bound additional
-  authenticated data (AAD) value, so a database write attack cannot
-  lift one tenant's secret into another tenant's row.
+  AES-256-GCM, bound to your organization and to this specific
+  credential, so a database-level attack cannot lift one customer's
+  secret into another customer's account.
 - **Token lifetime** — access tokens are fetched fresh on every sync run
   (typically once a day) and are not cached, so a leaked token has at
   most a single sync run of useful lifetime.
@@ -234,7 +233,7 @@ per-org rather than rolling them out globally.
     parents). Copy one of the listed account IDs, paste it into the
     **Account ID** field, and Test again.
   </Accordion>
-  <Accordion title="Last Sync shows 'auth_failed' but credentials look right">
+  <Accordion title="Last Sync shows 'Auth Failed' but credentials look right">
     The Client Secret was probably rotated in Huntress and the old
     value is still in Regentra. Paste the new secret, Test, then Save.
     The 24-hour backoff clears on the next successful sync.
@@ -251,10 +250,10 @@ per-org rather than rolling them out globally.
     had `sent == 0`. Launch a campaign in Huntress and run **Sync Now**
     after it completes.
   </Accordion>
-  <Accordion title="Sync metadata shows 'truncated: true'">
-    Your tenant exceeded the per-endpoint cap (5,000 assignments or
+  <Accordion title="Sync shows a truncated result">
+    Your account exceeded the per-endpoint cap (5,000 assignments or
     5,000 campaigns). The metrics still compute against the truncated
     page, but the denominator is partial. Contact support so we can
-    adjust the cap for your org.
+    adjust the cap for your account.
   </Accordion>
 </AccordionGroup>
