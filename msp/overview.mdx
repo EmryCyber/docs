@@ -16,7 +16,7 @@ The MSP module is the backbone of Regentra's multi-tenant architecture. It lets 
 
 <Steps>
   <Step title="MSP organization">
-    Your top-level organization. This is where your team, billing, integrations, and global settings live.
+    Your top-level organization. This is where your team, billing, integrations, and global settings live — and it can also run its own compliance program as a tenant in its own right, distinctly labeled from your clients. See [Your own organization as a tenant](/msp/clients#your-own-organization-as-a-tenant).
   </Step>
   <Step title="Client organizations">
     Each managed client is a separate compliance tenant under your MSP org. Clients have their own controls, policies, risk assessments, tickets, and portal.
@@ -43,10 +43,10 @@ The MSP dashboard provides a high-level view across all clients:
 
 | Metric | Description |
 | --- | --- |
-| **Managed clients** | Total number of active client tenants |
-| **Compliance scores** | Per-client compliance posture at a glance |
-| **Tenant usage** | Compliance tenant allocation vs plan limits |
-| **Open tickets** | Aggregate ticket count across all clients |
+| **Total Clients** | Total number of client organizations you manage (PSA companies plus compliance-only tenants) |
+| **Active Subs** | Number of clients with an active compliance subscription |
+| **Avg Compliance** | Average compliance score across your clients that have one |
+| **Open Tickets** | Aggregate open ticket count across all clients |
 
 <CardGroup cols={2}>
   <Card title="Managing Clients" icon="users" href="/msp/clients">

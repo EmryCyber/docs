@@ -61,26 +61,27 @@ Every policy moves through a defined lifecycle:
   Moving a policy backward in the lifecycle (e.g., from Approved back to Draft) is allowed. This is useful when an active policy needs significant revisions.
 </Note>
 
-### Separation of duties — author cannot self-approve
+### Separation of duties — self-approval is tracked, not blocked
 
-Regentra enforces a separation-of-duties (SoD) rule on policy approval: **the person who last edited a version's content cannot approve that same version**. The system tracks `lastContentAuthorId` per version and blocks the Approve action if the requesting user matches.
+Regentra tracks a separation-of-duties (SoD) signal on policy approval: it records who last edited a version's content (`lastContentAuthorId`) and, when that same person approves the policy, flags the approval as a **self-approval**.
 
-This is a hard server-side check — not a UI suggestion — and matches the SOC 2 / ISO 27001 / HIPAA expectation that author and approver are different individuals.
+Self-approval is **allowed**, not blocked. In a solo-admin or two-person MSP, the person who wrote the policy is often the only available Approver, and a hard block would leave the policy permanently stuck. Only Approver-tier roles can approve or activate a policy at all — that role gate is unchanged — but once someone with that role approves their own edit, the approval goes through and is recorded with a self-approval flag on the audit log, so the SoD signal is preserved for review even though the action itself isn't stopped.
 
 | Scenario | Behavior |
 | --- | --- |
-| Author submits the policy for review, a different approver approves | Approval succeeds |
-| Author submits, then approves their own version | Blocked with "You cannot approve your own edits — another approver must review" |
-| Author edits, a second person edits, second person approves | Blocked — the second person is now the `lastContentAuthorId` |
-| Same person edits in Draft, makes no further edits in Review, then approves | Blocked — they are the last content author |
+| Author submits the policy for review, a different approver approves | Approval succeeds — not flagged as self-approved |
+| Author submits, then approves their own version | Approval succeeds — flagged as self-approved on the audit log |
+| A second person edits after the original author, then approves | Approval succeeds — not flagged (the second person is now the last content author, not the approver's own edit) |
 
-To unblock, either (a) a different approver reviews and approves the existing version, or (b) the original author hands the draft to a co-author who makes a substantive edit and submits, after which the original author may approve.
+<Note>
+  When you have more than one Approver available, route policy approvals to someone other than the author — that's still the stronger control, and what most SOC 2 / ISO 27001 / HIPAA auditors expect to see as your default practice. The self-approval flag exists precisely so an auditor can see when and how often the exception was used.
+</Note>
 
 ## Per-requirement applicability badges
 
-Compliance programs vary by organization type — a non-clearinghouse covered entity does not need to satisfy §164.308(a)(4)(ii)(A), and an org that doesn't operate in the EU has no GDPR Article 27 representative obligations. Regentra surfaces this on each framework requirement directly.
+Compliance programs vary by organization type — a requirement that only binds business associates doesn't apply to a covered entity, and vice versa. Regentra surfaces this on each framework requirement directly.
 
-On any framework detail page (**Compliance → Frameworks → [framework]**), requirements that apply only to specific organizational roles render with an **applicability badge** — for example `clearinghouse only` or `controller only`. Hover the badge for the long-form explanation. If the role does not match your org, mark the corresponding control **N/A** with a one-line justification.
+On any framework detail page (**Compliance → Frameworks → [framework]**), requirements that apply only to specific organizational roles render with an **applicability badge** — for example `business-associate only` or `covered-entity only` (other roles used across frameworks include merchant, service-provider, and multi-tenant-service-provider). Hover the badge for the long-form explanation. If the role does not match your org, mark the corresponding control **N/A** with a one-line justification.
 
 <Tip>
   The badges are a heads-up, not an auto-N/A. Auditors generally accept an N/A on a flagged requirement as long as the justification names the role mismatch — "we are not a clearinghouse" is sufficient.
@@ -97,22 +98,7 @@ Regentra maintains a **complete version history** for every policy. Each time a 
 
 ## Signature Campaigns
 
-Signature campaigns let you send policies to employees for formal acknowledgment.
-
-<Steps>
-  <Step title="Create a campaign">
-    From the policy detail page, click **Create Campaign**. Select the policy and choose your target audience — all employees, a specific department, or individual users.
-  </Step>
-  <Step title="Configure the campaign">
-    Set a deadline for signatures and customize the notification message. You can require employees to confirm they have read the full document.
-  </Step>
-  <Step title="Launch the campaign">
-    Click **Send**. Each recipient gets a notification (email and in-app) with a link to review and sign the policy.
-  </Step>
-  <Step title="Track completion">
-    Monitor the campaign dashboard to see who has signed, who has not, and overall completion percentage.
-  </Step>
-</Steps>
+Signature campaigns let you send one or more policies to employees for formal acknowledgment. Campaigns are created from **Campaigns** in the sidebar, not from an individual policy's detail page — see [Acknowledgment Campaigns](/compliance/acknowledgment-campaigns) for the full walkthrough of building recipient lists, setting a due date, and sending.
 
 ## Campaign Tracking and Reminders
 
@@ -123,7 +109,7 @@ The campaign dashboard shows real-time completion status:
 - **Overdue** — employees who have missed the deadline
 
 <Info>
-  You can send manual reminders to pending employees or configure automatic reminders at intervals you define (e.g., 3 days before deadline, 1 day after deadline).
+  Reminder emails go out automatically on a fixed schedule — 7 days before the deadline, 1 day before, and on the due date itself, then every 3rd day after the deadline (copying the recipient's manager) until it's signed. There's no manual "send reminder now" button and the schedule isn't user-configurable.
 </Info>
 
 Completed signature records are stored as **compliance evidence** and can be attached to relevant controls. This creates a direct audit trail from framework requirement to policy to employee acknowledgment.

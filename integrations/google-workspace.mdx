@@ -53,8 +53,8 @@ Manual and scheduled syncs are serialized per organization so a Sync Now during 
   <Accordion title="Test fails with unauthorized_client">
     Domain-wide delegation isn't wired up. The Client ID you added in the Admin Console must EXACTLY match the service account's numeric Client ID, and the requested scope must be on the allow-list. Re-check both.
   </Accordion>
-  <Accordion title="Test fails with invalid_grant or admin_email_required">
-    The Admin Email is missing or isn't a real Workspace super-admin in the same domain. Service-account delegation needs an admin to impersonate; pick one (any super-admin works) and re-save.
+  <Accordion title="Test fails with 'Admin email is required' or invalid_grant">
+    The Admin Email field is empty, or the address isn't a real Workspace super-admin in the same domain. Service-account delegation needs an admin to impersonate; pick one (any super-admin works) and re-save.
   </Accordion>
   <Accordion title="Where do I rotate the JSON key?">
     Google Cloud → IAM & Admin → Service Accounts → Keys. Generate a new key, paste it into Regentra, then delete the old key from Google. Regentra picks up the new key on the next sync.

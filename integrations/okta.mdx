@@ -46,7 +46,7 @@ Manual and scheduled syncs are serialized per organization so a Sync Now during 
     Read-only is enough. Okta API tokens inherit the role of the user that created them. Best practice: create the token from a service-account user with a read-only admin role (e.g. *Read-only administrator*), so the token can never modify users, MFA factors, or apps even if it leaks.
   </Accordion>
   <Accordion title="Tokens expire — what happens?">
-    Okta API tokens are valid until used at least once every 30 days, or rotated by an admin. Regentra polls daily, so tokens stay alive automatically. If you rotate manually, paste the new token; the old one stops working immediately.
+    Okta API tokens are valid until used at least once every 30 days, or rotated by an admin. Regentra's identity sync runs every 4 hours, so tokens stay alive automatically as long as syncs keep succeeding. If you rotate manually, paste the new token; the old one stops working immediately.
   </Accordion>
   <Accordion title="Should I use Okta API tokens or OAuth?">
     API token for now. OAuth-based service-to-service is on the roadmap but not required for evidence sync.

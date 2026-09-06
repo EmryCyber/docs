@@ -1,0 +1,92 @@
+---
+title: "Networks & VLANs"
+description: "Track client subnets, VLANs, VLAN zones, and IP address assignments, with vault-linked credentials and CSV or Hudu import."
+---
+
+Networks is Regentra's IPAM (IP address management) module — a dedicated inventory for your clients' subnets, VLANs, and IP address assignments. It lives alongside [Knowledge Base](/psa/knowledge-base) and [Passwords](/psa/password-management) in the sidebar's **Knowledge** group.
+
+## What it does
+
+- **Network inventory** — Record every client subnet with its CIDR, type, status, and site
+- **VLANs and VLAN zones** — Track 802.1Q VLAN tags and group them into zones with reserved ID ranges
+- **IP address tracking** — Log individual addresses within a network, with status and hostname
+- **Vault-linked credentials** — Link a network to an existing Password Vault entry instead of storing a secret inline
+- **Secret detection** — A write-time check flags credential-shaped text typed into a network's notes and offers to move it to the vault
+- **CSV import/export** and a **one-way Hudu import** for migrating existing documentation in
+
+## Networks, VLANs, and VLAN zones
+
+The Networks page has three tabs:
+
+<Tabs>
+  <Tab title="Networks">
+    Each network record has a **name**, **CIDR** (IPv4 or IPv6 — both are supported), **type** (LAN, WAN, DMZ, VPN, Guest, IoT, Management, Voice, Storage, or Other), **status** (Active, Planned, Deprecated, or Reserved), an optional **client**, **parent network** (for nesting a subnet inside a larger range), **VLAN**, **site**, **description**, and **notes**.
+
+    As you type a CIDR, Regentra previews the network address, mask bits, usable host count, netmask/wildcard (IPv4), and the first/last usable address — so you can confirm you've entered the range you meant before saving. If the range overlaps an existing network, you're warned (but not blocked) with a link to the conflicting record.
+
+    The network detail page also shows IP utilization (percentage assigned, out of the usable range) and any child subnets nested under it.
+  </Tab>
+  <Tab title="VLANs">
+    A VLAN record has a **name**, **VLAN tag** (1–4094), an optional **client**, and an optional **VLAN zone**. Networks can be tagged with a VLAN to associate a subnet with its Layer 2 segment.
+  </Tab>
+  <Tab title="VLAN Zones">
+    A VLAN zone groups related VLANs under a name with a **VLAN ID range** (e.g. `100-500,1000-1500`) — useful for documenting which tag ranges are reserved for which purpose or site.
+  </Tab>
+</Tabs>
+
+## Notes and the credential-detector warning
+
+Every network has a free-text **notes** field for configuration details, gateway info, uplinks, and change history. If you type something that looks like a credential — a password, PSK, or shared secret — Regentra flags it after you save:
+
+> These notes look like they contain a credential. Store it in the vault instead of leaving it in plain text, then link it to this network.
+
+This is a warning, not a block — the note is still saved — but it points you toward **Link a credential**, which opens the same picker described below so you can move the secret into the vault and reference it properly instead.
+
+## Linking vault entries
+
+Rather than storing a credential directly on a network, link out to an existing entry in the [Password Vault](/psa/password-management). On a network's detail page (or from the notes warning above), click **Link a credential** to search your vault entries and attach one. Only entries you already have access to are shown, and personal vault entries can't be linked to a network. This keeps one credential with one owner and one audit trail, no matter how many places reference it.
+
+## IP address inventory
+
+Each network's detail page has an **IP Addresses** panel where you can track individual addresses within that subnet. Add an address with a status of Unassigned, Assigned, Reserved, Deprecated, DHCP, or SLAAC, plus an optional FQDN and description. This is what drives the utilization percentage shown on the network.
+
+## CSV import and export
+
+Export your network inventory as a CSV from the Networks page, or bulk-import a spreadsheet of networks. A few things to know:
+
+- **Notes are never included** in either direction. Notes are exactly the field the credential-detector warning exists to keep secrets out of — a bulk CSV of every network's notes would be the unencrypted artifact that protection is trying to prevent. Link vault entries instead of exporting free text that might contain one.
+- Import resolves the **Client** and **VLAN Name** columns by matching names against your existing companies and VLANs — a CSV has no internal IDs to reference directly.
+- A duplicate CIDR for the same client is skipped on import rather than creating a second record.
+- Import is capped at 2 MB / 5,000 rows per file.
+- Export and import are restricted to Admin-level roles, since a full export is effectively every client's subnet plan and VLAN segmentation in one file.
+
+## Importing from Hudu
+
+If your network documentation currently lives in Hudu, **Import from Hudu** (linked from the Networks page) walks through a one-way migration:
+
+<Steps>
+  <Step title="Connect Hudu">
+    Save your Hudu API key and base URL under Settings → Integrations first, if you haven't already.
+  </Step>
+  <Step title="Map companies">
+    Click **Discover companies** to pull the list of companies from your Hudu account. Map each one to an existing Portal Company — records for any company you leave unmapped are skipped on import, never assigned to the wrong client. Regentra suggests a match when a Hudu company name matches a Portal Company name exactly.
+  </Step>
+  <Step title="Run preview">
+    Click **Run preview** for a dry run showing exactly what would be created or updated — networks, VLAN zones, VLANs, and IP addresses — without writing anything yet.
+  </Step>
+  <Step title="Run import">
+    Once you're satisfied with the preview, click **Run import** to commit it.
+  </Step>
+</Steps>
+
+The import is **idempotent** — re-running it against the same Hudu account updates existing records instead of duplicating them, so you can safely re-import after making changes in Hudu.
+
+A few things about what does and doesn't come across:
+
+- **Notes are imported from Hudu** (unlike the CSV path above) and are scanned by the same secret-detector; the summary after each run shows how many records were flagged so you can triage them afterward.
+- Hudu's network-type field has no fixed set of values Regentra can map exactly, so every Hudu network type imports as **Other** for now.
+- Unmapped companies and any records that failed to import are listed in the run summary, not silently dropped.
+
+<Note>
+  Hudu import is one-way — it brings records into Regentra, but nothing you do here writes back to Hudu.
+</Note>

@@ -36,6 +36,9 @@ Plus continuous sync via Intuit webhooks for incoming payments and invoice statu
   <Step title="(Optional) Sync your customers">
     From a Portal Company detail page, click **Sync to QuickBooks** to push it as a QB Customer. Regentra dedupes by primary email so re-syncs don't create duplicates.
   </Step>
+  <Step title="(Optional) Turn on auto-push for Stripe-imported invoices">
+    If you also import invoices from Stripe (see [Stripe → Importing invoices created directly in Stripe](/integrations/stripe#importing-invoices-created-directly-in-stripe)), the mapping page has an "Auto-push to QuickBooks" card with an **Automatically push invoices to QuickBooks** checkbox, off by default. See [below](#auto-pushing-invoices-created-from-a-stripe-import) for exactly what it does.
+  </Step>
 </Steps>
 
 <Note>
@@ -123,6 +126,32 @@ The full chain on a Stripe payment:
 Fee fetch + fee post failures are best-effort: they're logged but never roll back the gross Payment. A QB hiccup means you might see a fee delta in QB for a few cycles, but the customer's AR is always resolved correctly.
 
 If you currently use a third-party reconciliation tool (Acodei, Synder, Bookkeep, the QBO native Stripe app), the native flow will create duplicate entries. Disable the third-party tool's fee sync before enabling Regentra's, or leave the Regentra mapping fields blank.
+
+## Auto-pushing invoices created from a Stripe import
+
+If you invoice through Stripe directly and also use QuickBooks as your books of record, turning on **Automatically push invoices to QuickBooks** (Settings → Integrations → QuickBooks → Configure mapping → "Auto-push to QuickBooks", off by default) automatically pushes newly-imported Stripe invoices to QuickBooks — you don't have to click **Send to QuickBooks** on each one.
+
+<Note>
+  Turning this on stamps the moment you enabled it. Only Stripe invoices created **after** that moment auto-push. Invoices you import from further back — through a manual backfill, or the background healing sweep catching up on older history — still import into Regentra for visibility, but don't auto-push; use the bulk send described below for those.
+</Note>
+
+Once auto-push is on, the invoice-generate form also defaults its **QuickBooks** checkbox to checked, so a manually-generated invoice pushes to QuickBooks by default too.
+
+## Finding and bulk-sending invoices that aren't in QuickBooks
+
+The invoice list (**PSA → Invoices**) shows an **In QuickBooks** status pill per row so you can see at a glance which invoices have been pushed. Use the **Not in QuickBooks** filter to isolate everything that hasn't.
+
+If a push failed, the pill shows why — the specific error QuickBooks returned — instead of leaving you to guess.
+
+To catch up a batch at once, select the invoices you want and click **Send to QuickBooks** from the list (not the single-invoice button on each invoice's detail page). This is available only to Admin-level roles — a stricter check than the rest of this feature — since sending up to 50 invoices in one action has a much bigger blast radius than pushing one.
+
+## Reconnecting a broken connection
+
+If your QuickBooks connection breaks — most commonly an expired refresh token — a **QuickBooks connection is broken — Reconnect** banner now appears in two places: on the integration card itself, and on the invoice list, since that's usually where you'll notice invoices have stopped syncing. Either one takes you through the same reconnect flow, which re-authorizes without losing your mapping configuration.
+
+## Payment processor and accounting sync roles
+
+QuickBooks is the one integration in Regentra that can act as both your **payment processor** (collecting payment) and your **accounting sync** (recording it to your books) at the same time — every other processor (Stripe, Alternative Payments) only ever holds the payment-processor role. See [Payment Processors](/integrations/payment-processors) for how this works, including what happens if you connect QuickBooks while Stripe is already your active processor, and what disconnecting QuickBooks does to both roles at once.
 
 ## What gets synced (per direction)
 

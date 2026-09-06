@@ -32,7 +32,7 @@ The Teams Chat Bridge connects a Microsoft 365 user account in your tenant to Re
     There's no `Chat.ReadWrite` or rename/membership scope in the request.
   </Step>
   <Step title="Verify the connection">
-    Once consent is granted, you're bounced back to the Integrations page and the card shows **Connected** with the support account's email. Polling for new messages starts on a 5-minute cron.
+    Once consent is granted, you're bounced back to the Integrations page and the card shows **Connected** with the support account's email. Regentra checks for new messages every 5 minutes.
   </Step>
 </Steps>
 
@@ -47,11 +47,13 @@ The Teams Chat Bridge connects a Microsoft 365 user account in your tenant to Re
 
 Cross-tenant external chat in Teams is governed by **External Access** on both your tenant and your client's tenant. If either side blocks external messaging, the client's Teams app silently drops messages to your support account.
 
-On the Teams Chat Bridge card, click **Verify Client Federation**. Regentra checks each client organization with a known Entra tenant ID and reports:
+On the Teams Chat Bridge card, click **Verify Client Federation**. This does not call Microsoft Graph to check the actual federation state today — Graph's federation-status endpoint needs permissions this integration doesn't request. Instead, Regentra lists every client organization that has an Entra tenant ID on record and reports it as **connected**, alongside a PowerShell command and Admin Center path for manually confirming external access on both sides:
 
-- **Connected** — federation is allowed both ways. Messages will work.
-- **Blocked** — one side has external access disabled or is blocking the other tenant. Use the manual PowerShell / Admin Center steps shown on the card to reach the client's admin.
-- **Unknown** — Microsoft Graph couldn't determine the federation state (commonly because the client tenant ID is wrong or hasn't been set on the client record).
+```
+Get-CsTenantFederationConfiguration | Select-Object AllowTeamsConsumer, AllowPublicUsers, AllowFederatedUsers
+```
+
+Treat this list as "clients Regentra knows a tenant ID for," not as a live confirmation that messages will get through — if a client isn't in the list, their Entra tenant ID hasn't been captured on their record yet. Verify actual external-access settings using the PowerShell command or **Teams Admin Center → Org-wide settings → External access** on both your tenant and the client's.
 
 ## Frequently asked questions
 
@@ -74,7 +76,7 @@ On the Teams Chat Bridge card, click **Verify Client Federation**. Regentra chec
   <Accordion title="How fast is 'real-time'?">
     The poller runs every 5 minutes by default. New chats and inbound messages appear in Regentra within that window. Outbound replies (tech → client) are sent immediately when the tech posts in Regentra.
   </Accordion>
-  <Accordion title="Why are some clients showing as 'Blocked' in federation check?">
-    Either your tenant or theirs has External Access locked down. The fix is on the blocking side: in Teams Admin Center → Users → External Access, allow your domain (or theirs). The card shows a PowerShell command and Admin Center path you can send to the client's IT admin.
+  <Accordion title="A client isn't messaging through even though I'm connected">
+    The federation check only confirms Regentra has the client's Entra tenant ID on record — it can't yet detect an actual External Access block on either side. If messages aren't arriving, either your tenant or the client's has External Access locked down. In Teams Admin Center → Org-wide settings → External access, confirm communication with external Teams users is allowed on both sides. The card shows a PowerShell command and Admin Center path you can send to the client's IT admin.
   </Accordion>
 </AccordionGroup>

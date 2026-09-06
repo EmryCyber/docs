@@ -1,16 +1,13 @@
 ---
 title: "GitHub Integration"
-description: "Pull repository, branch-protection, and review evidence from GitHub for change-management and SDLC controls."
+description: "Connect a GitHub personal access token so Regentra can verify access to your organization."
 ---
 
-The GitHub integration pulls repository metadata, branch protection rules, pull-request review records, and org member data from your GitHub organization into Regentra. This data evidences change management and source-code access controls.
+Regentra can store a GitHub personal access token for your organization and verify it's valid. This is a credential-connection integration today — Regentra does not yet automatically pull repository metadata, branch protection rules, pull-request reviews, or org member data from GitHub.
 
-## What it provides
-
-- **Repository metadata** — Repositories owned by your org, including default branches and visibility
-- **Branch protection rules** — Required reviews, status checks, signed-commit enforcement
-- **Pull-request reviews** — Reviewer, approval state, merge time. Used to evidence change management.
-- **Org members** — Members and their roles; used to evidence access control on source code
+<Note>
+  Automated evidence collection from GitHub (repositories, branch protection, PR reviews, org members) is not implemented yet. Connecting today saves and validates your token for when that ships.
+</Note>
 
 ## Setup
 
@@ -22,7 +19,7 @@ The GitHub integration pulls repository metadata, branch protection rules, pull-
     Set the **resource owner** to your organization. If you don't see your org, an org admin needs to enable fine-grained tokens for the org first.
   </Step>
   <Step title="Choose repository access">
-    Under **Repository access**, choose either *All repositories* or specific repositories. Pick what matches your evidence scope.
+    Under **Repository access**, choose either *All repositories* or specific repositories.
   </Step>
   <Step title="Grant read-only permissions">
     Grant **read-only** permissions for:
@@ -33,23 +30,27 @@ The GitHub integration pulls repository metadata, branch protection rules, pull-
     - Organization → Members (read)
   </Step>
   <Step title="Enter token in Regentra">
-    Generate the token and paste it into Regentra along with your **organization name** (the URL slug, e.g. `my-org` from `github.com/my-org`).
+    In Regentra, go to **Settings → Integrations** and find the GitHub card. Paste the token into **Personal Access Token**, and your org's URL slug (e.g. `my-org` from `github.com/my-org`) into **Organization Name**.
   </Step>
   <Step title="Save and test">
-    Save and test the connection.
+    Click **Save Credentials**, then **Test Connection**. A successful test confirms the token is valid and shows the GitHub account name and how many organizations it belongs to.
   </Step>
 </Steps>
+
+<Note>
+  Test Connection checks the token itself (via GitHub's `/user` and `/user/orgs` endpoints) — it doesn't currently verify the token against the specific organization name you entered.
+</Note>
 
 ## Frequently asked questions
 
 <AccordionGroup>
   <Accordion title="Why fine-grained instead of classic PAT?">
-    Fine-grained tokens are scoped to a specific org and a specific permission set, and they expire by default. Classic PATs grant broad access tied to a user account. Fine-grained is the lower-blast-radius choice for evidence sync.
+    Fine-grained tokens are scoped to a specific org and a specific permission set, and they expire by default. Classic PATs grant broad access tied to a user account. Fine-grained is the lower-blast-radius choice.
   </Accordion>
   <Accordion title="What if my org hasn't enabled fine-grained tokens?">
     An org admin needs to enable them under Settings → Personal access tokens. Until that's done, classic PATs work but with broader scope — request the `read:org` and `repo` (read-only via SAML) scopes if you must.
   </Accordion>
   <Accordion title="Tokens expire — what happens?">
-    Fine-grained tokens expire on a date you set during creation (default 30 days). Pick something reasonable (e.g. 1 year) and rotate via the same flow. Regentra surfaces a warning on the card a week before expiry.
+    Fine-grained tokens expire on a date you set during creation (default 30 days). Pick something reasonable and rotate before it lapses — a request made with an expired token fails Test Connection with a GitHub authentication error.
   </Accordion>
 </AccordionGroup>

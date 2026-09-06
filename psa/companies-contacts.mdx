@@ -28,8 +28,16 @@ Companies are your MSP customers. Contacts are the individuals inside those comp
 </Steps>
 
 <Tip>
-  After a company is created, the detail page has a **Sync With M365** button that re-runs the per-company Entra sync on demand. Use it to pull a fresh snapshot of users + devices for that one customer without waiting for the next scheduled cycle. See [Microsoft Entra ID](/integrations/microsoft-entra#per-company-sync).
+  After a company is connected to Microsoft 365, the detail page has a **Resync now** button that re-runs the per-company Entra sync on demand. Use it to pull a fresh snapshot of users + devices for that one customer without waiting for the next scheduled cycle. See [Microsoft Entra ID](/integrations/microsoft-entra#per-company-sync).
 </Tip>
+
+## Company hierarchy
+
+A company can nest under a parent company — useful when a customer has multiple locations, sites, or divisions that you want to track separately but roll up under one top-level account.
+
+On the Companies list, use the **Move under…** dropdown next to any company to place it under a parent, or choose **Top level** to detach it. Nested companies are indented under their parent so the hierarchy is visible at a glance. A company can't be moved under one of its own descendants, so the hierarchy can never form a loop.
+
+Each company in the hierarchy keeps its own tickets, contacts, assets, and invoices — nesting is purely organizational and doesn't merge or share records between parent and child.
 
 ## Archiving and deleting companies
 
@@ -62,7 +70,7 @@ While archived, the company is blocked from receiving new resources:
 **Restore** is symmetric: from the Archive view, click **Restore** on any archived row to clear the archive state and reactivate the QB Customer link.
 
 <Note>
-  Archive requires Admin, MSP Admin, or Compliance Admin. The action is idempotent — clicking Archive on an already-archived company is a no-op.
+  Archive requires Super Admin, Admin, MSP Admin, or Compliance Admin. The action is idempotent — clicking Archive on an already-archived company is a no-op.
 </Note>
 
 ### Stage 2 — Permanent delete (irreversible)
@@ -78,13 +86,13 @@ Before permanent delete is allowed, the system **blocks** the action when any of
 The confirmation modal shows the full impact:
 
 - **Records that will become unassigned** (kept in the DB but lose their company link): tickets, assets, contacts, invoices, KB articles, KB folders, quotes, projects, password folders, password entries
-- **Records that will be permanently deleted** (cascade): per-customer SLA policies
+- **Records that will be permanently deleted** (cascade): per-customer SLA policies, and all of that company's [Networks, VLANs, VLAN zones, and IP addresses](/psa/networks) — network topology is treated as sensitive data, so it's hard-deleted rather than left unassigned
 - **QuickBooks Customer** is set to `Active=false` (best-effort soft-delete)
 
-To complete the deletion, the Super Admin must **type the exact company name** into the confirmation field — the Submit button stays disabled until the typed value matches the row's `name` exactly (case-sensitive). The server re-validates the match inside the same transaction as the delete, so there is no race window.
+To complete the deletion, the Super Admin must **type the exact company name** into the confirmation field — the Submit button stays disabled until the typed value matches the row's `name` exactly (case-sensitive), and the server rejects a mismatched name before touching any data. Separately, the delete itself only proceeds if the company is still archived at the moment it runs (checked inside the same transaction), so a concurrent restore can't result in an active company being purged.
 
 <Warning>
-  Permanent delete cannot be undone. Neon database snapshots provide a ~24-hour recovery window for catastrophic mistakes; after that, the row is gone. Use Archive for any case where there is even a 1% chance you might want the customer back.
+  Permanent delete cannot be undone. Regentra keeps short-term database backups, so if you delete a company by mistake contact support immediately; after that window, the record is gone. Use Archive for any case where there is even a 1% chance you might want the customer back.
 </Warning>
 
 If you have hundreds of stale customers to clear, archive them first. The Archive view supports per-row restore and per-row permanent delete; there is no batch permanent-delete by design.

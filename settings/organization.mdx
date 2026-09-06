@@ -1,21 +1,66 @@
 ---
 title: "Organization Settings"
-description: "Configure your organization profile, timezone, custom domain, email delivery, and session settings."
+description: "Configure your Organization Profile — branding, address, tax info, and document defaults — plus timezone, custom domain, email delivery, and session settings."
 ---
 
 Organization settings control your Regentra account's global configuration. These settings apply across all modules — compliance, PSA, and the customer portal.
 
-## Organization profile
+## Organization Profile
 
-Go to **Settings → Company Profile** to manage your profile:
-
-- **Organization name** — Displayed in the app header, reports, and invoices
-- **Address** — Used on invoices and compliance documentation
-- **Website** — Your company website URL
-- **Logo** — Displayed in the app, reports, portal, and email notifications
+Go to **Settings → Company Profile** to manage everything about how your organization presents itself — on the app, and on every document your clients see. It's one consolidated card, grouped into six sections: **Identity**, **Address**, **Contact**, **Tax**, **Documents**, and **Attribution**.
 
 <Tip>
-  Upload a high-resolution logo (at least 400x400px) for the best appearance across reports and the portal.
+  Everything in this card feeds the branding shown on quotes, invoices, PDFs, and emails your clients receive — see [Where this shows up](#where-this-shows-up) at the end of this section.
+</Tip>
+
+### Identity
+
+- **Logo** — a landscape PNG (transparent background recommended) or JPEG, at least 600×200px, ideally 1200×400px, up to 2 MB. If you upload a WebP file, Regentra automatically generates a PNG version behind the scenes so it still renders correctly on PDFs.
+- **Icon** (optional) — a separate square PNG or JPEG, 256×256px, used for compact headers where a wide logo doesn't fit.
+- **Organization Name** — your display name, shown in the app and on documents.
+- **Legal name** — only needed if it differs from your display name; falls back to the organization name if left blank.
+- **Industry**
+- **Brand color** — used as an accent color on the quote/invoice header preview and public-facing pages.
+
+### Address
+
+Address fields are structured: **Address line 1**, **Address line 2**, **City**, **State/Region**, **Postal code**, and **Country** (2-letter code). If your organization still has an address stored the old free-text way, a **Split legacy address** button appears once, to migrate it into these structured fields — after that, the structured fields are what's used everywhere.
+
+### Contact
+
+**Phone**, **Website**, **Support email**, and **Billing email**. Billing email is used as the reply-to address on invoice emails and the "questions?" line — if left blank, it falls back to your support email.
+
+### Tax
+
+- **Tax ID label** — defaults to "EIN," but you can change it to match what's appropriate for your country (there's no separate, fixed EIN field anymore — the label is just configurable text).
+- **Tax ID** — the number itself.
+- **Show tax ID on quotes** — off by default. Your tax ID always appears on invoices; this toggle additionally shows it on quotes.
+
+### Documents (PSA only)
+
+Defaults applied across your quotes and invoices:
+
+- **Default payment terms** — how many days clients have to pay, used when generating a new invoice.
+- **Invoice memo** — text shown above the totals on every invoice PDF.
+- **Invoice footer**
+- **Quote terms & conditions (default)**
+- **Quote footer**
+- **Remit-to instructions** — payment instructions (check payable-to, ACH/wire details) shown on the invoice PDF only.
+
+<Note>
+  These are organization-wide defaults. A quote can carry a per-document override for **who it's addressed to** (recipient name, email, phone, address), but the memo, footer, terms, and remit-to instructions above always come from your organization defaults — there's no per-invoice override for those yet.
+</Note>
+
+### Attribution
+
+**Show "Powered by Regentra"** — on by default. This one toggle controls a "Powered by Regentra" mark across every customer-facing surface: the public quote page, the quote PDF, quote emails, the invoice PDF, PSA client reports, and other public links. Turn it off for a fully white-labeled experience.
+
+### Where this shows up
+
+Everything above appears on: the public quote page and quote PDF, quote emails, the invoice PDF, PSA client report PDFs, and public token pages (e-signature, ticket, audit, vendor questionnaire, and shared-password links).
+
+<Tip>
+  Upload a high-resolution logo for the best appearance across every one of those surfaces.
 </Tip>
 
 ## Timezone
@@ -26,6 +71,7 @@ Set your organization's timezone from the **Timezone & Display** card in **Setti
 - Report date ranges
 - Scheduled sync times
 - Dashboard date displays
+- Date-range filters on [data exports](/settings/import-export)
 
 <Note>
   Changing the timezone does not retroactively adjust existing SLA calculations. It applies to new tickets and future SLA evaluations.
@@ -54,6 +100,13 @@ Regentra sends email notifications for ticket updates, SLA alerts, and invoice d
 
 ## Session duration
 
-Configure how long user sessions remain active before requiring re-authentication. Go to **Settings → Authentication & SSO** and choose one of the available options: **1 hour**, **4 hours**, or **12 hours**.
+Go to **Settings → Authentication & SSO → Session Duration** and choose how long a session can stay active without re-authentication: **1 hour**, **4 hours**, or **12 hours**.
 
-Shorter session durations improve security for shared workstations. Longer durations reduce login friction for trusted environments.
+This setting controls the **inactivity window** — how long a session can go without any activity before it expires. Regardless of what you pick, every session also has a fixed **12-hour absolute limit**: even a continuously active session is signed out after 12 hours and must sign in again. Shorter inactivity windows improve security for shared workstations; longer ones reduce login friction for trusted environments — but no session, however active, outlives the 12-hour cap.
+
+## Related settings
+
+- [Tickets](/settings/tickets) — ticket numbering and billing behavior.
+- [Import / Export](/settings/import-export) — bulk data export and CSV import.
+- [Webhooks](/settings/webhooks) — real-time event delivery to your own systems.
+- [API Keys](/settings/api-keys) — scoped keys for external automations.

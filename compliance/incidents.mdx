@@ -1,0 +1,152 @@
+---
+title: "Incident Management"
+description: "Report, investigate, and notify on security incidents and breaches — with a four-factor breach determination, per-framework notification obligations, and a regulator-ready report."
+---
+
+Incident Management takes a security incident from first report through investigation, breach determination, regulator notification, and a final report you can hand to counsel or a regulator. It covers HIPAA's Breach Notification Rule as well as the notification obligations of GDPR, FTC Safeguards, SEC Regulation S-P, CMMC/CIRCIA, and PCI DSS.
+
+Find it in the sidebar under **Privacy & Breach → Incidents**.
+
+<Note>
+  Some of this page's language is HIPAA-specific — the four-factor assessment framing, the 60-day breach-notification countdown, and the "presumed breach" wording. That language only appears for organizations that have adopted the HIPAA framework (or that haven't adopted any framework yet, which defaults to the same neutral guidance). Organizations on other frameworks see equivalent, framework-neutral copy instead — see [HIPAA-specific wording](#hipaa-specific-wording) below.
+</Note>
+
+## Reporting an incident
+
+Click **Report Incident** from the Incidents page to open the intake form. It captures what you know at the moment of discovery — you fill in investigation detail afterward:
+
+- **Title** and **What happened** — a free-text description (minimum 10 characters)
+- **Type** — Breach, Security Incident, Privacy Violation, Near Miss, or Suspected Breach
+- **Severity** — Low, Medium, High, or Critical
+- **When was it discovered** and **How was it detected** (user report, automated monitoring, vendor/third party, customer, or other)
+- **Who detected it** (name/role)
+- **Affected systems** — free text
+- **Data types involved** — a PHI checkbox plus PII, PCI, Credentials, IP, or Other
+- **Estimated affected individuals** and **estimated affected records**
+- **Initial actions taken** — what was done immediately on detection
+- **Assign to** (optional) — the investigation owner
+
+Submitting creates the incident and takes you straight to its detail page, numbered `INC-<year>-<sequence>`.
+
+## The incident detail page
+
+Every incident has seven tabs:
+
+<Tabs>
+  <Tab title="Overview">
+    Move the incident through its status: **Reported → Investigating → Contained → Notifying → Resolved → Closed**. Every status change requires a short **reason**, which is recorded on the timeline. The page also tracks containment, eradication, and recovery actions; root cause; business impact; remediation steps; lessons learned; and the assigned investigator — all editable as the investigation progresses.
+  </Tab>
+  <Tab title="Timeline">
+    An append-only investigation timeline. Entries are typed (Detected, Triaged, Contained, Eradicated, Recovered, Notified, Status Change, or Note) and timestamped with their author. You can add notes, but existing entries can never be edited or deleted — a correction is a new entry, not a rewrite of history.
+  </Tab>
+  <Tab title="Risk Assessment">
+    The four-factor breach determination — see [below](#the-four-factor-breach-assessment).
+  </Tab>
+  <Tab title="Notifications">
+    Proposed and confirmed notification obligations, one per audience and framework — see [below](#notification-obligations).
+  </Tab>
+  <Tab title="Evidence">
+    A chain-of-custody log of the evidence collected during the investigation — see [below](#evidence-chain-of-custody).
+  </Tab>
+  <Tab title="Corrective Actions">
+    Follow-up remediation items with an owner, a due date, and a status (Open, In Progress, Done).
+  </Tab>
+  <Tab title="Report">
+    Export, print, or email the regulator-ready PDF report — see [below](#the-regulator-ready-report).
+  </Tab>
+</Tabs>
+
+## The four-factor breach assessment
+
+The Risk Assessment tab walks you through a four-factor analysis of the probability that data was compromised. Rate each factor **Low**, **Medium**, or **High** and add a narrative supporting the rating:
+
+1. **Nature and extent** of the data involved (identifiers, re-identification likelihood)
+2. **Unauthorized recipient** — who received or could have accessed the data
+3. **Whether the data was actually acquired or viewed**
+4. **Extent of mitigation** already achieved
+
+Regentra computes a determination from the four ratings — you never have to reconcile your narrative judgment with the recorded outcome yourself:
+
+- **Not a Breach** — every one of the four factors must be rated Low. Any single factor rated High means the incident is treated as a confirmed breach, regardless of the other three.
+- **Breach** — any factor rated High.
+- **Pending** — a mix with no High rating but at least one Medium doesn't clear the "low probability of compromise" bar either. The determination stays Pending until you refine the assessment or record a manual determination.
+
+<Warning>
+  A breach is presumed unless documented analysis shows a low probability of compromise across all four factors. Undocumented incidents default to the more conservative outcome, not the more convenient one.
+</Warning>
+
+A confirmed **Breach** determination always requires notification, regardless of which frameworks your organization has adopted — the Notifications tab's proposals are driven by this determination together with the incident's data types and framework adoption.
+
+## Notification obligations
+
+The Notifications tab proposes who you may need to notify and by when, based on the incident's data types, affected count, breach determination, and the frameworks your organization has adopted:
+
+| Framework | Audience | Deadline |
+| --- | --- | --- |
+| HIPAA | Individuals | 60 days from discovery |
+| HIPAA | HHS (500+ affected) | Concurrent with individual notice |
+| HIPAA | HHS (under 500 affected) | Within 60 days after the end of the calendar year |
+| HIPAA | Media (500+ residents of one state) | 60 days from discovery |
+| FTC Safeguards | FTC (500+ consumers) | 30 days |
+| SEC Regulation S-P | Individuals | 30 days |
+| SEC Regulation S-P | SEC (8-K Item 1.05, public companies) | 4 business days from a materiality determination |
+| GDPR | Supervisory authority | 72 hours |
+| GDPR | Individuals (high risk) | Without undue delay |
+| CMMC | DoD | 72 hours |
+| CIRCIA (alongside CMMC) | CISA | 72 hours |
+| PCI DSS | Card brands | Immediately on confirmed compromise |
+| State law (any org with an affected-individual count) | State Attorney General | Varies by state, commonly 30–90 days |
+
+If your organization hasn't adopted any compliance framework yet, Regentra proposes a single neutral 60-day notice to individuals as a best-practice benchmark.
+
+Each proposal shows its basis in plain language and a due-date countdown. To act on one:
+
+<Steps>
+  <Step title="Confirm the obligation">
+    Click **Confirm** on a proposed obligation to record it as a real, tracked notification requirement for this incident.
+  </Step>
+  <Step title="Notify, then mark it sent">
+    Once you've actually sent the notice, click **Mark sent**, choose the method (email, mail, portal, phone, filing, or other), and optionally record a reference number.
+  </Step>
+</Steps>
+
+Confirmed-but-unsent obligations are what drive the countdown banner on the Incidents list page and the "Pending Notification" stat — the deadline shown is the confirmed obligation's own due date once one exists, falling back to the general 60-day-from-discovery guidance for an incident that hasn't been reviewed yet.
+
+## Evidence chain of custody
+
+The Evidence tab is a metadata log, not a file store — Regentra doesn't currently support attaching the underlying files here. For each item you record:
+
+- **Item** — what the evidence is (e.g. "firewall log export")
+- **Collected by**
+- **Collected at** (date/time)
+- **Storage location** — where the actual file or artifact lives
+- **SHA-256** (optional) — a hash to prove the artifact wasn't altered after collection
+
+This gives you a defensible record of what was collected, by whom, and when — store the actual files in your own evidence system and reference their location and hash here.
+
+## Corrective actions
+
+Track follow-up remediation items separately from the investigation narrative: give each action a title, an owner, and an optional due date, then move it through **Open → In Progress → Done** as work completes.
+
+## Closing an incident
+
+Move an incident's status to **Closed** from the Overview tab (with a reason, like any other status change). Closing automatically logs a piece of compliance evidence tagged as an incident-response artifact — this happens in the background and never blocks the close even if it fails, so you don't need a separate manual step to preserve a record that the incident was formally closed.
+
+Moving an incident backward out of Resolved or Closed clears the corresponding resolved/closed timestamps, so reopening an investigation doesn't leave a stale resolution date on an incident that's active again.
+
+## The regulator-ready report
+
+The Report tab generates a single PDF covering classification, summary, affected scope, the four-factor assessment and determination, the notifications table, the full timestamped timeline, containment/eradication/recovery actions, root cause, business impact, corrective actions, the chain-of-custody evidence log, lessons learned, and sign-off lines.
+
+- **Export PDF** downloads the report
+- **Print** opens it inline for printing
+- **Email** sends it directly to up to 20 recipients — useful for sending straight to a regulator or outside counsel without downloading and re-attaching it yourself
+
+## HIPAA-specific wording
+
+Several parts of this page and the Incidents list adapt their language depending on whether your organization is HIPAA-eligible (has adopted the HIPAA framework, or hasn't adopted any framework yet):
+
+- The page subtitle and the four-factor assessment card's heading and body copy use HIPAA-specific terms ("PHI," "impermissible use/disclosure," "presumed breach") for a HIPAA-eligible org, and neutral terms ("personal data," "unauthorized use or disclosure") otherwise.
+- The Incidents list's countdown banner shows the §164.404/§164.406 60-day rule and media-notification threshold only for a HIPAA-eligible org. A non-HIPAA org instead sees a plain "confirm notification obligations" prompt with no HIPAA-specific deadline math attached.
+
+This only changes wording and which countdown clock is shown by default — the underlying obligations engine still proposes deadlines for every framework your organization has actually adopted, as described above.

@@ -4,9 +4,9 @@ description: "Pull MFA enrollment, global authentication policy, admin inventory
 ---
 
 The Cisco Duo integration imports five compliance signals from your Duo
-tenant on two cadences — a four-hourly identity sync and an hourly
-authentication-log poll. Each signal lands as a `MonitoringSignal`
-evidence row on the relevant control card.
+account on two cadences — a four-hourly identity sync and an hourly
+authentication-log poll. Each signal lands as an evidence entry on the
+relevant control card.
 
 ## What syncs
 
@@ -123,8 +123,8 @@ least-privilege without opening the Duo console.
 
 | Result | Status |
 | --- | --- |
-| `total admins > 10` or `Owner count > 5` | Fail |
 | `total admins == 0` | Warning |
+| `total admins > 10` or `Owner count > 5` | Warning |
 | Otherwise | Pass |
 
 ### Account settings
@@ -172,8 +172,8 @@ backlog.
 ## Sync schedule
 
 - **Identity sync** — every 4 hours on the hour
-  (`0 */4 * * *`, runs at 00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
-- **Authentication log poll** — hourly at the half-hour (`30 * * * *`)
+  (00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
+- **Authentication log poll** — hourly at the half-hour
 - **Manual sync** — the **Sync Now** button on the card queues an
   immediate identity sync (auth-log polling stays on its own schedule)
 
@@ -216,19 +216,20 @@ Two consequences worth knowing:
 
 If a sync fails with a 401-range error, missing-permission error, or a
 clock-skew error (`40103` / `40104`), Regentra flags the credential as
-`auth_failed` and **skips it on subsequent scheduled runs for 24
+**Auth Failed** and **skips it on subsequent scheduled runs for 24
 hours**. Rationale: a revoked Secret key, a clock-skew problem, or a
 removed permission produces persistent failures, and we do not want the
-4-hour cron to burn Duo API budget on a known-broken credential.
+scheduled sync to keep burning your Duo API budget on a known-broken
+credential every four hours.
 
 After 24 hours, the credential is retried automatically. Rotating the
 Secret key in Duo and pasting the new one into Regentra clears the
 backoff on the next successful sync.
 
 A 429 rate-limit response is **not** an auth failure — it flags the
-credential as `rate_limited` and retries on the next cron tick. The
-underlying Duo SDK also does its own exponential backoff (1s, 2s, 4s,
-8s, 16s, 32s with jitter) inside a single retry attempt.
+credential as **Rate Limited** and retries on the next scheduled sync.
+Regentra also does its own exponential backoff (1s, 2s, 4s, 8s, 16s,
+32s with jitter) inside a single retry attempt.
 
 ## Pagination caps
 
@@ -254,10 +255,10 @@ per-org.
   hostname not matching the `.duosecurity.com` suffix. DNS resolution
   is checked at request time to defeat rebinding to private IPs.
 - **Credential storage** — the Integration key and Secret key are
-  encrypted at rest with AES-256-GCM using an org/provider/column-bound
-  additional authenticated data (AAD) value. A database-level write
-  attack cannot lift one tenant's secret into another tenant's row
-  without the AAD mismatch tripping the auth tag.
+  encrypted at rest with AES-256-GCM, bound to your organization and to
+  this specific credential. That binding means one customer's secret
+  can never be lifted into another customer's account, even in the
+  event of a database-level attack.
 - **No write surface** — Regentra requests only read permissions; the
   Admin API cannot create users, disable factors, or change policies
   from Regentra's side.
@@ -269,12 +270,10 @@ per-org.
 
 <AccordionGroup>
   <Accordion title="Test Connection returns 40103 — Invalid Date">
-    The container's clock is more than ~60 seconds out of sync with
-    Duo's clock. On a self-hosted deployment, verify chrony / ntpd is
-    running. On Azure Container Apps and Vercel, host-level NTP is
-    managed for you, so a 40103 here usually means the credential has a
-    stale stored skew flag — reset the credential by saving fresh
-    values.
+    Regentra's servers keep time in sync automatically, so this almost
+    never reflects a real clock problem. A 40103 here usually means a
+    stale stored clock-skew flag on the credential — save the
+    credential again to reset it.
   </Accordion>
   <Accordion title="Test Connection returns 40301 — Permission denied">
     One of the four required permissions is missing or the
@@ -282,13 +281,16 @@ per-org.
     the application in Duo, confirm all four are checked, save, wait
     ~30 seconds, and Test again.
   </Accordion>
-  <Accordion title="Test Connection returns 40002 — Invalid request">
-    The API Hostname field is wrong — usually a copy-paste artifact
-    (extra `https://`, trailing slash, or the admin portal URL pasted
-    instead of the API host). The hostname should look like
-    `api-XXXXXXXX.duosecurity.com`, nothing else.
+  <Accordion title="Test Connection returns 40401 — Resource not found">
+    This usually means the credential is an **Auth API** key pair
+    pasted into an **Admin API** integration, or the API Hostname
+    field is wrong — a copy-paste artifact (extra `https://`, trailing
+    slash, or the admin portal URL pasted instead of the API host).
+    The hostname should look like `api-XXXXXXXX.duosecurity.com`,
+    nothing else, and the credentials must come from an Admin API
+    application.
   </Accordion>
-  <Accordion title="Last Sync shows 'auth_failed' after rotating the Secret key">
+  <Accordion title="Last Sync shows 'Auth Failed' after rotating the Secret key">
     Paste the new Secret key, click **Test Connection**, then **Save**.
     The 24-hour backoff clears on the next successful sync — you do
     not need to wait the full 24 hours.
@@ -310,10 +312,10 @@ per-org.
   <Accordion title="Admin inventory shows more Owners than expected">
     Owner names are surfaced in the signal metadata. Cross-reference
     against your authorization-and-supervision policy; if any are
-    stale, demote them in Duo. Owner count above 5 trips the fail
+    stale, demote them in Duo. Owner count above 5 trips the warning
     threshold because the role grants every other admin permission.
   </Accordion>
-  <Accordion title="Auth log poll shows 'rate_limited' status">
+  <Accordion title="Auth log poll shows 'Rate Limited' status">
     Another integration or a custom script is sharing the same Admin
     API application and using the same `/admin/v2/logs/authentication`
     budget. The endpoint is limited to 1 call per minute per tenant.

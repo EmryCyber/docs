@@ -40,6 +40,7 @@
               "compliance/access-reviews",
               "compliance/audit-lifecycle",
               "compliance/audit-requests",
+              "compliance/incidents",
               "compliance/reports"
             ]
           },
@@ -58,6 +59,7 @@
               "psa/password-management",
               "psa/automations-and-ai",
               "psa/knowledge-base",
+              "psa/networks",
               "psa/portal",
               "psa/reports"
             ]
@@ -95,6 +97,7 @@
               "integrations/regentra-bot",
               "integrations/level-rmm",
               "integrations/ninjaone",
+              "integrations/hudu",
               "integrations/okta",
               "integrations/duo",
               "integrations/google-workspace",
@@ -103,7 +106,8 @@
               "integrations/github",
               "integrations/jira",
               "integrations/stripe",
-              "integrations/quickbooks"
+              "integrations/quickbooks",
+              "integrations/payment-processors"
             ]
           },
           {
@@ -112,6 +116,10 @@
               "settings/organization",
               "settings/team-management",
               "settings/notification-rules",
+              "settings/tickets",
+              "settings/webhooks",
+              "settings/api-keys",
+              "settings/import-export",
               "settings/mfa",
               "settings/sso"
             ]
@@ -156,7 +164,7 @@
   },
   "feedback": {
     "thumbsRating": true,
-    "suggestEdit": true
+    "suggestEdit": false
   },
   "search": {
     "prompt": "Search Regentra docs..."

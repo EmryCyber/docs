@@ -1,0 +1,71 @@
+---
+title: "Payment Processors"
+description: "How Regentra keeps one active payment processor and one active accounting sync at a time, and what happens when you switch."
+---
+
+Stripe, QuickBooks, and Alternative Payments can all connect to your organization, but Regentra keeps them from stepping on each other with a simple rule: **at most one active payment processor, and at most one active accounting sync, at any time.**
+
+This page explains the model. For setup steps, see [Stripe](/integrations/stripe) and [QuickBooks](/integrations/quickbooks).
+
+## The two roles
+
+| Role | What it means | Who can hold it |
+| --- | --- | --- |
+| **Payment processor** | Collects money from your clients — the integration your invoices' payment links actually charge through. | Stripe, QuickBooks, or Alternative Payments |
+| **Accounting sync** | Records invoices and payments to your books of record. | QuickBooks only, today |
+
+QuickBooks is the one integration that can hold **both** roles at once — it can be your books of record and your payment processor at the same time, the same way it always has been. Stripe and Alternative Payments only ever hold the payment-processor role.
+
+A typical setup is one of:
+
+- **Stripe alone** — Stripe collects payment; no accounting sync.
+- **Stripe + QuickBooks** — Stripe collects the payment; QuickBooks records it to your books.
+- **QuickBooks alone** — QuickBooks both collects payment (via QuickBooks Payments) and records it.
+- **Alternative Payments + QuickBooks** — Alternative Payments collects the payment; QuickBooks records it to your books. Same shape as Stripe + QuickBooks, with a different processor.
+
+## Seeing which one is active
+
+On **Settings → Integrations**, each connected processor's card shows a badge when it holds a role:
+
+- **Active payment processor**
+- **Active accounting sync**
+
+QuickBooks can show both badges at once. Stripe and Alternative Payments only ever show the processor badge.
+
+## Connecting a second processor
+
+If you try to connect a payment processor while a different one is already active, Regentra doesn't silently override it. Saving the new processor's credentials returns a conflict, and you're asked to confirm:
+
+> **\{Current processor\}** is your active payment processor. Switching to **\{new processor\}** will disconnect **\{current processor\}** for new invoices; existing **\{current processor\}** invoices keep their hosted links and continue to reconcile.
+
+Confirming disconnects the previous processor and connects the new one in a single step. If you cancel, nothing changes — your original processor stays active and the new one's credentials aren't saved.
+
+<Warning>
+  Switching away from QuickBooks disconnects it entirely — both invoicing **and** your QuickBooks accounting sync — because QuickBooks is the one integration that can hold both roles. Switching between Stripe and Alternative Payments only affects invoicing; neither one touches an accounting sync.
+</Warning>
+
+QuickBooks itself never gets refused this way for the accounting-sync role: connecting QuickBooks always claims the accounting-sync slot (unless a different accounting integration already holds it), and separately claims the payment-processor slot only if it's free — it never bumps an already-active Stripe or Alternative Payments connection.
+
+## Existing invoices are never disrupted
+
+Switching processors only changes where **new** invoices go. Invoices already sent through the processor you disconnected keep their hosted payment links and continue to reconcile normally — the switch doesn't rewrite invoice history or break a link a client already has open.
+
+## Alternative Payments
+
+Alternative Payments is available as a payment-processor option alongside Stripe. You can connect it today from **Settings → Integrations → Alternative Payments**:
+
+<Steps>
+  <Step title="Pick your environment">
+    Choose **Demo** or **Production** — Alternative Payments issues separate credentials for each, and a Demo credential won't work against Production or vice versa.
+  </Step>
+  <Step title="Generate credentials">
+    In your Alternative Payments Partner Dashboard, generate a **Client ID** and **Client Secret** for the environment you picked.
+  </Step>
+  <Step title="Save in Regentra">
+    Paste both values into the Client ID and Client Secret fields and save. This claims Alternative Payments as your active payment processor, with the same switch-and-confirm flow described above if another processor is currently active.
+  </Step>
+</Steps>
+
+<Warning>
+  Connecting Alternative Payments saves your credentials and claims the processor role, but invoicing through it isn't live yet: **Test Connection** returns "not yet implemented," and generating an invoice with Alternative Payments as the collection method is refused with "Alternative Payments invoicing is not available yet." Connect it to reserve the processor slot and be ready, but keep Stripe or QuickBooks as your active processor for invoices you need paid today.
+</Warning>

@@ -1,18 +1,19 @@
 ---
 title: "Invoices & Quotes"
-description: "Draft quotes, generate invoices, send via Stripe or QuickBooks, and track payment status in one place."
+description: "Draft quotes, generate invoices, collect payment through your active processor, and sync to QuickBooks — with white-label branding throughout."
 ---
 
-Create and manage customer quotes and invoices. Pull line items from your [Service Catalog](/psa/service-catalog), set payment terms, and send via [Stripe](/integrations/stripe) for hosted online payment or [QuickBooks](/integrations/quickbooks) for accounting sync.
+Create and manage customer quotes and invoices. Pull line items from your [Service Catalog](/psa/service-catalog), set payment terms, and send via your organization's active payment processor for hosted online payment or QuickBooks for accounting sync.
 
 ## What it does
 
 - **Quote drafting** — Build multi-line quotes with custom descriptions, quantities, and pricing
-- **Invoice generation** — Convert service agreements or manual line items into invoices
-- **Dual destinations** — Send invoices to both Stripe (online payment) and QuickBooks (accounting)
+- **Invoice generation** — Convert service agreements, logged time, or manual line items into invoices
+- **Multiple destinations** — Send invoices to your active payment processor (for online payment) and/or QuickBooks (for accounting)
 - **Catalog integration** — Pick from your [Service Catalog](/psa/service-catalog) or enter free-text items
 - **Payment options** — Card, ACH, bank transfer, SEPA debit, and more per invoice
 - **Tax & due date control** — Set tax rate and override the default 30-day due window
+- **White-label branding** — Your logo, address, and tax details appear on every quote and invoice you send
 
 ## How to create a quote
 
@@ -34,6 +35,16 @@ Create and manage customer quotes and invoices. Pull line items from your [Servi
   </Step>
 </Steps>
 
+## Quote recipient (Bill to)
+
+Every quote has its own **Recipient / Bill to** block, independent of the company and contact you pick. This is what actually appears on the public quote page, the quote PDF, and the quote email — so even a quote with no company attached still has somewhere to put a full billing address.
+
+Fill in name, email, phone, and address directly, or click **Use company details** to pull them from the company and contact you've already selected. An override always takes precedence over the company/contact fields on every surface; leaving a field blank falls back to the corresponding company or contact value.
+
+<Note>
+  Once a quote is **accepted** or **converted** to an invoice, the recipient block (along with the linked company and contact) is frozen — it can no longer be edited. This keeps the billing record on an accepted quote immutable even if the underlying company or contact record changes later.
+</Note>
+
 ## How to generate an invoice
 
 <Steps>
@@ -41,50 +52,87 @@ Create and manage customer quotes and invoices. Pull line items from your [Servi
     In the PSA module sidebar, click **Invoices**, then click **Generate Invoice**.
   </Step>
   <Step title="Choose destination(s)">
-    Check **Stripe** (for hosted online payment) and/or **QuickBooks** (for accounting sync). If QB is checked, link a Portal Company; click **Sync now** if not yet synced.
+    Check **Collect payment via `<your active processor>`** (for hosted online payment) and/or **QuickBooks** (for accounting sync). If QuickBooks is checked, link a Portal Company; click **Sync now** if not yet synced.
   </Step>
   <Step title="Select a client and agreement (optional)">
-    For Stripe, pick a customer from your connected Stripe account. Optionally link a [Service Agreement](/psa/projects-agreements) to auto-populate the monthly recurring charge.
+    For your payment processor, pick a customer from your connected account. Optionally link a [Service Agreement](/psa/projects-agreements) to auto-populate recurring charges, or pull in [approved unbilled time](/psa/time-tracking#billing-review-ready-to-bill).
   </Step>
   <Step title="Set period and line items">
-    Define the billing period. Add manual line items by picking from your [Service Catalog](/psa/service-catalog) or entering free-text descriptions and amounts. Catalog items sync to Stripe automatically.
+    Define the billing period. Add manual line items by picking from your [Service Catalog](/psa/service-catalog) or entering free-text descriptions and amounts. Catalog items sync to your processor automatically.
   </Step>
   <Step title="Configure payment options">
-    Set a custom due date (default: 30 days from invoice date). Enable payment methods: Card, ACH, Link, Bank Transfer, SEPA Debit. If none selected, Card and ACH are used.
+    Set a custom due date (default: 30 days from invoice date). If Stripe is your active processor, enable payment methods: Card, ACH, Link, Bank Transfer, SEPA Debit. If none selected, Card and ACH are used.
   </Step>
   <Step title="Generate the invoice">
     Click **Generate**. The invoice is created and synced to your chosen destination(s).
   </Step>
 </Steps>
 
-## Stripe & QuickBooks behaviour
+## Payment processors
 
-**Stripe** invoices are hosted online. Customers receive a link and can pay directly. You track payment status in real time.
+Regentra separates payment integrations into two roles, and enforces **at most one active provider per role** for your organization:
 
-**QuickBooks** invoices sync to your QuickBooks account. They don't include an online payment link; customers receive the PDF and pay via the methods you specify offline.
+- **Processor** — collects payment from the customer. Stripe or Alternative Payments.
+- **Accounting** — records the invoice to your books. QuickBooks or Xero.
 
-Configure both in **Settings → Integrations**:
+QuickBooks is the one provider that can hold both roles at once — connecting it claims the Accounting slot automatically, and also claims the Processor slot if nothing else already holds it.
 
-- [Stripe](/integrations/stripe) — Per-organization Stripe account connection
-- [QuickBooks](/integrations/quickbooks) — Per-organization QuickBooks authorization
+Connect a processor or accounting integration under **Settings → Integrations**. If you try to connect a second provider for a role that's already occupied, Regentra shows a confirmation naming the current holder and what switching means for existing invoices, rather than silently overriding it — you have to confirm the switch explicitly.
+
+Whichever processor is active drives the invoice generation form: the checkbox reads **"Collect payment via `<your processor>`"** instead of a hard-coded provider name, and Stripe-specific options (customer picker, payment method selection) only appear when Stripe itself holds the Processor role.
+
+<Note>
+  Alternative Payments can be connected from Settings → Integrations, but its payment-collection adapter isn't live yet — it can hold the Processor role slot, but invoices can't currently be sent through it. Use Stripe for online payment collection today.
+</Note>
+
+## Importing invoices from Stripe
+
+If you've ever billed a customer directly from the Stripe Dashboard rather than through Regentra, click **Import from Stripe** on the Invoices page to pull those invoices in. Each run:
+
+- Looks back 90 days and imports up to 1,000 invoices by default.
+- Matches each Stripe invoice to an existing customer where possible; unmatched customers are listed after the run with a **pick a company to link** shortcut, so future invoices for that customer resolve automatically.
+- Is safe to re-run — an invoice already imported is updated in place rather than duplicated.
+- Shows a **Run again to continue** link if it hits the 1,000-invoice cap, picking up exactly where it left off.
+
+Imported invoices carry a **Stripe** badge to distinguish them from invoices you generated in Regentra. Because Stripe owns their content, a Stripe-origin invoice can't be edited or regenerated the way a Regentra-generated one can. Voiding one still works, but asks you to confirm you understand it originated in Stripe and that voiding here also voids it there — the confirmation names the Stripe invoice and links to it.
+
+## QuickBooks push visibility
+
+When your invoices should flow to QuickBooks automatically as they're created (rather than only on demand), turn on **auto-push** in your QuickBooks mapping settings. From that point forward, new invoices for QuickBooks-synced companies push automatically; invoices imported from Stripe *before* you turned this on are left alone so historical data isn't retroactively pushed.
+
+To see what still needs attention:
+
+- The **Not in QuickBooks** filter on the Invoices list shows every invoice that hasn't reached QuickBooks yet, with a badge explaining why — not yet synced, the company isn't linked to a QuickBooks customer, or the last push attempt failed (with the error shown on hover).
+- **Send to QuickBooks**, available to admin roles, lets you select up to 50 not-yet-synced invoices at once and push them in a single action, rather than one at a time.
+- A connection-health banner appears on the Invoices list itself (not just the Integrations page) if your QuickBooks connection needs to be reconnected.
+
+## White-label branding
+
+Your organization's logo, legal name, address, tax ID, and remit-to details — configured once under **Settings → Company Profile** — appear automatically on:
+
+- The public quote page and the quote PDF
+- The invoice PDF
+- The quote-send email
+
+You can also set default footer/memo text for quotes and invoices, and choose whether your tax ID appears on quotes. If you'd rather not show Regentra's own branding alongside yours, the **Show "Powered by Regentra"** toggle in the same settings controls that footer line across every one of these surfaces.
 
 ## Supply dates & tax compliance
 
-When adding manual line items, optionally enable **Supply date** to specify a single date or date range (e.g. "Service period: 2026-05-01 — 2026-05-31"). This is rendered on the Stripe invoice and helps satisfy UK/EU tax-point rules.
+When adding manual line items, optionally enable **Supply date** to specify a single date or date range (e.g. "Service period: 2026-05-01 — 2026-05-31"). This is rendered on the invoice and helps satisfy UK/EU tax-point rules.
 
 ## Frequently asked questions
 
 <AccordionGroup>
   <Accordion title="Can I convert a quote to an invoice?">
-    Not directly today. View the quote's line items as a reference, then create an invoice with them. We plan to automate this flow.
+    Yes. On an accepted quote's detail page, click **Convert to Invoice**. The new invoice copies the quote's line items and its resolved recipient ("Bill to") details, so the invoice matches exactly what the customer signed off on.
   </Accordion>
   <Accordion title="What happens if I edit a catalog item?">
-    The invoice retains the price and description at the time of generation. Historical invoices are unaffected. A new Stripe Price is created on the next sync if the unit amount or currency changed.
+    The invoice retains the price and description at the time of generation. Historical invoices are unaffected. A new price is created on the next sync if the unit amount or currency changed.
   </Accordion>
-  <Accordion title="Can I send an invoice via both Stripe and QuickBooks?">
-    Yes. Check both destinations, link a Portal Company for QB, and generate. The invoice is created in both systems independently.
+  <Accordion title="Can I send an invoice to both my payment processor and QuickBooks?">
+    Yes. Check both destinations, link a Portal Company for QuickBooks, and generate. The invoice is created in both systems independently.
   </Accordion>
   <Accordion title="What's the difference between Line Items and Service Agreements?">
-    **Line Items** are one-off charges on a single invoice. **Service Agreements** ([Projects & Agreements](/psa/projects-agreements)) define recurring billing (monthly + hourly). You can link an agreement and still add extra line items.
+    **Line Items** are one-off charges on a single invoice. **Service Agreements** ([Projects & Agreements](/psa/projects-agreements)) define recurring billing built from their own line items. You can link an agreement and still add extra line items.
   </Accordion>
 </AccordionGroup>

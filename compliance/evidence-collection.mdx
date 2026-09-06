@@ -85,6 +85,14 @@ When an auditor asks "How do you satisfy HIPAA § 164.312(a)(1)?", you can show 
 
 Because controls map across frameworks through the CCF, evidence attached to a shared control counts toward every mapped framework. Upload once, satisfy many.
 
+## Cross-Framework Evidence Map
+
+**Compliance → Evidence Map** shows the **Cross-Framework Evidence Map** — a dedicated view for seeing where evidence has and hasn't been collected across every framework you've adopted.
+
+For each framework, the map shows an **evidence collection coverage** percentage — the share of that framework's mapped controls that have at least one piece of evidence attached. This measures evidence *presence*, not requirement coverage: a control with evidence attached isn't automatically "satisfied" for gap-analysis purposes, and a control can be Implemented with strong evidence but still map only PARTIAL-strength to a given requirement (see [Gap Analysis](/compliance/gap-analysis)). Each control's row shows its implementation-status badge next to its evidence count so you can see both signals together.
+
+Because controls are shared across frameworks through the CCF, the map's language is deliberately "**reused across**" frameworks, not "satisfies" — evidence uploaded once for a shared control is reusable everywhere that control is mapped, but reuse and requirement satisfaction are two different questions.
+
 ## Monitoring Signals and Compliance Status
 
 Some evidence is not a static document but a **live signal** — an ongoing check that something is still true. Regentra's monitoring signals track:
@@ -94,11 +102,15 @@ Some evidence is not a static document but a **live signal** — an ongoing chec
 - **Logging configuration** — are audit logs still being captured?
 - **Patch compliance** — are devices still up to date?
 
-When a monitoring signal detects a change (e.g., MFA was disabled for a user), the associated control's status is flagged for review.
+When a monitoring signal detects a change (e.g., MFA was disabled for a user), the associated control's status can change automatically — see [Automatic status changes](/compliance/controls#automatic-status-changes) for exactly how the demote/restore cycle works and what triggers it.
 
 <Warning>
-  A control marked as Implemented can be automatically flagged as **Needs Review** if a monitoring signal detects drift. This ensures your compliance posture reflects reality, not just a point-in-time snapshot.
+  A control marked as Implemented can be automatically flagged as **Needs Review** if a monitoring signal detects drift. This ensures your compliance posture reflects reality, not just a point-in-time snapshot. It is also automatically restored once fresh evidence shows a full pass again.
 </Warning>
+
+<Info>
+  If your organization runs both Compliance and PSA, failing monitoring findings flow into PSA as tickets by default. To avoid flooding the ticket queue, an initial wave of findings — or any later burst of five or more within an hour, such as after reconnecting an integration — is folded into a single "Compliance baseline" ticket rather than filed one ticket per finding.
+</Info>
 
 ## Evidence Expiration and Refresh Cycles
 
@@ -107,7 +119,7 @@ Evidence does not last forever. Auditors expect to see current proof, not year-o
 Regentra manages evidence freshness through:
 
 - **Expiration dates** — set an expiration on any piece of evidence. When it expires, the associated control is flagged for review.
-- **Automated refresh** — evidence from connected integrations is refreshed on a configurable schedule (daily, weekly, or monthly).
+- **Automated refresh** — evidence from connected integrations is refreshed automatically on a fixed schedule (currently every 6 hours; not user-configurable).
 - **Review reminders** — the dashboard highlights controls with stale or expired evidence so your team knows where to focus.
 
 <Tip>

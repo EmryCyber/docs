@@ -1,86 +1,112 @@
 ---
 title: "Time Tracking & Billing"
-description: "Log billable and non-billable time against tickets, manage approval workflows, generate invoices, and collect payment via Stripe."
+description: "Track time with a live timer or the Log Time modal, submit and approve weekly timesheets, and turn approved time into invoices."
 ---
 
-Regentra's time tracking ties technician work directly to tickets and feeds into invoicing. Every time entry flows through an approval workflow before it can be billed to a client.
+Regentra's time tracking ties technician work directly to tickets and projects, and feeds straight into invoicing. Every time entry moves through a submit/approve workflow — including a rejection path with resubmission — before it can be billed to a client.
 
 ## Logging time
 
-Technicians log time directly from the ticket detail page. Each time entry includes:
+Time can be logged two ways: a live timer on the ticket detail page, or the **Log Time** modal (also reachable from **Timesheets**).
 
-- **Duration** — Hours and minutes spent
-- **Description** — What was done during this time
-- **Billable flag** — Whether the entry should be invoiced to the client
-- **Date** — When the work was performed
+<Tabs>
+  <Tab title="Timer">
+    On a ticket's detail page, click **Start** to begin timing your work. The elapsed time is shown live. Click **Stop** when you're done, and the Log Time modal opens pre-filled with the real start and end time the timer captured — review and save. Only one timer can run at a time; starting a new one prompts you to stop the one already running elsewhere.
+  </Tab>
+  <Tab title="Log Time modal">
+    Click **Log Time** to open the entry form directly. Choose what you're logging against — a ticket (search by title or number) or a project task — enter a description, and set the duration.
+  </Tab>
+</Tabs>
 
-<Tip>
-  You can also log time in bulk from **PSA → Time Sheets** for work that spans multiple tickets or non-ticket activities.
-</Tip>
+Each time entry includes:
+
+- **Log against** — a ticket or a project/task. The company is shown read-only, derived from whichever you pick.
+- **Description** — what was done during this time.
+- **Duration** — enter minutes directly, or switch to start/end time and let the modal compute the duration. Quick-add buttons (+15m, +30m, +1h, +2h) speed up common durations.
+- **Date** — defaults to today; see [Backdating](#backdating) below.
+- **Work type** — Remote, Onsite, After-hours, Travel, or Internal.
+- **Billable flag** — whether the entry should be invoiced to the client.
+
+A read-only strip on the modal shows your other entries for that day as positioned blocks, so you can sanity-check for overlaps before saving. All times are shown and interpreted in your organization's configured timezone, labeled at the top of the modal.
+
+## Backdating
+
+Time doesn't have to be logged the same day it happened. Change the **Date** field in the Log Time modal to log against any prior day — useful for catching up after a busy stretch or correcting a forgotten entry. Backdated entries still respect your organization's timezone when resolving which week they belong to.
 
 ## Billable vs non-billable
 
 Mark entries as **billable** when the work should be invoiced to the client. Use **non-billable** for internal tasks, training, or work covered under a flat-rate agreement. Non-billable time still appears in reports for utilization tracking.
 
+## Rate resolution
+
+When a billable entry is invoiced, its hourly rate is resolved in this order — the first one that applies wins:
+
+1. **Manual override** — an admin can set a specific rate on an entry when reviewing it, overriding everything else below.
+2. **Service agreement rate** — the explicit or company-default [Service Agreement](/psa/projects-agreements) tied to the entry.
+3. **Organization default rate** — a fallback hourly rate configured under Settings → Tickets → Billing.
+4. **$0** — if none of the above apply.
+
 ## Approval workflow
 
-Time entries move forward through four stages. The flow is one-way — there is no rejection state, so review the entry before submitting.
+Time entries move through a submit/approve cycle, with a rejection path that lets a technician correct and resubmit rather than dead-ending:
 
 <Steps>
   <Step title="Draft">
-    Technician creates the entry. The owner can edit or delete it at this stage; nobody else sees it for review yet.
+    The entry is created. The owner can edit or delete it while it's in this state.
   </Step>
   <Step title="Submitted">
-    Technician submits the entry for approval. The entry becomes read-only for the owner and appears in a manager's queue.
+    The technician submits the entry for review. It becomes read-only for the owner and appears in a manager's approval queue.
   </Step>
-  <Step title="Approved">
-    A manager or admin (someone other than the owner) approves the entry. Once approved it becomes eligible for invoicing.
+  <Step title="Approved / Rejected">
+    A manager or admin (someone other than the owner) either approves the entry, making it eligible for invoicing, or rejects it with a reason. A rejected entry can be edited and resubmitted — it isn't a dead end.
   </Step>
   <Step title="Invoiced">
-    The entry is attached to a generated invoice. Invoiced entries are locked into the billing record.
+    Once attached to a generated invoice, the entry is locked into the billing record and shows a link to that invoice.
   </Step>
 </Steps>
 
 <Note>
-  Only **approved** and **billable** time entries are included when generating invoices.
+  Whether approval is required at all is configurable — see [Billing settings](#billing-settings) below. When it's turned off, submitted time is auto-approved (and audit-logged) at invoice time, which suits a solo shop with no separate approver.
 </Note>
 
-## Service agreements
+## Weekly Timesheets
 
-Service agreements define the billing structure for each client:
+**Timesheets** (PSA sidebar, under Finance) shows a Monday–Sunday grid of the tickets and projects you logged time against that week, with week navigation and — for managers — a technician selector to review someone else's week.
 
-<Tabs>
-  <Tab title="Monthly recurring">
-    A fixed monthly fee covering a defined scope of services. Time is tracked for utilization reporting but is not individually invoiced.
-  </Tab>
-  <Tab title="Hourly rate">
-    An hourly rate applied to billable time entries. Each approved entry is billed at the client's configured rate when an invoice is generated.
-  </Tab>
-</Tabs>
+Below the grid, each entry has its own actions depending on status: **Edit** and **Submit** (draft or rejected entries), **Delete**, and, for managers, **Approve** or **Reject** with a reason.
 
-Service agreements are configured per company under **PSA → Companies**, opening a company and switching to its **Service Agreement** tab.
+The week itself has an envelope status of its own:
 
-## Invoice generation
+- **Submit week** — submits every draft or rejected entry in the week at once.
+- **Approve week** — available to managers once every entry in the week is submitted; approves them all together. Blocked if any entry in the week is still a draft or rejected, so a week can't end up approved while part of it is still unresolved.
+- **Reject week** — sends every submitted entry in the week back to rejected with a shared reason.
 
-<Steps>
-  <Step title="Select time period">
-    Choose the billing period (e.g., last month) to include approved time entries.
-  </Step>
-  <Step title="Review line items">
-    Preview the invoice with all approved billable entries, rates, and totals.
-  </Step>
-  <Step title="Generate invoice">
-    Create the invoice. It is saved and can be sent to the client.
-  </Step>
-  <Step title="Collect payment">
-    Clients pay through Stripe. Payment status is tracked on the invoice.
-  </Step>
-</Steps>
+A rejected entry — whether rejected individually or as part of a week — can always be corrected and resubmitted. Once every entry in a previously-rejected week is resubmitted, the week's envelope automatically clears back to submitted so it's ready for approval again.
 
-## Stripe integration
+## Billing review ("Ready to Bill")
 
-Connect your Stripe account in **Settings → Integrations → Stripe** to enable payment collection on invoices. See the [Stripe integration guide](/integrations/stripe) for setup details.
+**Ready to Bill** (PSA sidebar, under Finance) is where approved, unbilled billable time turns into invoices. It groups outstanding time by company and [Service Agreement](/psa/projects-agreements) — a company's time with no agreement attached gets its own group — so you can see exactly what's ready to invoice before you generate anything.
+
+Click **Create invoice** on any group to jump into the [invoice generation flow](/psa/invoices-quotes#how-to-generate-an-invoice), pre-filled with that company, agreement, and time period.
+
+## Ticket billed notation and auto-close
+
+When an invoice is generated from time entries, each affected ticket gets a system reply noting what was billed (e.g. "Time billed on invoice INV-2026-0042 ($240.00)."), and its unbilled-time total is updated.
+
+If a ticket is **Resolved** and every bit of its billable time has now been billed, it automatically closes — provided **Auto-close tickets when billed** is turned on (it is by default). This closure doesn't notify the customer; it's treated as an internal, administrative step rather than a customer-facing status change.
+
+## Billing settings
+
+Under **Settings → Tickets → Billing**:
+
+- **Auto-close tickets when billed** — default on. When an invoice covers all of a Resolved ticket's time, close it automatically.
+- **Require approval before billing** — default on. Only approved time can be invoiced. Turn this off for a solo shop with no separate approver; submitted time is then auto-approved (and audit-logged) at invoice time.
+- **Default hourly rate** — applied when a time entry has no service agreement rate to inherit. Leave blank for $0.
+
+## Service agreements and payment
+
+[Service Agreements](/psa/projects-agreements) define recurring and hourly billing structure per client, and time entries roll up into them automatically. Once entries are approved and invoiced, payment is collected through whichever [payment processor your organization has active](/psa/invoices-quotes#payment-processors) — Stripe, QuickBooks, or Alternative Payments.
 
 <Warning>
-  Invoices with $0 totals typically mean the included time entries are either not approved or not marked as billable. Check entry status before generating.
+  Invoices with $0 line items for time usually mean the included entries are either not approved or not marked as billable. Check entry status on Timesheets before generating.
 </Warning>

@@ -1,54 +1,79 @@
 ---
 title: "Multi-Factor Authentication"
-description: "Set up TOTP-based MFA, enforce MFA across your organization, and manage recovery for authenticator apps."
+description: "Passkeys and TOTP-based multi-factor authentication, admin enforcement, trusted devices, and account lockout."
 ---
 
-Regentra supports TOTP-based multi-factor authentication using any standard authenticator app (Microsoft Authenticator, Google Authenticator, Authy, 1Password, etc.).
+Regentra supports two ways to add a second factor to sign-in: **passkeys** (Face ID, Touch ID, Windows Hello, or a security key) and **TOTP authenticator apps** (Microsoft Authenticator, Google Authenticator, Authy, 1Password, etc.). Either one satisfies your MFA requirement — you don't need both.
 
-## MFA enforcement
+## Who needs MFA
 
-MFA is required for all Regentra accounts. New users have a **7-day grace period** after account creation to set up MFA. After the grace period expires, MFA setup is mandatory before accessing the platform.
+MFA is **mandatory for Admin, Super Admin, and MSP Admin roles**, regardless of whether your organization has turned on the org-wide MFA toggle. Every other role follows your organization's MFA setting, which an admin controls from **Settings → Authentication & SSO**.
 
 <Warning>
-  Users who do not configure MFA within the 7-day grace period will be locked out until they complete setup. Encourage your team to set up MFA immediately after joining.
+  If you hold an admin-tier role, you can't opt out of MFA even if your organization's MFA toggle is off. Set up a passkey or TOTP before you're prompted at login.
 </Warning>
 
 ## Setting up MFA
 
 <Steps>
   <Step title="Navigate to security settings">
-    Go to **Settings → Authentication & SSO** and scroll to the **Multi-Factor Authentication** section.
+    Go to **Settings → Authentication & SSO**.
   </Step>
-  <Step title="Scan the QR code">
-    Open your authenticator app and scan the QR code displayed on screen. This registers Regentra in your app.
+  <Step title="Choose a method">
+    Set up a passkey under the **Passkeys** card, or a TOTP app under the **Multi-Factor Authentication** card. You can set up both if you like.
   </Step>
-  <Step title="Enter the verification code">
-    Type the 6-digit code shown in your authenticator app into the verification field. This confirms the setup is working.
-  </Step>
-  <Step title="Save recovery codes">
-    Download or copy the one-time recovery codes. Store them in a secure location — they are the only way to regain access if you lose your authenticator device.
+  <Step title="Confirm the factor">
+    A passkey confirms itself the moment your device creates it (Face ID, Touch ID, Windows Hello, or your security key's own prompt). A TOTP app confirms by scanning a QR code and entering the 6-digit code it generates.
   </Step>
 </Steps>
 
-<Note>
-  Each recovery code can only be used once. Generate new recovery codes from the security settings page if you run out.
-</Note>
+## Passkeys
 
-## Recovery procedures
+Passkeys use WebAuthn/FIDO2 — the same technology behind "Sign in with Face ID" on other sites. They're phishing-resistant: a passkey is bound to Regentra's actual domain, so it can't be tricked into authenticating on a lookalike site the way a typed code can.
 
-If a user loses access to their authenticator app:
-
-1. **Use a recovery code** — Enter one of the saved recovery codes during the MFA prompt to bypass the authenticator requirement.
-2. **Admin reset** — An organization admin can reset a user's MFA from **Settings → Team Members**, opening the affected user and clicking **Reset MFA**. The user will need to set up MFA again on their next login.
+Enroll one from **Settings → Authentication & SSO → Passkeys**. You can register more than one — for example, your laptop's Touch ID and a physical security key as a backup — and each shows up as its own entry you can name and revoke independently.
 
 <Tip>
-  Store recovery codes in a password manager or a secure physical location — not on the same device as your authenticator app.
+  A passkey satisfies your MFA requirement on its own, without an authenticator app — signing in with a passkey is already two factors (something you have, something you are or know) in one step.
 </Tip>
+
+## Trusted devices
+
+When you complete an MFA challenge, you can check **Remember this device for 14 days** to skip the second-factor prompt on that device until it expires. Manage which devices are currently trusted — and revoke any you don't recognize — from **Settings → Authentication & SSO → Trusted Devices**.
+
+## Enrolling or removing a factor
+
+Both enrolling a new factor and removing an existing one require you to have verified a factor earlier in your **current session** — a fresh MFA check, not just being logged in. If you're prompted to re-verify while trying to change your MFA settings, that's this step-up check; complete it and you'll return to where you were.
+
+<Note>
+  This applies even to removing your last remaining factor — you can't disable MFA on your account without proving you still control a factor first.
+</Note>
+
+## Recovery
+
+When you enroll a TOTP authenticator, Regentra generates one-time backup codes — store them somewhere safe (a password manager, not the same device as your authenticator app). Each code works once.
+
+If you lose access to your authenticator device and have a passkey enrolled, sign in with the passkey instead — no recovery needed. Otherwise:
+
+1. **Use a backup code** at the MFA prompt to sign in.
+2. **Ask an admin to reset your MFA** from **Settings → Team Members**, if you're out of backup codes too. This clears your enrolled factors so you can set up a new one on your next login.
+
+## Password requirements
+
+Regentra requires a minimum password length of **12 characters** with no other composition rule — no forced mix of uppercase, numbers, or symbols. Every password is checked against a breach database at signup, reset, and change; a password that's appeared in a known breach is rejected even if it meets the length requirement.
+
+<Info>
+  If the breach-check service is temporarily unreachable, Regentra doesn't block you from setting your password — it lets the change through and records the fact that the check couldn't run, rather than locking you out over a third-party outage.
+</Info>
+
+## Account lockout
+
+After **5 failed sign-in attempts**, an account is locked for **15 minutes** before another attempt is allowed. This applies per account, not per IP address, so a locked-out user can't be unlocked simply by trying from a different network.
 
 ## Azure AD users and MFA
 
-If your organization uses [Entra ID SSO](/settings/sso) for authentication, MFA is handled by Azure AD — not by Regentra. Users who sign in through SSO follow their organization's Azure AD conditional access and MFA policies.
+If your organization uses [Entra ID SSO](/settings/sso) for authentication, Regentra checks whether the sign-in response from Azure AD actually proves MFA happened, rather than assuming it did just because SSO was used. If Azure AD's conditional access enforced MFA on that sign-in, Regentra accepts it as satisfying its own requirement and skips its passkey/TOTP prompt. If it can't confirm that — Azure AD didn't enforce MFA, or the proof is missing — and this user still requires MFA, Regentra falls back to its own passkey or TOTP challenge right after the SSO sign-in.
 
 <Info>
-  Regentra does not duplicate MFA for SSO users. If Azure AD requires MFA, that satisfies Regentra's MFA requirement. You do not need to configure MFA in both places.
+  Regentra doesn't duplicate MFA unnecessarily, but it also never blanket-trusts SSO as a substitute for MFA. Admin-tier roles always require MFA regardless of SSO — signing in via SSO satisfies that requirement only when Azure AD's own proof is strong enough; otherwise Regentra still prompts them.
 </Info>

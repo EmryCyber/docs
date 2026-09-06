@@ -10,8 +10,33 @@ Regentra billing is managed through Stripe and covers your subscription plan, PS
 Every new Regentra account starts with a **14-day free trial** that includes full access to all features — compliance, PSA, integrations, and the customer portal. No credit card is required to start the trial.
 
 <Note>
-  When the trial expires, you must select a subscription plan to continue using Regentra. Your data is preserved for 30 days after trial expiration.
+  When the trial expires, you're **not** locked out. If you haven't chosen a paid plan, PSA automatically transitions to a capped **Free Tier** — see below — instead of blocking access. Choosing a plan at any point upgrades you out of the Free Tier.
 </Note>
+
+## Free Tier
+
+If your PSA trial ends without a paid plan selected, Regentra transitions your organization to Free Tier automatically rather than cutting off access. Free Tier caps you to what you were actively using at the moment your trial ended — at minimum, **1 active technician and 1 active client**, or your real active counts at trial end if they were higher. You keep everything you already have; you just can't add more without upgrading.
+
+<Note>
+  Free Tier is grandfathered at your actual usage, not reset to 1-and-1 for every organization. An organization trialing with 3 technicians and 2 clients active at cutoff keeps all 5 on Free Tier — the cap only bites when you try to add a 4th technician or a 3rd client.
+</Note>
+
+Free Tier includes:
+
+- Full PSA access — tickets, time tracking, and invoicing
+- Your capped number of active technicians and clients
+- Unlimited quotes — prospects stay as prospects (not counted against your client cap) until you actually onboard them
+
+If you try to add a technician or client beyond your cap, Regentra shows a banner on **Settings → Plans & Subscription** explaining what you hit and prompting you to subscribe to add more.
+
+### Switching to Free Tier voluntarily
+
+You don't have to wait for your trial to end. From **Settings → Plans & Subscription**:
+
+- **Start Free** — available if you haven't yet subscribed to a paid plan (including mid-trial). Switches you to Free Tier immediately.
+- **Downgrade to Free** — available if you have an active paid subscription. Schedules the switch for the end of your current billing period, so you keep paid-plan access through what you've already paid for.
+
+Re-subscribing to a paid plan at any time restores full access and lifts the Free Tier caps.
 
 ## Subscription plans
 
@@ -51,6 +76,10 @@ The **Settings → Plans & Subscription** page shows two distinct numbers when u
 ## Compliance tenant billing
 
 Each managed client that uses compliance features occupies one compliance tenant. Your plan includes a base number of tenants. Additional tenants can be purchased as add-ons.
+
+<Note>
+  Your own MSP organization counts as one of your compliance tenants too, if you activate compliance for it — see [Your own organization as a tenant](/msp/clients#your-own-organization-as-a-tenant). It's not a client, but it's billed and tracked the same way one is.
+</Note>
 
 ## Stripe integration
 

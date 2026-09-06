@@ -10,6 +10,7 @@ The Level.io RMM integration imports device and asset data from your Level.io ac
 - **Device sync** — RMM-managed devices are imported as Regentra assets
 - **Asset enrichment** — Hostname, serial number, OS, manufacturer, model, and warranty data are populated from agent telemetry
 - **Real-time updates** — Webhook support for immediate asset updates when device state changes
+- **Alert-to-ticket** — an active Level alert can open a PSA ticket automatically (via the webhook, see below); the ticket auto-resolves when the alert clears
 
 ## Setup
 
@@ -45,35 +46,34 @@ Each Level.io device maps to a Regentra asset with the following fields:
 ## Sync frequency
 
 - **Scheduled sync** runs every **6 hours**, pulling the full device inventory
-- **Real-time webhooks** push individual device updates as they occur (new device, status change, agent uninstall)
+- **Real-time webhooks** push individual device, group, and alert updates as they occur
 
 ## Webhook setup
 
 To enable real-time updates:
 
 <Steps>
-  <Step title="Copy the webhook URL">
-    In Regentra, go to **Settings → Integrations → Level.io RMM** and copy the webhook endpoint URL.
+  <Step title="Copy the webhook URL and secret">
+    After saving your API key in Regentra, go to **Settings → Integrations → Level.io RMM** and copy the **Webhook URL** and **Webhook Secret** shown on the card.
   </Step>
   <Step title="Configure in Level.io">
-    In Level.io, add a webhook pointing to the Regentra endpoint. Select device events (created, updated, deleted) as triggers.
+    In Level.io, go to **Settings → Webhooks** and click **Create webhook**. Paste the Webhook URL as the endpoint and the Webhook Secret as the signing secret. Enable all 8 event types: `alert_active`, `alert_resolved`, `device_created`, `device_updated`, `device_deleted`, `group_created`, `group_updated`, `group_deleted`.
   </Step>
   <Step title="Verify delivery">
-    Level.io sends a test event. Regentra confirms receipt and the webhook status shows **Active**.
+    Once Level starts sending events, the integration card shows a "Webhook {'{'}time{'}'} ago" indicator with the time since the last delivery Regentra received.
   </Step>
 </Steps>
 
+`alert_active` and `alert_resolved` are handled specially: an active alert opens a PSA ticket (idempotent — Regentra won't open a second ticket for the same still-active alert), and the matching `alert_resolved` event auto-resolves it. The other six event types drive asset sync only.
+
 <Note>
-  Webhooks are optional. The 6-hour scheduled sync works without them. Webhooks add near-instant updates for time-sensitive asset tracking.
+  Webhooks are optional. The 6-hour scheduled sync works without them. Webhooks add near-instant asset updates and are the only path for alert-to-ticket creation.
 </Note>
 
 ## Deduplication with Entra/Intune
 
-If you also use the [Microsoft Entra ID integration](/integrations/microsoft-entra), devices may appear from both Level.io and Intune. Regentra deduplicates by matching on serial number and hostname. Merged records combine data from both sources:
-
-- **From Level.io** — Agent status, manufacturer, model, warranty
-- **From Entra/Intune** — Compliance state, Entra device ID, last sign-in
+If you also use the [Microsoft Entra ID integration](/integrations/microsoft-entra), the same physical device can otherwise show up twice — once from Level, once from Entra/Intune. Regentra resolves this by source priority, not by merging fields: NinjaOne outranks Level, which outranks Intune, which outranks Entra. When a Level sync matches an existing Entra or Intune asset by hostname or serial number, the Entra/Intune row is retired (its status flips to **Retired**, taking it out of the active asset list) and the Level-sourced row becomes the one active record for that device — it isn't a combined record carrying fields from both sources.
 
 <Warning>
-  Deduplication requires at least one matching field (serial number or hostname). Devices without serial numbers may appear as separate records until manually merged.
+  Retirement only fires when Level's record shares a hostname or serial number with the existing Entra/Intune record. Devices with no matching field may appear as separate active records.
 </Warning>

@@ -9,7 +9,7 @@ Regentra uses Stripe in two distinct ways: platform billing for your Regentra su
 
 <Tabs>
   <Tab title="Platform billing">
-    Handles your Regentra subscription charges — plan fees, per-seat PSA billing, and compliance tenant add-ons. This is managed automatically when you subscribe and requires no additional setup. See [Billing & Subscriptions](/msp/billing) for details.
+    Handles your Regentra subscription charges — plan fees, per-seat PSA billing, and compliance workspace add-ons. This is managed automatically when you subscribe and requires no additional setup. See [Billing & Subscriptions](/msp/billing) for details.
   </Tab>
   <Tab title="Per-org billing (PSA invoicing)">
     Lets you invoice your clients for billable time and services through Regentra. You connect your own Stripe account so payments from your clients flow directly to you.
@@ -18,23 +18,22 @@ Regentra uses Stripe in two distinct ways: platform billing for your Regentra su
 
 ## Setting up per-org Stripe
 
+Regentra's Stripe card only asks for two values: your Stripe **Secret Key** and, once the webhook is registered, the **Webhook Signing Secret**. There's no publishable key field — Regentra never renders Stripe Elements client-side, so it doesn't need one.
+
 <Steps>
-  <Step title="Get your Stripe API keys">
-    In the [Stripe Dashboard](https://dashboard.stripe.com), navigate to **Developers → API Keys** and copy your **Publishable key** and **Secret key**.
-  </Step>
-  <Step title="Enter keys in Regentra">
-    Go to **Settings → Integrations → Stripe** and paste both keys.
+  <Step title="Save your Secret Key">
+    In the [Stripe Dashboard](https://dashboard.stripe.com), navigate to **Developers → API Keys** and copy your **Secret Key** (starts with `sk_live_` or `sk_test_`). Paste it into **Settings → Integrations → Stripe → Secret Key** and click **Save Credentials**.
   </Step>
   <Step title="Test the connection">
     Click **Test Connection** to verify Regentra can communicate with your Stripe account.
   </Step>
-  <Step title="Save">
-    Save the configuration. You can now generate invoices that accept payment through Stripe.
+  <Step title="Register the webhook">
+    After saving, your unique **Webhook URL** appears on the card. Follow [Webhook configuration](#webhook-configuration) below to create the endpoint in Stripe and paste the **Webhook Signing Secret** back — invoices won't reconcile payment status automatically until this is done.
   </Step>
 </Steps>
 
 <Warning>
-  Use your **live** API keys for production invoicing. Test keys will not process real payments. Never share your secret key — it is encrypted at rest using AES-256-GCM.
+  Use your **live** Secret Key for production invoicing. A test-mode key will not process real payments. Never share your secret key — it is encrypted at rest using AES-256-GCM.
 </Warning>
 
 ## Invoice generation and payment
@@ -52,13 +51,14 @@ Payment status is tracked on the invoice in Regentra:
 | Status | Meaning |
 | --- | --- |
 | **Draft** | Invoice created but not yet sent |
-| **Sent** | Invoice delivered to the client |
-| **Paid** | Payment received through Stripe |
-| **Overdue** | Payment deadline has passed without payment |
+| **Sent** | Invoice delivered to the client, awaiting payment |
+| **Partial** | A partial payment was received; a balance remains |
+| **Paid** | Payment received in full |
+| **Void** | The invoice was voided and is no longer collectible |
 
 ## Webhook configuration
 
-Regentra uses Stripe webhooks to receive real-time invoice events. Regentra generates a per-org webhook URL with a random token in the path (so two orgs never share a route), but you have to **paste that URL into Stripe yourself** — Stripe does not let third parties create endpoints in your account on your behalf.
+Regentra uses Stripe webhooks to receive real-time invoice, refund, and dispute events. Regentra generates a per-org webhook URL with a random token in the path (so two orgs never share a route), but you have to **paste that URL into Stripe yourself** — Stripe does not let third parties create endpoints in your account on your behalf.
 
 <Steps>
   <Step title="Copy the webhook URL from Regentra">
@@ -68,20 +68,89 @@ Regentra uses Stripe webhooks to receive real-time invoice events. Regentra gene
     In the Stripe Dashboard → **Developers → Webhooks → Add endpoint**, paste the URL.
   </Step>
   <Step title="Subscribe to the events">
-    The critical event is `invoice.paid` — that's the one that flips a Regentra invoice to PAID and triggers the QuickBooks payment bridge if QB is connected. You can also subscribe to `invoice.payment_succeeded` and `invoice.payment_failed` for the audit log, but only `invoice.paid` drives state transitions.
+    Subscribe the endpoint to all 10 events Regentra handles:
+
+    ```
+    invoice.paid
+    invoice.payment_succeeded
+    invoice.payment_failed
+    invoice.finalized
+    invoice.voided
+    invoice.marked_uncollectible
+    charge.refunded
+    charge.dispute.created
+    charge.dispute.updated
+    charge.dispute.closed
+    ```
   </Step>
   <Step title="Paste the Signing Secret back into Regentra">
     Stripe shows the endpoint's **Signing Secret** (starts with `whsec_`). Paste it into the Webhook Signing Secret field on the Regentra card and Save. The signature is verified on every webhook call — a missing or wrong secret causes inbound events to be rejected.
   </Step>
 </Steps>
 
-In hourly reconciliation, Regentra also calls `invoices.retrieve` for any PSA invoice flagged as SENT to catch the case where Stripe delivered `invoice.paid` while Regentra was briefly unreachable. This makes the integration self-healing — a missed webhook does not strand the invoice.
+`invoice.paid` is the one that flips a Regentra invoice to PAID and triggers the QuickBooks payment bridge if QB is connected. `invoice.finalized`, `invoice.voided`, and `invoice.marked_uncollectible` keep an invoice's status in step with what happened in Stripe, and are also what powers importing invoices created directly in the Stripe Dashboard (see below). `invoice.payment_succeeded` and `invoice.payment_failed` are recorded for the audit log only. The four `charge.*` events track refunds and disputes — see [Refunds, chargebacks, and payouts](#refunds-chargebacks-and-payouts) below.
+
+In hourly reconciliation, Regentra also calls `invoices.retrieve` for any PSA invoice flagged as Sent or Partial to catch the case where Stripe delivered `invoice.paid` while Regentra was briefly unreachable. This makes the integration self-healing — a missed webhook does not strand the invoice.
+
+## Importing invoices created directly in Stripe
+
+If your team ever creates or edits an invoice straight from the Stripe Dashboard instead of through Regentra, that invoice doesn't automatically exist in Regentra. Once your webhook is configured (above), new Dashboard-created invoices import automatically as they're finalized, paid, voided, or marked uncollectible — you don't have to do anything for those going forward.
+
+For invoices from **before** you connected the webhook, or if you suspect one was missed:
+
+<Steps>
+  <Step title="Open the invoice list">
+    Go to **PSA → Invoices**.
+  </Step>
+  <Step title="Import from Stripe">
+    Click **Import from Stripe**. Regentra pulls finalized, paid, voided, and uncollectible Stripe invoices from the last 90 days by default, up to 1,000 invoices per run.
+  </Step>
+  <Step title="Run again if needed">
+    If your account has more invoices than one run can cover, Regentra shows **Run again to continue** — click it to pick up exactly where the previous run left off.
+  </Step>
+</Steps>
+
+Regentra also sweeps your account hourly in the background, re-checking your most recently finalized Stripe invoices — so even a webhook delivery that's dropped for some reason gets picked up within a few hours without you doing anything.
+
+Imported invoices are labeled with a **Stripe** source badge on the invoice list and detail page. Because they originated in Stripe, their line items, amounts, and notes stay in sync with Stripe going forward rather than being editable in Regentra directly — voiding one still works, but asks you to confirm you understand it's a Stripe-originated invoice first.
+
+<Note>
+  If you use QuickBooks too, invoices imported from Stripe can also auto-push to QuickBooks — see [Auto-push toggle](/integrations/quickbooks#auto-pushing-invoices-created-from-a-stripe-import) on the QuickBooks page.
+</Note>
+
+## Linking a Stripe customer to a company
+
+To connect an existing Stripe customer to one of your Regentra companies — useful when a customer already existed in Stripe before you started using Regentra — open the company's detail page under **PSA → Companies** and use the **Stripe** card to pick from your Stripe customers.
+
+<Info>
+  This only links an existing Stripe customer. It never creates a new one — if the customer you're looking for isn't in the picker, create it in Stripe first.
+</Info>
+
+Linking a company this way makes future invoices, and the Stripe-import matching described above, resolve to the right company automatically instead of importing as unmatched.
+
+## Refunds, chargebacks, and payouts
+
+When you refund a payment or a customer disputes a charge in Stripe, Regentra reflects it on the invoice's payment record automatically:
+
+| Stripe event | What happens in Regentra |
+| --- | --- |
+| Full refund | The payment is marked **Refunded**. |
+| Partial refund | The payment stays **Succeeded**; the refunded amount is recorded for your records. |
+| Dispute opened | The payment is marked **Chargeback**, unless Stripe's own dispute status shows no funds were actually withdrawn (an inquiry). |
+| Dispute won | The payment returns to **Succeeded**. |
+| Dispute lost | The payment stays **Chargeback**. |
+
+Regentra also runs a background job that matches your Stripe payouts to the individual payments that made them up, so a payment's record shows which payout it landed in — and a daily consistency check flags any invoice whose recorded payments don't add up to what Stripe shows, for your own review rather than any automatic correction.
+
+## Switching payment processors
+
+Stripe is one of three integrations that can hold the **payment processor** role — see [Payment Processors](/integrations/payment-processors) for how connecting a second processor while Stripe is active works, and what switching away from Stripe does to invoices you've already sent.
 
 ## Auto-sync of Stripe products to the Service Catalog
 
-When you connect Stripe for the first time, Regentra automatically pulls every Stripe **Product** and **Price** from your account into the PSA [Service Catalog](/psa/service-catalog). New items appear in the catalog within seconds of the connect-success page — no separate "Sync from Stripe" click is required for the initial pull.
+Every time you save your Stripe Secret Key — the first connection or a later key update — Regentra automatically pulls every Stripe **Product** and **Price** from your account into the PSA [Service Catalog](/psa/service-catalog) in the background. New items typically appear within seconds; no separate "Sync from Stripe" click is required.
 
-After the initial connect, you can re-trigger the sync any time from **PSA → Catalog**, clicking **Sync from Stripe** at the top of the page, to pick up products you've added on the Stripe side.
+You can also re-trigger the sync any time from **PSA → Catalog**, clicking **Sync from Stripe** at the top of the page, to pick up products you've added on the Stripe side since the last sync.
 
 ## Fee reconciliation with QuickBooks
 

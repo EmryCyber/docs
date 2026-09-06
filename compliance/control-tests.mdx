@@ -35,7 +35,7 @@ Control Tests let you validate that your security controls are working as design
 | Status | Meaning | Action |
 | --- | --- | --- |
 | **Pass** | Control is functioning correctly | No action needed; evidence captured |
-| **Fail** | Control failed the test | Creates a compliance issue; review and resolve |
+| **Fail** | Control failed the test | Review and remediate; if you want to track it as a finding, log a [Compliance Issue](/compliance/audit-lifecycle) yourself and tag its source as "Test Failure" |
 | **Warning** | Control has partial or questionable behavior | Investigate further; may escalate |
 | **Not Run** | Test has never been executed | Run the test to collect initial evidence |
 
@@ -62,7 +62,7 @@ For critical [Controls](/compliance/controls), set shorter frequencies (e.g. 7 o
     When you create a test, choose the control from the dropdown. If the control doesn't appear, ensure it's been adopted in your framework first (see [Controls](/compliance/controls)).
   </Accordion>
   <Accordion title="What happens when a test fails?">
-    A failed test creates a draft compliance issue tied to that control. You can review, assign, and track closure. The issue appears in the [Audit Lifecycle](/compliance/audit-lifecycle) view.
+    The test's status updates to Fail and the result is logged to its history — nothing is created automatically. If it's worth tracking as a finding, log a [Compliance Issue](/compliance/audit-lifecycle) yourself with source "Test Failure" and link it to the control.
   </Accordion>
   <Accordion title="Is there a default frequency for new tests?">
     Yes — 90 days (quarterly). You can change it when creating the test or edit it later.

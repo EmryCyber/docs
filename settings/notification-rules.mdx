@@ -5,45 +5,54 @@ description: "Configure email notifications for ticket events with per-rule filt
 
 Notification rules let you decide who gets emailed when something happens in the PSA — without writing automation rules. The engine is purpose-built for ticket events, runs server-side, and routes to a list of recipient emails per rule.
 
+<Note>
+  This page covers the **Notification Rules** screen — org-wide rules that route ticket events to a recipient list. It's linked from the main **Settings → Notification Preferences** page, which is a separate, per-user screen controlling which platform notifications *you personally* receive (email, in-app, sound, desktop) and alerts when your organization's mailbox connection breaks. The two work independently: your personal preferences don't affect whether a rule fires, and a rule firing doesn't depend on the recipient's own notification preferences.
+</Note>
+
 ## What it does
 
-- **Per-MSP rule engine** — create as many rules as you need, each with its own filter + recipient list
-- **Ticket-spike detection** — a built-in detector that fires when 3+ tickets from the same company arrive within 2 hours
-- **Filterable triggers** — match on ticket priority, source channel (portal / email / SMS / Teams / manual), portal company, and assigned technician
-- **Recipient cap** — each rule supports up to 25 email recipients (defense against accidentally CC-ing the entire org)
+- **Personal and team rules** — any user can create a rule for themselves; admins can additionally create "team" rules that route to other org users and free-text email addresses (a tech's own rule can only ever email the tech themself)
+- **Ticket-spike detection** — a built-in detector that fires when a portal company hits 5+ new tickets, or 3+ new tickets in the same category, within a 10-minute window
+- **Filterable triggers** — match on ticket priority (one value), category (exact text match), a specific client, and/or "only when assigned to me"
+- **Recipient cap** — up to 25 org-user recipients and 25 free-text email addresses per rule (defense against accidentally CC-ing the entire org)
+- **Quiet hours and cooldown** — suppress a rule during a configured time window (with a priority bypass list), and throttle repeat emails to the same recipient
 - **Org-scoped** — rules are tenant-scoped at the API layer; an MSP cannot receive a notification for another MSP's tickets
 
 ## How to create a rule
 
 <Steps>
   <Step title="Open the rules page">
-    Navigate to **Settings → Notification Preferences** and switch to the **Rules** tab.
+    Navigate to **Settings → Notification Preferences**, then click the **Notification Rules** card near the top of the page.
   </Step>
   <Step title="Click New Rule">
     Enter a descriptive name (e.g., "Critical tickets for Acme Health → on-call inbox").
   </Step>
-  <Step title="Choose the trigger event">
-    Currently supported:
-    - **Ticket Created** — fires on new ticket from any source
-    - **Ticket Status Changed** — fires on every status transition
-    - **Ticket Reply Added** — fires on every customer-visible reply
-    - **Ticket Spike Detected** — the built-in 3-in-2h detector (see below)
-    - **SLA Warning** — fires when a ticket's SLA timer enters the at-risk window before breach
-    - **Ticket Escalated** — fires when an automation rule or operator moves a ticket to ESCALATED status
+  <Step title="Choose the trigger event(s)">
+    Check as many as you want:
+    - **New ticket** — fires on new ticket from any source
+    - **Status changed** — fires on every status transition
+    - **Reply added** — fires on every customer-visible reply
+    - **Ticket spike** — the built-in spike detector (see below)
+    - **SLA warning** — fires when a ticket's SLA timer enters the at-risk window before breach
+    - **Escalated** — fires when an automation rule or operator moves a ticket to ESCALATED status
   </Step>
   <Step title="Add filters (optional but recommended)">
-    - **Priority** — LOW / MEDIUM / HIGH / CRITICAL (one or many)
-    - **Source** — Portal / Email / SMS / Teams / Manual (one or many)
-    - **Company** — narrow to a specific portal company or "All"
-    - **Assignee** — narrow to a specific technician or "All"
+    - **Client** — narrow to one portal company, or leave as "Any client"
+    - **Priority** — one of LOW / MEDIUM / HIGH / CRITICAL, or "Any priority"
+    - **Category** — match an exact category string
+    - **Only fire when the ticket is assigned to me** — a checkbox, not a technician picker
+    - **Only fire when the ticket is part of a spike** — a checkbox, independent of the "Ticket spike" trigger above
 
-    All filters AND together: the rule fires only when every selected filter matches.
+    All filters AND together: the rule fires only when every filter you set matches.
   </Step>
-  <Step title="Add recipients">
-    Up to 25 email addresses per rule. Each email is treated independently — no shared inbox is required.
+  <Step title="Add recipients (optional)">
+    Leave this blank to email only yourself. Admins can additionally add other org users and comma-separated extra email addresses (e.g., `oncall@msp.com`) — non-admins can only route a rule to themselves.
   </Step>
-  <Step title="Save and enable">
-    Toggle **Enabled** and click **Save**.
+  <Step title="Set quiet hours and cooldown (optional)">
+    Quiet hours suppress the rule during a from/to time window in your organization's timezone, unless the ticket's priority is on the bypass list you check. Cooldown sets a minimum number of seconds between two emails to the same recipient from this rule (default 60).
+  </Step>
+  <Step title="Save">
+    New rules are active immediately — there's no separate "Enabled" toggle to flip on creation; use the **Power** icon on an existing rule to pause or resume it later.
   </Step>
 </Steps>
 
@@ -53,9 +62,9 @@ The `Priority` filter matches against the value set at ticket creation by the cu
 
 ## Ticket-spike detection
 
-When 3 or more tickets from the same portal company arrive within a 2-hour window, the **Ticket Spike Detected** trigger fires. Useful for catching site-wide outages early — one rule with this trigger and your on-call inbox covers every customer.
+A spike fires when a portal company crosses either of two independent thresholds within a rolling 10-minute window: 5 or more new tickets total, or 3 or more new tickets sharing the same category. Either one fires the **Ticket spike** trigger. Useful for catching site-wide outages early — one rule with this trigger and your on-call inbox covers every customer.
 
-The spike detector runs as part of the same Inngest pipeline that handles `app/ticket.created` events, so the alert email lands within seconds of the third ticket. The notification email links to all tickets in the spike for quick triage.
+The spike detector runs as part of the same background pipeline that processes new tickets, so the alert email lands within seconds of the ticket that crosses the threshold.
 
 ## Frequently asked questions
 
@@ -63,16 +72,16 @@ The spike detector runs as part of the same Inngest pipeline that handles `app/t
   <Accordion title="Can a notification rule write to a ticket (e.g., change assignee)?">
     No. Notification rules only send emails. For state-changing automations (assign / change priority / set status), use [PSA → Automations](/psa/automations-and-ai) — that engine is separate.
   </Accordion>
-  <Accordion title="What if a rule has 0 recipients?">
-    The rule is invalid and cannot be saved. You must specify at least one recipient.
+  <Accordion title="What if I don't add any recipients?">
+    The rule defaults to emailing just you, the rule's owner — this is the normal case for a personal rule. You only need the recipients field for a team rule that should also reach other people.
   </Accordion>
   <Accordion title="How do I stop a rule temporarily?">
-    Toggle **Enabled** off on the rules list. The rule is preserved but won't fire until re-enabled.
+    Click the power icon on the rule in the rules list to disable it. The rule is preserved but won't fire until you re-enable it the same way.
   </Accordion>
   <Accordion title="Are recipients deduplicated across rules?">
-    Yes. If two rules match the same ticket and both list `alice@example.com`, alice receives one email (not two). The email enumerates which rule(s) matched so the recipient understands why they're being notified.
+    Only within one rule — if a rule lists the same address in both its user recipients and its extra emails, that person gets one email, not two. Across two DIFFERENT rules, dedup does not apply: if two separate rules both match the same ticket event and both list `alice@example.com`, alice gets two separate emails, one per rule, each naming that rule.
   </Accordion>
   <Accordion title="Can I scope a rule to my MSP-managed clients only?">
-    Yes — set the Company filter to one specific client, or create one rule per client. Notification rules are tenant-scoped at the API layer; you cannot accidentally route another MSP's tickets to your inbox.
+    Yes — set the Client filter to one specific client, or create one rule per client. Notification rules are tenant-scoped at the API layer; you cannot accidentally route another MSP's tickets to your inbox.
   </Accordion>
 </AccordionGroup>

@@ -1,17 +1,23 @@
 ---
 title: "Risk Register"
-description: "Maintain a register of identified risks with inherent and residual scores; assign treatment plans; track remediation."
+description: "Maintain a register of identified risks with inherent and residual scores; gated acceptance and closure; tolerance, review cadence, and reporting."
 ---
 
-The Risk Register is your organization's central inventory for managing identified risks. Assign each risk a category and score (likelihood × impact), link to controls and assessments, track treatment status, and measure progress from open through mitigation or acceptance.
+The Risk Register is your organization's central inventory for managing identified risks. Assign each risk a category and score (likelihood × impact), link to controls and assessments, track treatment status against your risk tolerance, and measure progress from open through mitigation, acceptance, or closure.
+
+Risk Register lives in the sidebar under a shared **Risk & Assessment** section, alongside Risk Assessment and the Risk Library — the same location regardless of which framework you have active.
 
 ## What it does
 
-- **Risk scoring** — assess inherent risk (before controls) and residual risk (after treatment) on a 5×5 likelihood/impact matrix
-- **Multi-category tracking** — cybersecurity, compliance, operational, financial, third-party, personnel, privacy, reputational, emerging tech
-- **Treatment planning** — link risks to remediation actions, assign owners, set due dates
-- **Heat map visualization** — see distribution at a glance and identify concentration in high-severity cells
-- **Risk library** — accelerate intake with pre-built templates
+- **Risk scoring** — assess inherent risk (before controls) and residual risk (after treatment) on a 5×5 likelihood/impact matrix, with optional quantitative and threat-scenario detail
+- **Multi-category tracking** — cybersecurity, operational, compliance, strategic, financial, third-party, physical, personnel, privacy, reputational, and AI/emerging tech
+- **Tolerance and appetite** — set an org-level risk appetite statement and per-category tolerance thresholds; risks that exceed tolerance are flagged
+- **Gated acceptance and closure** — accepting or closing a risk requires a written justification, recorded server-side against the approving user
+- **Review cadence** — risks that are overdue for re-review are flagged and filterable
+- **Treatment planning** — link risks to controls, assign owners, set due dates
+- **Heat map visualization** — toggle between inherent and residual distribution across the 5×5 matrix
+- **Risk library** — accelerate intake with pre-built risk templates
+- **Exporting** — CSV export in NIST IR 8286 column order, plus a dedicated Risk Register report from [Reports](/compliance/reports)
 
 ## How to add a risk
 
@@ -20,18 +26,100 @@ The Risk Register is your organization's central inventory for managing identifi
     From the Risk Register page, click **Add Risk** to open the entry form.
   </Step>
   <Step title="Fill in the details">
-    Enter title, description, and select a category. The system auto-assigns a risk number.
+    Enter title, description, and select a category. The system auto-assigns a risk number and, optionally, a priority.
   </Step>
   <Step title="Assess the risk">
-    Open the detail page and set inherent likelihood (1-5) and impact (1-5). The inherent score calculates automatically.
+    Open the detail page and set inherent likelihood (1-5) and impact (1-5). The inherent score calculates automatically. Add threat-scenario detail if useful — see below.
   </Step>
   <Step title="Link controls">
-    Link any internal [Controls](/compliance/controls) that mitigate this risk. Update the residual score once controls are in place.
+    Link any internal [Controls](/compliance/controls) that mitigate this risk, and rate each linked control's effectiveness. Update the residual score yourself once controls are in place — Regentra never recalculates a residual score automatically.
   </Step>
   <Step title="Create a treatment plan">
-    Assign an owner, set a due date, and describe the mitigation strategy or acceptance rationale.
+    Assign an owner, set a due date, and describe the mitigation strategy — or accept, transfer, or avoid the risk instead.
   </Step>
 </Steps>
+
+### Treatment plans
+
+For each risk, document a treatment approach:
+
+<Tabs>
+  <Tab title="Mitigate">
+    Implement controls to reduce the likelihood or impact. This is the most common approach. Link the risk to specific controls in Regentra to track mitigation progress.
+  </Tab>
+  <Tab title="Accept">
+    Formally acknowledge the risk and decide not to take further action. See [Accepting a risk](#accepting-a-risk) below — acceptance requires a written justification and is appropriate for low-severity risks where the cost of mitigation exceeds the potential impact.
+  </Tab>
+  <Tab title="Transfer">
+    Shift the risk to a third party, typically through insurance or contractual agreements. Document the transfer mechanism and any residual risk that remains.
+  </Tab>
+  <Tab title="Avoid">
+    Eliminate the risk entirely by removing the activity or system that creates it. This is appropriate when the risk is unacceptable and cannot be adequately mitigated.
+  </Tab>
+</Tabs>
+
+## Risk tolerance and appetite
+
+Click **Risk Criteria** on the Risk Register page to set:
+
+- A **risk appetite statement** — a short, org-level statement of what level of risk your organization is willing to accept
+- A **maximum tolerated residual level** (Low, Medium, High, or Critical) for each risk category — leave a category unset to apply no tolerance threshold to it
+
+A risk whose current level (residual, falling back to inherent when residual hasn't been scored) exceeds its category's configured tolerance is flagged on the register. Editing risk criteria requires an Admin role; anyone can view the current settings.
+
+## Accepting a risk
+
+Accepting a risk is a gated action, not a plain status change. Click **Accept Risk** on the risk detail page:
+
+- A **written justification** is required before the acceptance is recorded
+- The system records you as the approver and sets the treatment to Accept — automatically, from your session, not a free-text field
+- You can optionally set an **acceptance expiration date**; after that date the acceptance is considered stale and the risk is flagged for re-review
+- If the risk's current level exceeds its category's tolerance, only an **Admin** can accept it — anyone else's attempt is refused with an explanation
+
+<Note>
+  This replaces a bare status flip. The justification and approver are what an auditor asks for when they see an accepted risk — Regentra now captures both automatically at the moment of acceptance.
+</Note>
+
+## Closing a risk
+
+Closing a risk is also gated: click **Close Risk** and provide a **closure rationale** — why the risk is leaving the register (treatment complete, no longer applicable, superseded, and so on). The rationale is recorded alongside the closing user and timestamp.
+
+## Review cadence
+
+Risks carry a next-review date. Once that date has passed, the risk is marked **Review Overdue** on the register and can be filtered to just those items — useful for a recurring risk-management meeting. An accepted risk with an expired acceptance date is flagged the same way, prompting a fresh look rather than letting a stale acceptance stand indefinitely.
+
+## Linking controls and effectiveness
+
+Link any [Controls](/compliance/controls) that mitigate a risk from the risk detail page. Each linked control carries an **effectiveness** rating you set yourself:
+
+- **Effective**
+- **Partially Effective**
+- **Ineffective**
+- **Not Assessed** (default)
+
+<Warning>
+  Linking a control or rating its effectiveness never automatically changes the risk's residual score. Regentra deliberately does not auto-write residual scores from control status — that would be fabricated precision. Update the residual likelihood and impact yourself once you've verified the control is actually reducing the risk.
+</Warning>
+
+### Control-degradation flags
+
+If a control linked to a risk is automatically demoted (see [Automatic status changes](/compliance/controls#automatic-status-changes)), the risk is automatically flagged for human re-review, since the residual score may have assumed that control was working. This is a flag only — Regentra never rewrites the score itself. The same flagging applies if a risk's residual score implies a control effect that its currently-linked controls' own statuses don't support.
+
+## Quantitative estimates (optional)
+
+Alongside the qualitative 5×5 matrix, a risk can carry quantitative estimates:
+
+- **SLE** (Single Loss Expectancy) — expected monetary loss from one occurrence
+- **ARO** (Annual Rate of Occurrence) — expected number of occurrences per year
+- **ALE** (Annual Loss Expectancy) — SLE × ARO, either entered directly or left for Regentra to compute from the two inputs
+
+## Threat scenario detail (optional)
+
+For a NIST SP 800-30-style level of detail, a risk can also record:
+
+- **Threat event** — the specific event being assessed
+- **Threat source type** — Adversarial, Accidental, Structural, or Environmental
+- **Predisposing conditions** — conditions that increase or decrease the likelihood the threat materializes
 
 ## Risk lifecycle and status
 
@@ -40,8 +128,9 @@ Risks progress through:
 - **Open** — newly identified; no treatment started
 - **In Treatment** — actively being mitigated; owner working toward due date
 - **Mitigated** — risk reduced to acceptable residual level through controls
-- **Accepted** — risk acknowledged and accepted by leadership (formal acceptance record exists)
-- **Closed** — no longer relevant or fully resolved; archived for historical reference
+- **Accepted** — formally accepted with a recorded justification and approver
+- **Closed** — resolved or no longer relevant, with a recorded closure rationale
+- **Archived** — kept for historical reference outside active tracking
 
 ## Remediation tracking
 
@@ -50,23 +139,27 @@ Each risk can be linked to remediation work via related tasks:
 - Assign specific [Controls](/compliance/controls) to implement
 - Create assessment activities to test control effectiveness
 - Track related tickets or projects in the PSA module if manual work is required
-- Update treatment status as controls progress; residual score updates when controls are marked implemented
+- Update treatment status as controls progress
 
-The **Remediation Queue** view consolidates all gaps and control statuses in one place — bulk-assign work and manage due dates across multiple controls.
+The separate **Remediation** view (**Compliance → Remediation**) consolidates control gaps and statuses in one place for bulk-assigning work — it's control-focused, not specific to individual risks, so use it alongside the risk detail page rather than as a risk-level view.
 
 ## Heat map and summary cards
 
-The dashboard displays:
+The register page displays:
 
 - **Summary cards** — total risks, open count, in-treatment count, resolved count, overdue items
-- **Heat map** — inherent risk distribution across the 5×5 matrix; cell color intensity indicates risk level
-- **Filtering** — search by keyword, filter by status / category / owner
+- **Heat map** — a toggle between **Inherent** and **Residual** risk distribution across the 5×5 matrix (residual falls back to inherent for any risk that hasn't been residually scored yet); cell color intensity indicates risk level
+- **Filtering** — search by keyword, filter by status, category, owner, or Review Overdue
+
+## Exporting the register
+
+Click **Export CSV** on the Risk Register page for a full export in NIST IR 8286 column order — identification and scoring fields first, then acceptance/closure records, then the quantitative estimates. For a formatted document instead, generate the **Risk Register** report type from [Reports](/compliance/reports).
 
 ## Frequently asked questions
 
 <AccordionGroup>
   <Accordion title="What is the difference between inherent and residual score?">
-    **Inherent** is the risk level without any controls — raw threat and impact. **Residual** is what remains after controls are implemented. As you implement mitigating controls, residual score typically decreases.
+    **Inherent** is the risk level without any controls — raw threat and impact. **Residual** is what remains after controls are implemented. Residual only changes when you update it yourself; Regentra never recalculates it automatically from control status.
   </Accordion>
   <Accordion title="Can I bulk-import risks from a spreadsheet?">
     Use the Risk Library to browse and add pre-built risk templates. For custom bulk import, contact your admin. Individual entry via the UI is the standard method.
@@ -75,7 +168,7 @@ The dashboard displays:
     On the risk detail page, select **Link Assessment**. Choose a framework and requirement; the system shows which controls map to that requirement; link those controls to the risk.
   </Accordion>
   <Accordion title="What happens to an accepted risk?">
-    Accepted risks move to **Accepted** status and are no longer flagged as open. A formal acceptance record is kept for audit trails. You can monitor the residual score but no further treatment is required.
+    Accepted risks move to **Accepted** status and are no longer flagged as open. Acceptance requires a written justification, and the system records the approving user automatically — if the risk's level exceeds its category's tolerance, only an Admin can accept it. You can set an optional expiration after which the acceptance is flagged as stale for re-review.
   </Accordion>
   <Accordion title="Can I see which risks are associated with a specific control?">
     Yes. Open the [Control](/compliance/controls), find the **Linked Risks** section, and view all risks that reference it.

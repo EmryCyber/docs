@@ -32,13 +32,22 @@ The HHS SRA Tool's "Flag for later" semantic is exposed separately on the **asse
   Controls default to **Not Started** when a framework is adopted. Updating statuses is how you track progress toward full compliance.
 </Info>
 
+### Automatic status changes
+
+A control's status can also change on its own, driven by its monitoring signals (see [Evidence Collection](/compliance/evidence-collection)):
+
+- **Auto-demote** — if an **Implemented** control's latest monitoring evidence turns up a fresh failure, Regentra automatically moves it to **Needs Review** and remembers the prior status so it can find its way back.
+- **Auto-restore** — once that control's monitoring evidence returns to a full, fresh pass (no stale or failing signals), it is automatically restored to the status it was demoted from, and the memory is cleared.
+
+Only the aggregated, worst-of-all-signals check triggers a demotion or restore — a single flaky or stale signal never does. Any manual status change you make clears the demotion memory, so automation never overrides a human decision once you've made one.
+
 ## The Control Detail Page
 
 Click on any control to open its detail page. This is where you do the actual implementation work.
 
 ### How to Satisfy
 
-Each control includes a **How to Satisfy** section with practical guidance on what is required. This section explains:
+Each control includes a **How to Satisfy This Control** section with the full, untruncated guidance on what is required — Regentra's single source of truth for implementation guidance on the control detail page. This section explains:
 - What the framework requirement actually asks for
 - Common implementation approaches
 - What evidence auditors expect to see
@@ -64,13 +73,19 @@ Assign the control to a specific team member who is responsible for implementati
 
 ## Framework Mappings
 
-The right sidebar of the control detail page shows **Framework Mappings** — a list of every framework requirement this control satisfies.
+When you have a framework selected, the control detail page leads with a "**{Framework} Requirements Satisfied**" card at the top of the page — the official requirement text and reference numbers from that specific framework, each marked **Full** or **Partial** depending on how completely this control covers it. This is the language a framework expert is looking for, shown first.
 
-If a control maps to three different frameworks, you will see all three listed with their specific clause or section references. This visibility is key for understanding how a single implementation effort contributes to multiple compliance programs.
+The right sidebar's **All Framework Mappings** card lists every framework requirement this control satisfies across your full set of adopted frameworks, with the currently active framework's group pinned first. If a control maps to three different frameworks, you will see all three listed with their specific clause or section references — useful for understanding how a single implementation effort contributes to multiple compliance programs at once.
+
+Throughout the controls list and dashboard, the domain grouping Regentra uses (e.g. "Access Control," "Incident Response") is labeled **Regentra domain** — an explanatory banner appears when a framework filter is active, making clear this is Regentra's own organizing layer and not part of the selected framework's own structure.
 
 ### Cross-framework citations (NIST CSF, HPH CPG, HICP)
 
-Below the Framework Mappings, each control card shows an **Also referenced as** panel sourced from the HHS/ONC SRA Tool v3.6.1. For every HIPAA §ref the control covers, the panel lists:
+These citations aren't on the standalone control detail page above — they
+show up on the **Controls (SRA)** tab of an individual [Risk
+Assessment](/compliance/risk-assessment), where each control card shows an
+**Also referenced as** panel sourced from the HHS/ONC SRA Tool v3.6.1. For
+every HIPAA §ref the control covers, the panel lists:
 
 - **NIST CSF 2.0** subcategory IDs (e.g., `ID.RA`, `PR.AC-7`, `DE.CM-7`)
 - **HPH CPG** numeric references (Health and Public Health Critical Performance Goals)
@@ -80,13 +95,13 @@ These cross-references mean a customer reviewing a control sees every external f
 
 ## SRA Tool question reference
 
-For each control whose `hipaaRef` matches a question in the HHS/ONC SRA Tool v3.6.1 workbook, the control card shows a collapsible **HHS SRA Tool questions for §164.xxx** panel listing every SRA question that probes that §ref. Each question renders:
+Also on that same **Controls (SRA)** tab: for each control whose `hipaaRef` matches a question in the HHS/ONC SRA Tool v3.6.1 workbook, the control card shows a collapsible **HHS SRA Tool questions for §164.xxx** panel listing every SRA question that probes that §ref. Each question renders:
 
 - The question text and its `SRA-S{section}-Q{n}` code
-- HHS's `Required` / `Addressable` flag (when present)
+- HHS's `Required` flag (when present)
 - The full multi-choice answer set with HHS's per-answer markers (✓ compliant per HHS, ! risk indicated, · skip)
 
-This is a **read-only reference** — Regentra does not currently track which answers operators select. Operators running the SRA Tool workbook in parallel use this panel to see "for this control, here are the HHS questions to answer" alongside Regentra's control checklist + evidence. See [Risk Assessment → Alignment with the HHS/ONC SRA Tool](/compliance/risk-assessment#alignment-with-the-hhsonc-sra-tool) for the broader picture.
+This is a **read-only reference** — Regentra does not currently track which answers operators select. Operators running the SRA Tool workbook in parallel use this panel to see "for this control, here are the HHS questions to answer" alongside Regentra's control checklist + evidence. See [Risk Assessment](/compliance/risk-assessment) for the broader picture.
 
 ## Gap Analysis
 
@@ -112,5 +127,5 @@ The gap analysis view shows you where your compliance program stands and where t
 </Tip>
 
 <Warning>
-  Setting a control to **N/A** removes it from your compliance score calculation. Only mark controls as N/A when the requirement genuinely does not apply to the organization's environment — auditors will ask for justification.
+  Setting a control to **N/A** counts it as fully satisfied in your compliance score calculation, the same as **Implemented** — it does not get excluded from the count. Only mark controls as N/A when the requirement genuinely does not apply to the organization's environment — auditors will ask for justification.
 </Warning>

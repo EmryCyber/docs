@@ -61,11 +61,11 @@ Each framework is organized by domain (e.g. "CC6 — Logical & Physical Access C
 
 ## Remediation tickets
 
-When you click **Create Remediation Tickets**, one ticket is generated per selected control with the control code, title, domain, and implementation guidance pre-filled. Tickets are assigned to your compliance/engineering team. As they close tickets, update the control status in [Controls](/compliance/controls) to keep the gap analysis current.
+When you click **Create Remediation Tickets**, one ticket is generated per selected control with the control code, title, domain, requirement level, and implementation guidance (plus checklist progress) pre-filled. Tickets are created unassigned — assign them to whoever on your team will do the work. As they close tickets, update the control status in [Controls](/compliance/controls) to keep the gap analysis current.
 
 ## Implementation percentage
 
-The percentage shows: `(Implemented + In Progress) / Total` controls. For example, 50 total controls with 20 implemented and 15 in progress = 70%. Use this to track progress over time toward your audit date.
+The percentage shows: `Implemented / (Total − N/A)` controls — only fully **Implemented** controls count toward it (In Progress controls don't), and N/A controls are excluded from the denominator entirely so marking something N/A doesn't permanently depress the score. For example, 50 total controls with none marked N/A and 20 implemented = 40%, regardless of how many others are in progress. Use this to track progress over time toward your audit date.
 
 ## Frequently asked questions
 
