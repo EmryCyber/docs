@@ -58,7 +58,7 @@ Payment status is tracked on the invoice in Regentra:
 
 ## Webhook configuration
 
-Regentra uses Stripe webhooks to receive real-time invoice events. Regentra generates a per-org webhook URL with a random token in the path (so two orgs never share a route), but you have to **paste that URL into Stripe yourself** — Stripe does not let third parties create endpoints in your account on your behalf.
+Regentra uses Stripe webhooks to receive real-time invoice, refund, and dispute events. Regentra generates a per-org webhook URL with a random token in the path (so two orgs never share a route), but you have to **paste that URL into Stripe yourself** — Stripe does not let third parties create endpoints in your account on your behalf.
 
 <Steps>
   <Step title="Copy the webhook URL from Regentra">
@@ -68,14 +68,83 @@ Regentra uses Stripe webhooks to receive real-time invoice events. Regentra gene
     In the Stripe Dashboard → **Developers → Webhooks → Add endpoint**, paste the URL.
   </Step>
   <Step title="Subscribe to the events">
-    The critical event is `invoice.paid` — that's the one that flips a Regentra invoice to PAID and triggers the QuickBooks payment bridge if QB is connected. You can also subscribe to `invoice.payment_succeeded` and `invoice.payment_failed` for the audit log, but only `invoice.paid` drives state transitions.
+    Subscribe the endpoint to all 10 events Regentra handles:
+
+    ```
+    invoice.paid
+    invoice.payment_succeeded
+    invoice.payment_failed
+    invoice.finalized
+    invoice.voided
+    invoice.marked_uncollectible
+    charge.refunded
+    charge.dispute.created
+    charge.dispute.updated
+    charge.dispute.closed
+    ```
   </Step>
   <Step title="Paste the Signing Secret back into Regentra">
     Stripe shows the endpoint's **Signing Secret** (starts with `whsec_`). Paste it into the Webhook Signing Secret field on the Regentra card and Save. The signature is verified on every webhook call — a missing or wrong secret causes inbound events to be rejected.
   </Step>
 </Steps>
 
+`invoice.paid` is the one that flips a Regentra invoice to PAID and triggers the QuickBooks payment bridge if QB is connected. `invoice.finalized`, `invoice.voided`, and `invoice.marked_uncollectible` keep an invoice's status in step with what happened in Stripe, and are also what powers importing invoices created directly in the Stripe Dashboard (see below). `invoice.payment_succeeded` and `invoice.payment_failed` are recorded for the audit log only. The four `charge.*` events track refunds and disputes — see [Refunds, chargebacks, and payouts](#refunds-chargebacks-and-payouts) below.
+
 In hourly reconciliation, Regentra also calls `invoices.retrieve` for any PSA invoice flagged as SENT to catch the case where Stripe delivered `invoice.paid` while Regentra was briefly unreachable. This makes the integration self-healing — a missed webhook does not strand the invoice.
+
+## Importing invoices created directly in Stripe
+
+If your team ever creates or edits an invoice straight from the Stripe Dashboard instead of through Regentra, that invoice doesn't automatically exist in Regentra. Once your webhook is configured (above), new Dashboard-created invoices import automatically as they're finalized, paid, voided, or marked uncollectible — you don't have to do anything for those going forward.
+
+For invoices from **before** you connected the webhook, or if you suspect one was missed:
+
+<Steps>
+  <Step title="Open the invoice list">
+    Go to **PSA → Invoices**.
+  </Step>
+  <Step title="Import from Stripe">
+    Click **Import from Stripe**. Regentra pulls finalized, paid, voided, and uncollectible Stripe invoices from the last 90 days by default, up to 1,000 invoices per run.
+  </Step>
+  <Step title="Run again if needed">
+    If your account has more invoices than one run can cover, Regentra shows **Run again to continue** — click it to pick up exactly where the previous run left off.
+  </Step>
+</Steps>
+
+Regentra also sweeps your account hourly in the background, re-checking your most recently finalized Stripe invoices — so even a webhook delivery that's dropped for some reason gets picked up within a few hours without you doing anything.
+
+Imported invoices are labeled with a **Stripe** source badge on the invoice list and detail page. Because they originated in Stripe, their line items, amounts, and notes stay in sync with Stripe going forward rather than being editable in Regentra directly — voiding one still works, but asks you to confirm you understand it's a Stripe-originated invoice first.
+
+<Note>
+  If you use QuickBooks too, invoices imported from Stripe can also auto-push to QuickBooks — see [Auto-push toggle](/integrations/quickbooks#auto-pushing-invoices-created-from-a-stripe-import) on the QuickBooks page.
+</Note>
+
+## Linking a Stripe customer to a company
+
+To connect an existing Stripe customer to one of your Regentra companies — useful when a customer already existed in Stripe before you started using Regentra — open the company's detail page under **PSA → Companies** and use the **Stripe** card to pick from your Stripe customers.
+
+<Info>
+  This only links an existing Stripe customer. It never creates a new one — if the customer you're looking for isn't in the picker, create it in Stripe first.
+</Info>
+
+Linking a company this way makes future invoices, and the Stripe-import matching described above, resolve to the right company automatically instead of importing as unmatched.
+
+## Refunds, chargebacks, and payouts
+
+When you refund a payment or a customer disputes a charge in Stripe, Regentra reflects it on the invoice's payment record automatically:
+
+| Stripe event | What happens in Regentra |
+| --- | --- |
+| Full refund | The payment is marked **Refunded**. |
+| Partial refund | The payment stays **Succeeded**; the refunded amount is recorded for your records. |
+| Dispute opened | The payment is marked **Chargeback**, unless Stripe's own dispute status shows no funds were actually withdrawn (an inquiry). |
+| Dispute won | The payment returns to **Succeeded**. |
+| Dispute lost | The payment stays **Chargeback**. |
+
+Regentra also runs a background job that matches your Stripe payouts to the individual payments that made them up, so a payment's record shows which payout it landed in — and a daily consistency check flags any invoice whose recorded payments don't add up to what Stripe shows, for your own review rather than any automatic correction.
+
+## Switching payment processors
+
+Stripe is one of three integrations that can hold the **payment processor** role — see [Payment Processors](/integrations/payment-processors) for how connecting a second processor while Stripe is active works, and what switching away from Stripe does to invoices you've already sent.
 
 ## Auto-sync of Stripe products to the Service Catalog
 

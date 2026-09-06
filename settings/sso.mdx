@@ -60,12 +60,16 @@ Portal SSO is configured separately for each client. This allows your client's e
 
 ## SSO and MFA interaction
 
-When SSO is active, MFA is handled by Azure AD's conditional access policies — not by Regentra's built-in TOTP MFA. This means:
+When SSO is active, MFA is handled by Azure AD's conditional access policies — not by Regentra's own [passkeys or TOTP MFA](/settings/mfa). This means:
 
 - If Azure AD enforces MFA, users complete the MFA challenge during the Microsoft login flow
 - Regentra does not prompt for a second MFA step
-- Users who sign in via email/password (non-SSO) still use Regentra's built-in MFA
+- Users who sign in via email/password (non-SSO) still use Regentra's built-in passkey or TOTP MFA
 
 <Info>
   For the strongest security posture, enforce MFA in Azure AD conditional access policies and enable SSO-only login in Regentra to eliminate password-based access entirely.
 </Info>
+
+## Account lockout
+
+Repeated failed sign-in attempts on the email/password path lock an account for a short cooldown period regardless of whether SSO is also enabled for your organization — see [Account lockout](/settings/mfa#account-lockout). SSO sign-ins go through Microsoft's own login flow and aren't subject to Regentra's lockout, since Regentra never sees the password attempt.

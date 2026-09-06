@@ -5,6 +5,10 @@ description: "Configure email notifications for ticket events with per-rule filt
 
 Notification rules let you decide who gets emailed when something happens in the PSA — without writing automation rules. The engine is purpose-built for ticket events, runs server-side, and routes to a list of recipient emails per rule.
 
+<Note>
+  This page covers the **Notification Rules** screen — org-wide rules that route ticket events to a recipient list. It's linked from the main **Settings → Notification Preferences** page, which is a separate, per-user screen controlling which platform notifications *you personally* receive (email, in-app, sound, desktop) and alerts when your organization's mailbox connection breaks. The two work independently: your personal preferences don't affect whether a rule fires, and a rule firing doesn't depend on the recipient's own notification preferences.
+</Note>
+
 ## What it does
 
 - **Per-MSP rule engine** — create as many rules as you need, each with its own filter + recipient list
@@ -17,7 +21,7 @@ Notification rules let you decide who gets emailed when something happens in the
 
 <Steps>
   <Step title="Open the rules page">
-    Navigate to **Settings → Notification Preferences** and switch to the **Rules** tab.
+    Navigate to **Settings → Notification Preferences**, then click the **Notification Rules** card near the top of the page.
   </Step>
   <Step title="Click New Rule">
     Enter a descriptive name (e.g., "Critical tickets for Acme Health → on-call inbox").

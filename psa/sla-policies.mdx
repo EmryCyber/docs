@@ -49,7 +49,12 @@ Both timers respect business hours. Time outside your configured working hours d
 
 ## SLA pausing
 
-The SLA resolution timer **pauses** when a ticket enters the **Waiting on Customer** status. This prevents time spent waiting for a customer reply from counting against your resolution target. The timer resumes when the customer responds or the technician moves the ticket back to In Progress.
+The SLA resolution timer **pauses** in two situations:
+
+- **Waiting on Customer** — the technician has replied and is waiting on the client. The timer resumes when the customer responds or the technician moves the ticket back to In Progress.
+- **Waiting Approval** — the ticket is on hold for an [approval decision](/psa/tickets#ticket-approvals). The timer resumes when the approver responds (or the request expires and the ticket returns to its prior status).
+
+Both pauses only skip time outside your resolution target that isn't the technician's to control — time spent waiting on someone outside your team never counts against you.
 
 Response time is not paused — it is measured only once (time from creation to first reply).
 

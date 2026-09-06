@@ -30,15 +30,55 @@ Solutions for the most common issues encountered in Regentra. If your problem is
     If the portal is on a custom domain, verify that the DNS CNAME record is correctly pointing to the Regentra portal endpoint. DNS propagation can take up to 48 hours. Check the domain status under **PSA → Support Portal** (also reachable through the **Support Portal** tile on the main Settings page), then open the **Custom Domain** tab. If using Entra SSO for the portal, confirm that admin consent has been granted in the client's Azure AD tenant.
   </Accordion>
 
-  <Accordion title="MFA setup fails">
-    TOTP codes are time-based and require your authenticator app's clock to be accurate. Ensure your device's clock is synced with an NTP server (most devices do this automatically). If the code is still rejected, try generating a new QR code from **Settings → Authentication & SSO → Multi-Factor Authentication** and re-registering in your authenticator app.
+  <Accordion title="MFA / passkey setup fails">
+    MFA setup is **passkey-first** — you'll be prompted to register a passkey (Face ID, Windows Hello, a security key, or your phone) before you're offered the authenticator-app (TOTP) fallback.
+
+    If passkey registration fails:
+    - Make sure you're using a supported browser and that your device has a platform authenticator available (Face ID/Touch ID/Windows Hello) or a security key plugged in.
+    - A "relying party" or origin mismatch error usually means you're accessing Regentra from a URL other than the one you registered the passkey against (for example, a custom portal domain vs. the main app URL) — register the passkey again from the same URL you normally sign in at.
+    - Passkeys aren't currently supported in every browser/OS combination; fall back to the authenticator-app option shown below the passkey prompt.
+
+    If you're using the TOTP fallback instead: codes are time-based and require your authenticator app's clock to be accurate. Ensure your device's clock is synced with an NTP server (most devices do this automatically). If the code is still rejected, generate a new QR code from **Settings → Authentication & SSO → Multi-Factor Authentication** and re-register in your authenticator app.
+  </Accordion>
+
+  <Accordion title="I can't skip MFA setup as an admin">
+    That's expected. MFA is **mandatory for Admin, MSP Admin, and Super Admin roles**, regardless of whether your organization has turned on the org-wide MFA requirement for other users. If you hold one of those roles, you'll be prompted to enroll a passkey or TOTP factor before you can continue past sign-in.
+
+    For everyone else, whether MFA is required depends on your organization's subscription: it's not required during a trial or if the org has no active subscription, and once a paid subscription is active there's a short grace period before enrollment becomes mandatory.
+  </Accordion>
+
+  <Accordion title="Logging out unexpectedly / session expired">
+    Regentra sessions use a sliding 4-hour inactivity window — staying active keeps you signed in — but every session also has a **hard 12-hour cap** from when you first logged in, regardless of activity. If you hit that cap mid-task, you'll be signed out and need to log back in; there's currently no in-app warning before this happens, so if you're mid-way through a long session, save your work periodically.
+  </Accordion>
+
+  <Accordion title="After a failed SSO login I'm stuck on a broken screen">
+    If a Microsoft Entra ID (SSO) sign-in fails, Regentra now automatically falls back to showing the email/password login form with an error message, instead of leaving you on the SSO screen. If you land somewhere unexpected, refresh the login page and try again, or use email/password sign-in directly.
+  </Accordion>
+
+  <Accordion title="My account is locked after failed sign-in attempts">
+    After 5 failed password attempts, an account is locked for 15 minutes as a brute-force protection. Wait 15 minutes and try again, or contact an org admin — this lockout is separate from MFA and applies before MFA is even checked.
+  </Accordion>
+
+  <Accordion title="My QuickBooks or Stripe integration stopped syncing">
+    Check **Settings → Integrations** first — a reconnect banner appears on both the integrations card and the PSA invoice list when a QuickBooks connection is broken (usually an expired token) or a Stripe webhook hasn't been heard from recently. Click **Reconnect** to re-authorize.
+
+    On the invoice list, look for the **"Not in QuickBooks"** filter and the per-invoice status pill — hovering a failed push shows the last error Regentra received from QuickBooks. Admins can select multiple unsynced invoices and use **Send to QuickBooks** to retry them in bulk rather than fixing one at a time.
+
+    If invoices billed directly from the Stripe Dashboard aren't showing up in Regentra, use the **Import from Stripe** button on the invoice list — it backfills recent Stripe invoices on demand in addition to the automatic hourly sync.
   </Accordion>
 
   <Accordion title="Invoice shows $0">
-    Invoices only include time entries that are both **approved** and **billable**. If your invoice total is $0, check that:
+    Invoices only include time entries that are both **approved** (or submitted, if your organization doesn't require approval before billing) and **billable**. If your invoice total is $0, check that:
     1. Time entries are marked as billable (not non-billable)
-    2. Time entries have been submitted and approved (not still in Draft or Submitted status)
+    2. Time entries have been submitted and approved (not still in Draft or Rejected status)
     3. The invoice date range covers the period when the time was logged
+    4. Time was actually logged against that company's tickets or projects — project time bills the same way ticket time does
+
+    The **Ready to Bill** screen (PSA → Finance) is the fastest way to check: it lists every approved, unbilled time entry grouped by company and agreement, so you can confirm there's billable time before generating the invoice.
+  </Accordion>
+
+  <Accordion title="My export switched to a background job instead of downloading immediately">
+    That's expected for larger datasets. Exports of up to 5,000 rows download immediately in your browser; anything larger automatically runs as a background job and emails you a download link when it's ready (links expire after 72 hours). PDF exports are capped at 2,000 rows since PDF is meant for reading, not bulk data — use CSV or XLSX for larger datasets. Background jobs are capped at 250,000 rows, and you can have at most 3 running at once per organization.
   </Accordion>
 </AccordionGroup>
 

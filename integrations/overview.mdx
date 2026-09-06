@@ -17,6 +17,12 @@ Regentra integrates with the tools MSPs already use. Each integration runs at th
   <Card title="Level.io RMM" icon="server" href="/integrations/level-rmm">
     Device and asset sync with real-time webhook updates.
   </Card>
+  <Card title="NinjaOne" icon="server" href="/integrations/ninjaone">
+    Device inventory, patch SLA, and compliance evidence from your RMM.
+  </Card>
+  <Card title="Hudu" icon="book-open" href="/integrations/hudu">
+    Import networks, VLANs, and IP addresses from your documentation.
+  </Card>
   <Card title="Okta" icon="key" href="/integrations/okta">
     User provisioning, MFA enrollment, sign-in event poll.
   </Card>
@@ -44,6 +50,9 @@ Regentra integrates with the tools MSPs already use. Each integration runs at th
   <Card title="QuickBooks Online" icon="book" href="/integrations/quickbooks">
     Customer + invoice push with Stripe-paid bridging.
   </Card>
+  <Card title="Alternative Payments" icon="credit-card" href="/integrations/payment-processors">
+    A second payment-processor option alongside Stripe.
+  </Card>
   <Card title="Microsoft Teams — Chat Bridge" icon="comments" href="/integrations/teams-chat-bridge">
     Bidirectional bridge between Teams chats and PSA tickets.
   </Card>
@@ -58,6 +67,10 @@ Regentra integrates with the tools MSPs already use. Each integration runs at th
   **Compliance → Settings → Evidence Collection**. The cards above are the
   ones surfaced on the per-org Integrations page.
 </Note>
+
+## Payment processor roles
+
+Stripe, QuickBooks, and Alternative Payments are treated as a family: Regentra keeps at most one **payment processor** and one **accounting sync** active at a time, so connecting a second money-handling integration never silently overrides the one you're already using. Switching is explicit — you confirm it, and existing invoices keep working under the processor that sent them. See [Payment Processors](/integrations/payment-processors) for the full model.
 
 ## How integrations work
 

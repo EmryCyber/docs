@@ -42,6 +42,10 @@ Maintain a complete inventory of your customers' hardware, software, and devices
 
 Both syncs preserve historical data; archiving a device in the RMM or Entra updates its status without deleting the record.
 
+## Filtering by company
+
+Each asset card shows the [company](/psa/companies-contacts) it belongs to. Use the **Company** filter on the Asset Inventory page to narrow the list to a single client — handy when you're reviewing one customer's environment or preparing for a site visit.
+
 ## Asset tabs and views
 
 Four tabs:
@@ -57,7 +61,11 @@ Warranty information is maintained but doesn't trigger automatic alerts. Review 
 
 ## Linking assets to tickets
 
-When creating or editing a [Ticket](/psa/tickets), link one or more assets to:
+Every [ticket](/psa/tickets) has a **Linked Asset** card in its sidebar. Click **Link an asset…** to pick from a list scoped to the ticket's company (assets with no company assigned are always selectable). Once linked, the asset name links back to its detail page, and **Unlink** removes the association — a ticket can have at most one linked asset at a time.
+
+Linking is blocked if the asset and the ticket resolve to different companies, so you can't accidentally attach the wrong customer's device.
+
+Use asset linking to:
 
 - View all tickets for a given asset
 - See asset details in the ticket's context

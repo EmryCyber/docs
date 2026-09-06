@@ -5,7 +5,7 @@ description: "Answers to common questions about Regentra's compliance frameworks
 
 <AccordionGroup>
   <Accordion title="What compliance frameworks does Regentra support?">
-    Regentra supports nine compliance frameworks: SOC 2, HIPAA (2026 NPRM), NIST CSF, ISO 27001, CMMC Level 1, CMMC Level 2, PCI DSS, GDPR, and FTC Safeguards. You can adopt multiple frameworks simultaneously, and controls are mapped across frameworks via the Common Control Framework so you implement once and satisfy many.
+    Regentra supports eleven compliance frameworks: HIPAA (2026 NPRM), NIST CSF 2.0, SOC 2, ISO 27001, CMMC Level 1, CMMC Level 2, PCI DSS, GDPR, FTC Safeguards, SEC Regulation S-P, and FINRA. You can adopt multiple frameworks simultaneously, and controls are mapped across frameworks via the Common Control Framework so you implement once and satisfy many.
   </Accordion>
 
   <Accordion title="Can I use Regentra without the PSA module?">
@@ -21,11 +21,11 @@ description: "Answers to common questions about Regentra's compliance frameworks
   </Accordion>
 
   <Accordion title="What happens when my trial expires?">
-    After the 14-day trial, you must select a subscription plan to continue using Regentra. Your data is preserved for 30 days after trial expiration. During this period, you can subscribe to a plan and resume exactly where you left off. After 30 days, data may be deleted.
+    Nothing gets locked away. After the 14-day trial, if you haven't subscribed to a paid plan, PSA automatically transitions to a **Free Tier**: $0 forever, capped at 1 technician seat and 1 client. Your existing data stays intact — access above the free-tier caps is what's restricted, not your data. You can subscribe to a paid plan at any time to lift the caps and resume full access, and you can also voluntarily switch to Free Tier from Billing if you'd rather downgrade than cancel.
   </Accordion>
 
   <Accordion title="Can I export my data?">
-    Yes. You can export compliance data (controls, policies, risk assessments), ticket data, time entries, and reports from the Regentra dashboard. Exports are available in CSV and PDF formats depending on the data type.
+    Yes. Every PSA and compliance dataset — companies, tickets, invoices, quotes, agreements, projects, controls, policies, vendors, risks, the audit log, and more — can be exported in **CSV, XLSX, or PDF** from **Settings → Import / Export**, available in every module. Smaller exports (up to 5,000 rows) download immediately; larger ones automatically run as a background job and email you a download link when ready. PDF exports are capped at 2,000 rows, since PDF is a reading format rather than a bulk-data format — use XLSX for large datasets.
   </Accordion>
 
   <Accordion title="How do I add a new compliance framework?">
@@ -41,7 +41,15 @@ description: "Answers to common questions about Regentra's compliance frameworks
   </Accordion>
 
   <Accordion title="How does billing work for MSPs?">
-    Regentra charges a subscription fee based on your plan, plus per-seat billing for PSA users and per-tenant billing for compliance clients. Platform billing is handled through Stripe. This is separate from the PSA invoicing feature, which lets you bill your own clients for services through your own Stripe account.
+    Regentra charges a subscription fee based on your plan, plus per-seat billing for PSA users and per-tenant billing for compliance clients. Platform billing is handled through Stripe. PSA also has a permanent **Free Tier** (1 technician + 1 client, $0 forever) if you're not ready to subscribe. Platform billing is separate from the PSA invoicing feature, which lets you bill your own clients for services through your own connected payment processor.
+  </Accordion>
+
+  <Accordion title="How do I get paid for the invoices I send my clients?">
+    Regentra connects to your own payment accounts rather than moving money itself. You choose one **processor** — the integration that actually collects payment, either Stripe or an Alternative Payments connection — and, separately, one **accounting sync** — QuickBooks or Xero, which records the payment to your books. QuickBooks can serve as both at once if you don't use a separate processor. Only one processor and one accounting sync can be active at a time, and switching between them requires an explicit confirmation so you never silently lose a connection mid-billing-cycle. Configure this under **Settings → Integrations**.
+  </Accordion>
+
+  <Accordion title="Why was I logged out?">
+    Regentra sessions stay active on a sliding 4-hour window while you're using the app, but every session also has a hard 12-hour cap from when you first signed in — you'll be signed out at that point even if you were actively working, and will need to log back in. If you're an Admin, MSP Admin, or Super Admin, you'll also always be asked to complete MFA (a passkey or an authenticator-app code) — this can't be skipped for those roles regardless of your organization's MFA setting.
   </Accordion>
 
   <Accordion title="Where can I get help?">

@@ -32,13 +32,22 @@ The HHS SRA Tool's "Flag for later" semantic is exposed separately on the **asse
   Controls default to **Not Started** when a framework is adopted. Updating statuses is how you track progress toward full compliance.
 </Info>
 
+### Automatic status changes
+
+A control's status can also change on its own, driven by its monitoring signals (see [Evidence Collection](/compliance/evidence-collection)):
+
+- **Auto-demote** — if an **Implemented** control's latest monitoring evidence turns up a fresh failure, Regentra automatically moves it to **Needs Review** and remembers the prior status so it can find its way back.
+- **Auto-restore** — once that control's monitoring evidence returns to a full, fresh pass (no stale or failing signals), it is automatically restored to the status it was demoted from, and the memory is cleared.
+
+Only the aggregated, worst-of-all-signals check triggers a demotion or restore — a single flaky or stale signal never does. Any manual status change you make clears the demotion memory, so automation never overrides a human decision once you've made one.
+
 ## The Control Detail Page
 
 Click on any control to open its detail page. This is where you do the actual implementation work.
 
 ### How to Satisfy
 
-Each control includes a **How to Satisfy** section with practical guidance on what is required. This section explains:
+Each control includes a **How to Satisfy This Control** section with the full, untruncated guidance on what is required — Regentra's single source of truth for implementation guidance on the control detail page. This section explains:
 - What the framework requirement actually asks for
 - Common implementation approaches
 - What evidence auditors expect to see
@@ -64,9 +73,11 @@ Assign the control to a specific team member who is responsible for implementati
 
 ## Framework Mappings
 
-The right sidebar of the control detail page shows **Framework Mappings** — a list of every framework requirement this control satisfies.
+When you have a framework selected, the control detail page leads with a "**{Framework} Requirements Satisfied**" card at the top of the page — the official requirement text and reference numbers from that specific framework, each marked **Full** or **Partial** depending on how completely this control covers it. This is the language a framework expert is looking for, shown first.
 
-If a control maps to three different frameworks, you will see all three listed with their specific clause or section references. This visibility is key for understanding how a single implementation effort contributes to multiple compliance programs.
+The right sidebar's **All Framework Mappings** card lists every framework requirement this control satisfies across your full set of adopted frameworks, with the currently active framework's group pinned first. If a control maps to three different frameworks, you will see all three listed with their specific clause or section references — useful for understanding how a single implementation effort contributes to multiple compliance programs at once.
+
+Throughout the controls list and dashboard, the domain grouping Regentra uses (e.g. "Access Control," "Incident Response") is labeled **Regentra domain** — an explanatory banner appears when a framework filter is active, making clear this is Regentra's own organizing layer and not part of the selected framework's own structure.
 
 ### Cross-framework citations (NIST CSF, HPH CPG, HICP)
 

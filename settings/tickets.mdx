@@ -1,0 +1,54 @@
+---
+title: "Tickets Settings"
+description: "Configure ticket numbering and the time-tracking-to-invoice billing behavior for your service desk."
+---
+
+Go to **Settings → Tickets** to configure organization-wide ticket behavior: how ticket numbers are formatted, and how billed time interacts with ticket status.
+
+## Ticket numbering
+
+The **Ticket Numbering** card controls how ticket numbers display to your team and customers.
+
+### Prefix mode
+
+| Mode | What it does |
+| --- | --- |
+| **Customer-derived** (default) | A 3-letter prefix drawn from each ticket's company name — different customers get different prefixes automatically. |
+| **Fixed prefix** | The same prefix on every ticket, regardless of company. Enter 1-8 letters or numbers (e.g. `LIT`). |
+| **No prefix** | Just the number, no letters. |
+
+### Number width
+
+Choose how many digits ticket numbers are padded to (3, 4, 5, or 6 digits) — for example, a width of 4 formats ticket #42 as `0042`.
+
+A live preview shows exactly how the next ticket number will look under your current settings.
+
+### Setting the next ticket number
+
+The card shows your current highest ticket number and what the next one will be. If you're migrating from another PSA and want your Regentra ticket numbers to continue where the old system left off, enter the number you want the counter to jump to and confirm.
+
+<Warning>
+  You can only move the counter forward, never backward. Setting the next number to 5000 means every new ticket from that point on is numbered 5000, 5001, 5002, and so on — there's no undo.
+</Warning>
+
+## Billing
+
+The **Billing** card controls how logged time interacts with invoicing and ticket status, as part of [time tracking → invoicing](/psa/time-tracking).
+
+### Auto-close tickets when billed
+
+**Default: on.** When an invoice covers all of a Resolved ticket's logged time, Regentra closes it automatically. This close is silent to the customer — no notification email goes out for it — while your internal notification rules and any subscribed webhooks still fire normally.
+
+Turn this off if you'd rather close tickets manually regardless of billing status.
+
+### Require approval before billing
+
+**Default: on.** Only time entries that have been approved can be invoiced. An admin (or the technician themself, self-approving) reviews submitted time before it becomes billable.
+
+Turn this off for a solo shop with no separate approver — submitted time is automatically approved (and still audit-logged) at the moment it's invoiced, skipping the separate approval step.
+
+### Default hourly rate
+
+Applied when a time entry has no service agreement rate to inherit from. Leave this blank and unrated time bills at $0 — set a default here so time on a ticket with no agreement still has a sensible rate.
+
+This is the last fallback in the rate order: an explicit rate override always wins first, then a service agreement's rate, then this organization default, then $0.

@@ -17,6 +17,9 @@ Tickets are the core unit of work in Regentra's PSA. Every client interaction �
   <Step title="Waiting on Customer">
     The technician has replied and is awaiting a customer response. SLA resolution timer pauses in this state.
   </Step>
+  <Step title="Waiting Approval">
+    The ticket is on hold pending an [approval decision](#ticket-approvals) from a customer contact or another approver. SLA resolution timer pauses here too. This status can only be entered and exited through the approval flow — it isn't a choice in the manual status dropdown.
+  </Step>
   <Step title="Escalated">
     Ticket has been escalated to a senior technician or team lead due to complexity or SLA risk.
   </Step>
@@ -44,6 +47,8 @@ Tickets can be created through five channels:
 | **Live chat** | Chat conversations convert to tickets when the session ends |
 | **SMS** | Inbound SMS messages create tickets (requires phone number configuration) |
 
+When a technician creates a ticket manually, a [company](/psa/companies-contacts) is required — pick an existing one or create a new one on the spot (creating a new company counts against the Free-Tier client limit, same as adding one from the Companies page). The only exception is a ticket created from a compliance control's remediation link, which legitimately has no customer company. Typing a contact name and email that doesn't match an existing contact creates a real, findable [portal contact](/psa/companies-contacts) record under the resolved company — it's never a free-text stub on the ticket alone.
+
 ## Ticket detail page
 
 Each ticket includes:
@@ -52,6 +57,7 @@ Each ticket includes:
 - **Internal notes** — Private notes visible only to your team
 - **Time entries** — Logged time with billable/non-billable designation
 - **SLA badge** — Real-time SLA status (On Track, At Risk, Breached, Met)
+- **Linked Asset** — One [asset](/psa/assets#linking-assets-to-tickets) associated with the ticket, scoped to the ticket's company
 - **AI draft** — AI-generated reply suggestion based on ticket context and knowledge base articles
 
 <Tip>
@@ -85,6 +91,8 @@ See [Automations & AI](/psa/automations-and-ai#ai-and-ticket-priority) for the f
 
 Filter tickets by status, priority, assignee, client, SLA status, or date range. Combine filters to narrow results. Full-text search covers ticket subjects, descriptions, and reply content.
 
+The **All Tickets** stat card at the top of the list always shows your organization's total ticket count, regardless of any filters you have active. Clicking it clears every filter and the search box, taking you back to the fully unfiltered list. When filters are applied, a small "N matching" line under the card shows how many tickets match your current view.
+
 ## Auto-close behavior
 
 Tickets in **Resolved** status automatically transition to **Closed** after 24 hours. If a customer replies to a resolved ticket within that window, the ticket reopens to **In Progress**.
@@ -100,3 +108,40 @@ Use cases:
 - **Vendor outage**: open one master ticket against the vendor, link every customer ticket reporting the outage. One reply on the master can be cascaded to all children.
 - **Phishing wave**: one master incident ticket; each reported phishing email becomes a child, so the response team works one timeline instead of dozens.
 - **Site-wide maintenance**: master for the maintenance window, children for any customer who logs an issue during it — closes the loop when the window ends.
+
+## Ticket approvals
+
+Some work needs a customer's sign-off before you proceed — a parts purchase, a change window, anything above a client's comfort threshold. **Request approval** on the ticket detail page opens a short form:
+
+<Steps>
+  <Step title="Choose an approver">
+    Pick from a list of the ticket's company's contacts, or enter a custom name and email. The contact matching the ticket's requester is preselected when there is one.
+  </Step>
+  <Step title="Describe what needs approval">
+    A short message — e.g. "Replacement webcam for Joe — $40" — gives the approver enough context to decide without seeing the rest of the ticket.
+  </Step>
+  <Step title="Send the request">
+    The ticket status flips to **Waiting Approval** and the approver receives an email with **Approve** and **Deny** buttons — no login required.
+  </Step>
+</Steps>
+
+The approver's decision page shows only the ticket title, number, the requester's name, your organization name, and the message you wrote — never the rest of the ticket's contents. Once they decide, the ticket automatically returns to **Open** and the outcome is recorded on the ticket.
+
+A few things worth knowing:
+
+- Only one approval request can be pending on a ticket at a time.
+- **Waiting Approval** pauses the SLA resolution clock, the same way Waiting on Customer does.
+- The status is entirely approval-flow-driven — it doesn't appear as a choice in the manual status dropdown, and it can't be set by an automation rule.
+- The whole flow is **requester-blind**: the customer who opened the ticket sees it as ordinary "In Progress" the entire time and receives no notification when the approval starts or ends. Only the designated approver is contacted.
+
+## Ticket numbering
+
+By default, tickets are numbered with a three-letter prefix derived from the customer's company name (e.g. `ACM-0001` for Acme Corp) so numbers are easy to recognize at a glance. You can change this under **Settings → Tickets → Ticket Numbering**:
+
+- **Customer-derived** — the default described above.
+- **Fixed prefix** — the same 1-8 character prefix on every ticket, regardless of company (e.g. `LIT-0001`).
+- **No prefix** — just the number, with no letters.
+
+You can also choose the number of digits the counter pads to (3-6 digits), and preview exactly how the next ticket number will look before saving.
+
+If you're migrating from another PSA and want your numbering to continue where the old system left off, **Set Next Ticket Number** lets you jump the counter forward. This can only move the counter up, never back down, so you can't accidentally create duplicate or out-of-order ticket numbers.

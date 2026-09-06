@@ -1,0 +1,76 @@
+---
+title: "Hudu Integration"
+description: "Import networks, VLANs, VLAN zones, and IP addresses from Hudu into Regentra's Networks & IPAM module."
+---
+
+Hudu is IT documentation software many MSPs already use to track client networks, VLANs, and IP assignments. Regentra can pull that network topology in — a one-way, one-time-or-repeatable import into the [Networks & IPAM](/psa/assets) module, not a live sync.
+
+<Note>
+  This is a one-way import: Regentra reads from Hudu, it never writes back. Nothing you do in Regentra changes your Hudu documentation.
+</Note>
+
+## What gets imported
+
+| Hudu record | Lands in Regentra as |
+| --- | --- |
+| Networks | Networks (with their subnet range) |
+| VLAN Zones | VLAN Zones |
+| VLANs | VLANs |
+| IP address records | IP Addresses on their parent network |
+
+Notes fields ARE imported, but every imported note is scanned for credential-shaped text (API keys, passwords, connection strings) before it's saved. Anything that looks like a secret is flagged so you can review and move it into the encrypted password vault instead of leaving it in plain text.
+
+## Connecting Hudu
+
+<Steps>
+  <Step title="Generate an API key in Hudu">
+    In your Hudu instance, go to **Admin → API**, click **Generate API Key**, and copy it immediately.
+  </Step>
+  <Step title="Enter credentials in Regentra">
+    Go to **Settings → Integrations → Hudu** and enter your **Hudu URL** (e.g. `https://yourcompany.huducloud.com`) and the **API Key** you generated.
+  </Step>
+  <Step title="Save">
+    Save the credentials. The integration card shows **Connected** once Regentra can reach your Hudu instance.
+  </Step>
+</Steps>
+
+## Mapping Hudu companies to Regentra companies
+
+Hudu organizes records under its own customer companies, which don't automatically match your Regentra companies. Before anything imports, go to **PSA → Networks → Import from Hudu** and map each Hudu company:
+
+- **Use existing** — bind the Hudu company to a company you already have in PSA.
+- **Create new** — create a new PSA company from the Hudu company's name.
+- **Don't sync** — mark the company as ignored so its records are permanently skipped.
+
+Only records belonging to a **mapped** company are ever imported. Records for a company you haven't mapped are skipped, not imported to the wrong client — the import summary tells you which companies were skipped so nothing is silently lost.
+
+## Preview, then import
+
+The import always runs in two steps:
+
+<Steps>
+  <Step title="Preview">
+    Click **Preview**. Regentra reads your mapped Hudu companies' networks, VLAN zones, VLANs, and IP addresses and shows you how many records would be created or updated, per record type — nothing is written yet.
+  </Step>
+  <Step title="Run import">
+    Review the preview, then click **Run Import**. Regentra creates or updates the records for real and shows a final summary: created, updated, skipped, and any errors or warnings per record type.
+  </Step>
+</Steps>
+
+## Re-running the import
+
+You can run the import again at any time — for example, after you've documented a new client network in Hudu. Regentra matches each Hudu record against what it already imported, so re-running:
+
+- **Updates** a record whose Hudu details changed (a subnet resized, a VLAN renamed) instead of creating a duplicate.
+- **Creates** only genuinely new records.
+- **Adopts** a matching record you created manually or through a CSV import before you ever connected Hudu, rather than duplicating it — matched by company + subnet (for Networks), company + VLAN tag (for VLANs), or company + name (for VLAN Zones).
+
+## What's never imported
+
+- **Notes are sanitized**, not filtered out — but any note flagged as containing credential-shaped text is called out in the import summary so you can move it to the password vault.
+- Hudu's network "type" field has no standard values Regentra can map to a specific category yet, so every imported network lands with an **Other** type. The import summary lists the raw type values seen, so nothing is silently miscategorized without a trace.
+- IP address records with no company mapping, or that fail validation, are skipped and listed in the summary rather than imported incorrectly.
+
+## Disconnecting
+
+Disconnect from the integration card at any time. Already-imported networks, VLANs, and IP addresses stay in Regentra — disconnecting only stops future imports; it doesn't remove data you've already pulled in.

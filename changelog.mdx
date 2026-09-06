@@ -9,6 +9,197 @@ A running log of what's shipped on Regentra. Entries are written in the order th
   Want to be notified about new releases? Subscribe to changelog-only updates from your email preferences in **Settings → Notification Preferences**. You'll get product news without any of the marketing flow.
 </Info>
 
+## 2026-09
+
+### Payment processors: choose your own processor and accounting sync
+
+Payment integrations are no longer hard-coded to Stripe. Regentra now models them by role: a **processor** that actually collects payment (Stripe, or the new Alternative Payments option) and an **accounting sync** that records it (QuickBooks or Xero). Only one processor and one accounting sync can be active at a time, and QuickBooks can serve as both. Connecting a new processor while one is already active shows a confirmation dialog before switching, so you never silently lose a connection mid-billing-cycle.
+
+[Payment processors guide](/integrations/payment-processors)
+
+### Incident Management: guided intake-to-report workflow
+
+Incident reporting is now a full lifecycle, not a bare form. A new intake flow captures what happened, when, and how it was detected; Regentra proposes notification obligations and deadlines based on the incident's data types and your adopted frameworks (HIPAA, FTC Safeguards, SEC Reg S-P, GDPR, CMMC, and PCI DSS); a four-factor HIPAA breach-risk assessment computes a Breach / Not a Breach / Pending determination; and a one-click regulator-ready PDF report — with an append-only timeline, chain-of-custody evidence log, and corrective actions — can be downloaded or emailed directly to your legal or compliance contacts.
+
+[Incident Management guide](/compliance/incidents)
+
+### PSA time tracking → invoicing
+
+Time tracking is now a full timer-to-invoice workflow. **Timesheets** (PSA → Finance) is a weekly grid with submit/approve/reject at the week level — rejected entries can be corrected and resubmitted instead of dead-ending. A new **Ready to Bill** screen groups approved, unbilled time by company and agreement for guided invoice creation. Billing a ticket's time now posts an automatic note on the ticket and, once nothing is left unbilled, can auto-close a resolved ticket (configurable in Settings → Tickets).
+
+[Time tracking guide](/psa/time-tracking)
+
+### Networks: subnets, VLANs, and IP tracking for your clients
+
+A new Networks section (PSA → Knowledge) tracks subnets, VLANs, and IP addresses per client, with CSV import/export and a one-way migration path from Hudu for MSPs moving off it.
+
+[Networks guide](/psa/networks) · [Hudu import guide](/integrations/hudu)
+
+### Data Export: CSV, XLSX, and PDF for every dataset
+
+Every PSA and compliance dataset — companies, tickets, invoices, quotes, agreements, projects, controls, policies, vendors, risks, the audit log, and more — can now be exported in CSV, XLSX, or PDF from one place. Large exports automatically switch to a background job that emails you a download link instead of timing out.
+
+[Data export guide](/settings/import-export)
+
+### Importing Stripe-Dashboard invoices; QuickBooks push visibility
+
+Invoices billed directly from the Stripe Dashboard — outside PSA — now import into Regentra automatically, so your invoice list reflects everything you've actually billed. An **Import from Stripe** button backfills recent history on demand, and unmatched Stripe customers surface a direct link to connect them to a company. On the QuickBooks side, a **"Not in QuickBooks"** filter, a per-invoice error message, and a bulk **Send to QuickBooks** action (for admins) replace the old one-shot toast for push failures.
+
+[Stripe integration guide](/integrations/stripe) · [QuickBooks integration guide](/integrations/quickbooks)
+
+### White-label branding on quotes, invoices, and client-facing documents
+
+Company Profile is now one consolidated settings page that drives your logo, colors, and business details across every customer-facing document: quote pages, quote PDFs, invoice PDFs, quote emails, client reports, and public shared-link pages. Quotes also gained explicit "Bill to" overrides — set a name, email, phone, or address on the quote itself, independent of the linked company, and it's preserved even if that company record changes later. An accepted or converted quote's billing details are now frozen against further edits.
+
+[Organization Profile guide](/settings/organization) · [Quotes & invoices guide](/psa/invoices-quotes)
+
+### Smaller fixes
+
+- The ticket list's "All" filter card now reliably clears every other filter and search term in one click.
+- Compliance monitoring findings on organizations running both Compliance and PSA now file into PSA tickets automatically, grouped into one rollup ticket instead of flooding the queue.
+- Compliance-only organizations can now subscribe to PSA directly from Billing.
+- Various responsive/overflow fixes across ticket, invoice, and toolbar layouts on narrower screens.
+
+## 2026-08
+
+### NIST CSF 2.0 Tiers self-assessment; framework-first presentation
+
+Organizations that adopt NIST CSF 2.0 can now complete an official Tiers self-assessment (Partial through Adaptive) alongside their control work. Across the Compliance module, control detail pages, the framework view, and the NIST CSF category headers now lead with the **selected framework's own** identifiers and requirement text — Regentra's internal control taxonomy is still visible but clearly labeled as Regentra's own mapping layer, not the framework's structure.
+
+[Frameworks guide](/compliance/frameworks)
+
+### FINRA added as a supported framework
+
+**FINRA Member Firm Compliance** joins the framework library, bringing the total to eleven supported frameworks.
+
+[Frameworks guide](/compliance/frameworks)
+
+### Risk Register: expanded to align with NIST IR 8286
+
+The risk register gained priority levels, per-category risk tolerance and an org-level risk appetite statement, gated risk acceptance (a written justification and a recorded approver — above-tolerance acceptance requires an Admin), gated closure (a closure rationale is now required), review-cadence tracking for overdue risks, rated control-link effectiveness, optional quantitative estimates, and a CSV export.
+
+[Risk Register guide](/risk-trust/risk-register)
+
+### Outbound webhooks and a write-back API
+
+Settings → Webhooks lets you register endpoints that receive real-time events — ticket created, status changed, resolved, SLA breached, invoice generated, quote sent or decided, and more — signed so you can verify authenticity. A companion write-back API issues scoped API keys so external automation tools can post ticket notes and time entries back into Regentra, closing the automation loop.
+
+[Webhooks guide](/settings/webhooks) · [API keys guide](/settings/api-keys)
+
+### Ticket ↔ asset linking; new Settings → Tickets page
+
+Technicians can now link assets directly to a ticket from the ticket side. A new Settings → Tickets page consolidates ticket-numbering and time-tracking billing settings in one place.
+
+[Settings → Tickets guide](/settings/tickets)
+
+### Scheduled monthly reports
+
+A monthly digest email now sends automatically each month: an internal summary for your team, and a white-labeled, client-facing report per company.
+
+[PSA reports guide](/psa/reports)
+
+### Automation Value reporting
+
+Automation rules now report the real, auditable work they've done instead of an unverifiable activity count, under a new Automation Value view.
+
+[Automations guide](/psa/automations-and-ai)
+
+### Acknowledgment campaigns: target by Entra security group; scheduled sends fixed
+
+Campaigns can now target recipients by their Microsoft Entra ID group membership, in addition to individual selection. A bug that silently prevented non-immediate scheduled campaigns from ever sending has also been fixed.
+
+[Acknowledgment campaigns guide](/compliance/acknowledgment-campaigns)
+
+### Service Agreements: line items, contract attachments, company defaults
+
+Agreements now has its own dedicated page with line items (monthly, annual, and one-time charge types), SOW/contract attachments, and the ability to set a company's default agreement so time entries auto-attach a rate even when none is chosen explicitly.
+
+[Projects & agreements guide](/psa/projects-agreements)
+
+### Security hardening: admin MFA mandate, simplified password policy
+
+MFA is now mandatory for Admin, MSP Admin, and Super Admin roles regardless of your organization's MFA setting. Factor enrollment and removal both now require a freshly-verified factor from the same session. Password requirements simplified to a 12-character minimum with breach-database screening — no more forced character-composition rules. Trusted-device handling was also fixed to apply correctly across SSO logins and session resumes.
+
+[MFA guide](/settings/mfa)
+
+### Compliance dashboard drill-down; automatic control status changes
+
+Dashboard tiles are now clickable drill-downs into the underlying controls and evidence, with an in-card search. Controls also now demote themselves from Implemented to Needs Review automatically on fresh failing monitoring evidence, and restore automatically once a fresh check passes.
+
+[Compliance overview guide](/compliance/overview)
+
+### Self-service approvals for solo admins
+
+An admin can now self-approve their own policy changes and self-attest their own access-review line when they're the only available approver — the action is recorded with an audit flag rather than blocked outright, so small teams aren't stuck waiting on a second person who doesn't exist.
+
+[Policies guide](/compliance/policies) · [Access reviews guide](/compliance/access-reviews)
+
+## 2026-07
+
+### Passkey (WebAuthn) MFA — phishing-resistant sign-in
+
+MFA setup and verification are now passkey-first. Register a passkey — Face ID, Windows Hello, a security key, or your phone — and sign in without typing a code. An authenticator-app (TOTP) code remains available as a fallback.
+
+[MFA guide](/settings/mfa)
+
+### Free Tier for PSA
+
+Regentra PSA now has a permanent free tier: $0 forever, capped at 1 technician and 1 client. Trials that end without a plan selection now transition to Free Tier automatically instead of losing access, and any paid subscription can be voluntarily downgraded to Free Tier at any time.
+
+[MSP billing guide](/msp/billing)
+
+### SEC Regulation S-P added as a supported framework
+
+**SEC Regulation S-P** joined the framework library, covering safeguards-program, incident-response, and customer/vendor notification requirements for SEC-regulated firms.
+
+[Frameworks guide](/compliance/frameworks)
+
+### Quote → Invoice conversion
+
+Accepted quotes can now be converted directly into an invoice from the quote detail page, instead of re-entering the same line items by hand.
+
+[Quotes & invoices guide](/psa/invoices-quotes)
+
+### Ticket workflow fixes
+
+**ESCALATED** is now a first-class ticket status with its own filter, board column, and badge. New tickets now require picking (or creating) a company, and typing in a new contact creates a real contact record instead of a free-text stub. A broken mailbox connection is now surfaced clearly as a broken integration rather than treated as a transient blip.
+
+### Company hierarchy; company shown on assets
+
+A company can now nest under a parent company, so multiple locations or sites roll up to one top-level account. Asset cards also now show their company, and the asset list can be filtered by company.
+
+[Companies & contacts guide](/psa/companies-contacts)
+
+### Knowledge base article attachments
+
+Knowledge base articles can now carry file attachments alongside their written content.
+
+[Knowledge base guide](/psa/knowledge-base)
+
+### Your own organization as a compliance tenant
+
+The MSP's own organization now appears as a distinct, pinned row in your client list — this is also where you activate your own compliance program, separate from provisioning an actual client.
+
+[MSP clients guide](/msp/clients)
+
+### Security: expired-session handling
+
+Fixed a bug where a session past its expiry could still be used to construct a valid-looking session. Expired sessions are now cleanly rejected.
+
+### Login / SSO fixes
+
+After a failed Microsoft Entra ID (SSO) sign-in, the email/password login form now shows automatically instead of leaving you on a broken SSO screen. Fixed a bug that could bounce a successful login to the marketing site instead of your dashboard.
+
+### Integration fixes
+
+Level.io RMM device sync now maps explicitly by group to company, preventing a multi-location client's devices from splitting across duplicate companies. An attach-file button was also added directly to the new-ticket form.
+
+## 2026-06
+
+### Fix: Remediation Queue control link
+
+Fixed a bug where a link from the Remediation Queue could point at the wrong control.
+
 ## 2026-05
 
 ### QuickBooks ↔ Stripe dual-system support

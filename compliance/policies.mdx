@@ -61,20 +61,21 @@ Every policy moves through a defined lifecycle:
   Moving a policy backward in the lifecycle (e.g., from Approved back to Draft) is allowed. This is useful when an active policy needs significant revisions.
 </Note>
 
-### Separation of duties — author cannot self-approve
+### Separation of duties — self-approval is tracked, not blocked
 
-Regentra enforces a separation-of-duties (SoD) rule on policy approval: **the person who last edited a version's content cannot approve that same version**. The system tracks `lastContentAuthorId` per version and blocks the Approve action if the requesting user matches.
+Regentra tracks a separation-of-duties (SoD) signal on policy approval: it records who last edited a version's content (`lastContentAuthorId`) and, when that same person approves the policy, flags the approval as a **self-approval**.
 
-This is a hard server-side check — not a UI suggestion — and matches the SOC 2 / ISO 27001 / HIPAA expectation that author and approver are different individuals.
+Self-approval is **allowed**, not blocked. In a solo-admin or two-person MSP, the person who wrote the policy is often the only available Approver, and a hard block would leave the policy permanently stuck. Only Approver-tier roles can approve or activate a policy at all — that role gate is unchanged — but once someone with that role approves their own edit, the approval goes through and is recorded with a self-approval flag on the audit log, so the SoD signal is preserved for review even though the action itself isn't stopped.
 
 | Scenario | Behavior |
 | --- | --- |
-| Author submits the policy for review, a different approver approves | Approval succeeds |
-| Author submits, then approves their own version | Blocked with "You cannot approve your own edits — another approver must review" |
-| Author edits, a second person edits, second person approves | Blocked — the second person is now the `lastContentAuthorId` |
-| Same person edits in Draft, makes no further edits in Review, then approves | Blocked — they are the last content author |
+| Author submits the policy for review, a different approver approves | Approval succeeds — not flagged as self-approved |
+| Author submits, then approves their own version | Approval succeeds — flagged as self-approved on the audit log |
+| A second person edits after the original author, then approves | Approval succeeds — not flagged (the second person is now the last content author, not the approver's own edit) |
 
-To unblock, either (a) a different approver reviews and approves the existing version, or (b) the original author hands the draft to a co-author who makes a substantive edit and submits, after which the original author may approve.
+<Note>
+  When you have more than one Approver available, route policy approvals to someone other than the author — that's still the stronger control, and what most SOC 2 / ISO 27001 / HIPAA auditors expect to see as your default practice. The self-approval flag exists precisely so an auditor can see when and how often the exception was used.
+</Note>
 
 ## Per-requirement applicability badges
 

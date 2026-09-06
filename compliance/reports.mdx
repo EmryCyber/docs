@@ -17,7 +17,17 @@ Reports turn your compliance data into shareable documents for auditors, executi
   <Card title="Risk Assessment" icon="chart-pie">
     A snapshot of your risk register and assessment results — open findings by severity, treatment status, and the controls each finding is mapped to. Useful for board reporting and external auditors.
   </Card>
+  <Card title="Risk Register" icon="table-list">
+    A full snapshot of the [Risk Register](/risk-trust/risk-register) — open findings, tolerance status, treatment plans, and linked controls, in the same column order used for the register's CSV export.
+  </Card>
+  <Card title="Incident Report" icon="file-shield">
+    A regulator-ready report for a single [incident](/compliance/incidents) — classification, four-factor breach assessment and determination, the notifications table, the full timeline, chain-of-custody evidence log, and sign-off lines. Generated per-incident, not scheduled.
+  </Card>
 </CardGroup>
+
+<Note>
+  The Incident Report is generated from an incident's own **Report** tab rather than from this Reports page — see [Incident Management](/compliance/incidents#the-regulator-ready-report) for how to export, print, or email it.
+</Note>
 
 ## Generating a Report
 
@@ -107,3 +117,9 @@ Each report — whether generated on-demand or on a schedule — can be sent to 
 <Warning>
   Reports may contain sensitive compliance data. Verify recipient email addresses before sending, especially when sharing with external parties. Reports are not encrypted in transit beyond standard email TLS.
 </Warning>
+
+## Reports vs. Exports
+
+Reports (this page) are narrative PDFs — formatted documents with a cover page, charts, and prose meant to be read. If you need the underlying data itself — the raw rows behind controls, policies, vendors, assets, training, risks, or networks — use **Settings → Import/Export** instead. That page exports any dataset as CSV, Excel, or PDF; exports of 5,000 rows or more run as a background job and deliver a download link by email rather than blocking your browser.
+
+Reports and Exports serve different purposes: reach for a Report when you need something a person will read start to finish, and an Export when you need the data itself — for a spreadsheet, a second system, or a bulk backup.

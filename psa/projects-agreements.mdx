@@ -1,16 +1,16 @@
 ---
 title: "Projects & Service Agreements"
-description: "Group work into projects with budgets and timelines; define agreements with monthly recurring and hourly rates."
+description: "Group work into projects with budgets and timelines; define agreements with line items, SOW attachments, and hourly rates."
 ---
 
-Projects organize work into managed units with budgets, timelines, and task tracking. Service Agreements define how you bill — monthly recurring (MRR), hourly, or both.
+Projects organize work into managed units with budgets, timelines, and task tracking. Service Agreements define how you bill a customer — one-time charges, recurring line items, hourly rates, or a mix.
 
 ## What it does
 
 - **Project creation** — Name, description, status, priority, start/end dates, budget hours
 - **Task tracking** — Real-time progress: X of Y tasks done with a progress bar
 - **Budget tracking** — Compare actual hours logged via [Time Tracking](/psa/time-tracking) against the budget
-- **Service Agreements** — Define MRR and hourly rates per customer; link to [Invoices](/psa/invoices-quotes) for billing
+- **Service Agreements** — Standalone agreements with line items, SOW attachments, and hourly rates per customer; link to [Invoices](/psa/invoices-quotes) for billing
 - **Time rollup** — Time entries logged against a project automatically roll up into project hours and become billable
 
 ## How to create a project
@@ -35,14 +35,42 @@ Projects organize work into managed units with budgets, timelines, and task trac
 
 ## Service Agreements
 
-Each agreement has:
+Service Agreements have their own top-level **Agreements** page in the sidebar (Finance group), separate from Projects. Each agreement has:
 
-- **Monthly Recurring (MRR)** — fixed monthly charge
-- **Hourly Rate** — applied to hours logged by techs
+- **Line items** — the building blocks of what you bill, described below
+- **Hourly Rate** — applied to hours logged by techs against this agreement
 - **Status** — Active, Paused, Cancelled, or Expired
 - **Effective Date & End Date** — when the agreement is/was in effect
 
-When creating an [Invoice](/psa/invoices-quotes), optionally link a Service Agreement to auto-populate the monthly charge. Additional line items can be added on top.
+When creating an [Invoice](/psa/invoices-quotes), optionally link a Service Agreement to auto-populate its recurring charges. Additional manual line items can be added on top.
+
+### Line items
+
+Each agreement is built from individual line items rather than a single flat monthly fee. For each line item you set a description, quantity, unit price, and **billing cadence**:
+
+- **Monthly** — recurs every billing cycle.
+- **Annual** — recurs once a year (shown pro-rated per month in the agreement's rollup so you can compare it against monthly items).
+- **One-time** — bills exactly once. After it's charged on an invoice, its cadence can no longer be changed.
+
+Line items can be picked from your [Service Catalog](/psa/service-catalog) — which pre-fills the description and price — or entered as a custom description. The agreement shows a running rollup of monthly, annual, and one-time totals, plus an **effective monthly** figure that combines them for easy comparison across agreements.
+
+<Note>
+  Agreements created before line items existed still work — they fall back to their original flat monthly recurring amount until you add line items of your own.
+</Note>
+
+### SOW and contract attachments
+
+Upload the signed Statement of Work, contract, or other supporting document directly to the agreement's **Documents** panel — up to 5 MB per file. Replace or delete an attachment at any time; there's no version history, so a replacement fully supersedes the previous file.
+
+### Company default agreements
+
+A company can have one of its agreements marked as its **default agreement**. When a technician logs billable time without explicitly picking a Service Agreement, Regentra resolves the rate through the ticket or project's company and, if the company has a default agreement set, uses its hourly rate automatically.
+
+Set or clear a company's default from the agreement's detail page ("Make default for `<company>`"). Explicitly choosing a different agreement on a time entry always wins over the default.
+
+<Warning>
+  If a company's default agreement is Paused, Cancelled, or Expired, time entries simply won't pick up a rate from it — there's no error or warning at the point of logging time. Review a company's default agreement status if unbilled time is showing up at $0 unexpectedly.
+</Warning>
 
 ## How time entries roll up
 
@@ -68,7 +96,7 @@ Results update in real time.
 
 <AccordionGroup>
   <Accordion title="Can a project have multiple Service Agreements?">
-    A project links to one company. If that company has multiple agreements (one hourly, one MRR), choose which to use when logging time. Time can also be logged without an agreement.
+    A project links to one company. If that company has multiple agreements, choose which to use when logging time, or rely on the company's default agreement if one is set. Time can also be logged without an agreement.
   </Accordion>
   <Accordion title="What happens when a project goes over budget?">
     Status remains unchanged, but Actual Hours visibly exceeds Budget Hours. No automatic alert — manager monitors.

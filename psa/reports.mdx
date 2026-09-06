@@ -75,6 +75,21 @@ All reports respect your organization's configured timezone.
 
 ## Scheduled reports
 
+Regentra can generate and email two kinds of monthly reports automatically, from the **Scheduled Reports** panel at the top of the Reports page.
+
+<Tabs>
+  <Tab title="Client monthly report">
+    A branded, client-facing report for one company — the previous full calendar month's service data, formatted the same way as the Client Service Report above. Pick the **Company**, then check off the specific **Recipient Contacts** who should receive it (not "everyone at the company" — you choose exactly who). Recipients are re-verified against that company's contact list every time the report sends, so removing or deactivating a contact stops delivery to them automatically. You can add an optional note from your MSP that's included in the email.
+  </Tab>
+  <Tab title="Overview monthly digest">
+    An internal Service Desk Overview PDF sent to every admin who has opted in via their **Monthly Report** email preference (Settings → Notifications). No recipients to pick — it's resolved per admin at send time.
+  </Tab>
+</Tabs>
+
+Each schedule shows its next and last send date, and can be paused or deleted at any time without losing its configuration.
+
+Client reports are white-label branded with your organization's logo and accent color, and include hours billed against each client's included agreement hours where a [Service Agreement](/psa/projects-agreements) applies. A month with no reportable activity is skipped rather than sending an empty report.
+
 <Note>
-  Scheduled report delivery via email is coming soon. You will be able to configure recurring reports that are automatically generated and sent to designated recipients on a weekly or monthly cadence.
+  Scheduled Reports requires a Manager-level role or above to view and manage — it isn't available to plain technicians.
 </Note>

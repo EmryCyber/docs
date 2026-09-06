@@ -1,0 +1,100 @@
+---
+title: "Data Export & Import"
+description: "Export any PSA or compliance dataset to CSV, Excel, or PDF, with a background-job path for large exports."
+---
+
+Go to **Settings → Import / Export** to export any of your PSA or compliance data, or import a CSV to bulk-create or update records.
+
+## Available exports
+
+Every dataset below is available in CSV, Excel (XLSX), and PDF:
+
+| Dataset | Contents |
+| --- | --- |
+| Companies | Client companies with contact, agreement, and billing-link info |
+| Contacts | Portal contacts with company, portal access, and last login |
+| Tickets | Tickets with company, assignee, SLA state, and time logged |
+| Time Entries | Billable and non-billable time entries with approval state |
+| Invoices | Invoices with amounts, status, and QuickBooks/Stripe link flags |
+| Quotes | Quotes with one-time/monthly/annual totals and acceptance state |
+| Agreements | Service agreements with recurring amount and hourly rate |
+| Projects | Projects with budget/actual hours and status |
+| Audit Log | Security audit trail (defaults to the last 90 days) |
+| Controls | Compliance controls with status, assignments, and evidence counts |
+| Policies | Policies with category, status, and review dates |
+| Vendors | Vendors with contact info, risk levels, and BAA status |
+| Assets | Assets with type, status, and assignment details |
+| Training | Training records with completion status and scores |
+| Risks | Risk register entries (NIST IR 8286 columns) |
+| Networks | Networks/subnets with VLAN and client links |
+
+<Note>
+  The dataset list you see is scoped to what your plan and role allow — a compliance-only organization won't see PSA datasets like Invoices or Time Entries, and vice versa.
+</Note>
+
+## Exporting
+
+<Steps>
+  <Step title="Find the dataset">
+    On the Export tab, find the dataset you want.
+  </Step>
+  <Step title="Set filters (optional)">
+    Click **Filters** to narrow by date range or other fields available for that dataset.
+  </Step>
+  <Step title="Pick a format">
+    Click **CSV**, **Excel**, or **PDF**.
+  </Step>
+</Steps>
+
+A small export downloads immediately. A large one is queued as a background job automatically — you don't need to do anything differently; Regentra tells you it queued the export and emails you a download link when it's ready.
+
+## Formats
+
+<Tabs>
+  <Tab title="CSV">
+    Plain comma-separated values — the most portable option, good for importing into another system or a spreadsheet.
+  </Tab>
+  <Tab title="Excel (XLSX)">
+    A formatted workbook: frozen header row, auto-filter, proper date/currency formatting, and a README sheet recording your organization name, the export time, the filters you applied, the row count, and who ran it.
+  </Tab>
+  <Tab title="PDF">
+    A print-ready table, best for smaller result sets you want to read or hand to someone rather than process. PDF exports are capped at 2,000 rows — a larger result set still generates a PDF, but it's truncated with a banner pointing you to the Excel export for the complete data.
+  </Tab>
+</Tabs>
+
+## Background exports for large datasets
+
+An export over roughly 5,000 rows can't stream back synchronously, so it's queued as a background job instead. You'll see a notice that it's queued, and an email arrives with a download link once it finishes — you don't need to keep the page open.
+
+Background jobs:
+
+- Handle up to 250,000 rows in a single export.
+- Expire and become unavailable for download **72 hours** after completion — export again if you need the file later.
+- Are capped at **3 concurrent jobs per organization** — wait for one to finish (or let it expire) before queuing more.
+
+The **Recent Exports** section on this page lists your jobs — dataset, format, status, row count, file size, and a download link once complete.
+
+## Date filters
+
+Any date-range filter you set (for example, on Time Entries or the Audit Log) is applied using your organization's configured timezone, and the boundaries are inclusive of the full start and end days you pick — not a UTC midnight cutoff that clips off part of the first or last day.
+
+## What's never exported
+
+Passwords, integration credentials, API keys, webhook secrets, and the contents of the Networks module's notes field are never included in any export, regardless of dataset or format — these stay inside Regentra even when you export everything else about a record.
+
+## Importing
+
+The Import tab supports bulk-creating or updating a handful of record types from CSV:
+
+| Import | What it does | Required columns |
+| --- | --- | --- |
+| Vendors | Creates new vendor records | Name (required), Contact Name, Contact Email, Contact Phone, Risk Level, BAA Status, BAA Expiry, PHI Access, Category |
+| Assets | Creates new asset records | Name (required), Type (required), Status, Serial Number, Manufacturer, Model, Location, Assigned To |
+| Control Updates | Updates existing controls by IC Code | IC Code (required), Status, Assigned To, Due Date, Implementation Notes |
+| Policies | Creates new policy records (content is added afterward) | Title (required), Category (required), Status, Version, Effective Date, Review Date |
+
+Upload a CSV, and Regentra reports how many rows were created, updated, or skipped, along with a row-by-row list of any errors.
+
+<Tip>
+  These CSV imports are separate from the dataset-registry exports above (Networks, Companies, and the others don't have a matching bulk-import path today) — they cover the record types listed in the table, not every exportable dataset.
+</Tip>

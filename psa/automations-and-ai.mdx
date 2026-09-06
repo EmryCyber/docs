@@ -107,6 +107,18 @@ The AI auto-analyzer suggests, **never sets**, ticket priority. The priority cho
   The **Change Priority** automation action listed in the rule-builder above is for operator-authored MSP rules. It does not represent AI behavior. Use it freely — your rules are policy you define, not AI judgment.
 </Info>
 
+## Automation Value
+
+Automation Value (**PSA sidebar → Automation Value**) tracks how many technician-minutes each platform automation saves, so client reports can show the true value of auto-resolved work instead of just a ticket count.
+
+Every automation signal Regentra ships has a platform default — a reasonable estimate of how long the equivalent manual work would take. You can override any of them for your organization:
+
+- Browse **Platform Defaults** to see the default minutes for each automation signal.
+- Click **Override** to set your own **manual minutes equivalent** for your organization, plus an optional **fixed hourly rate** (otherwise the client's own agreement rate is used).
+- Overridden signals show an **Overridden** badge; remove an override at any time to fall back to the platform default.
+
+If a signal has no override and no platform default, Regentra falls back to a global default shown at the top of the page. Per-rule automations you build yourself (Settings → Automations) set their own minutes directly on the rule rather than through this page.
+
 ## Frequently asked questions
 
 <AccordionGroup>

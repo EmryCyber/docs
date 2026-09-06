@@ -1,0 +1,140 @@
+---
+title: "API Keys"
+description: "Scoped API keys for external automations like n8n or Zapier to write ticket notes and time entries back into Regentra."
+---
+
+API keys let an external automation — an n8n workflow, a Zapier zap, a custom script — write specific data back into Regentra. Paired with [outbound webhooks](/settings/webhooks), this closes the loop: a webhook tells your automation something happened, and an API key lets it write the result back.
+
+<Note>
+  API keys are a PSA feature and write-scoped: they can add a ticket note or log time, and nothing else. There is no read API and no key that can act with your full account permissions.
+</Note>
+
+## Creating a key
+
+<Steps>
+  <Step title="Open API Keys settings">
+    Go to **Settings → API Keys** and click **New Key**.
+  </Step>
+  <Step title="Name it">
+    Give the key a name that identifies what will use it (e.g. "n8n — ticket automations").
+  </Step>
+  <Step title="Choose scopes">
+    Select the permissions this key needs:
+    - **Time entries** — create time entries on tickets.
+    - **Internal notes** — add internal notes to tickets.
+  </Step>
+  <Step title="Set an expiration (optional)">
+    Set an expiration date, or leave it open-ended.
+  </Step>
+  <Step title="Save and copy the key">
+    Regentra shows the full key exactly once. Copy it now — it can't be retrieved again, only revoked and replaced with a new one.
+  </Step>
+</Steps>
+
+## Using a key
+
+Every key starts with `rgk_`. Send it as a bearer token on every request:
+
+```
+Authorization: Bearer rgk_1a2b3c4d5e6f...
+```
+
+### Confirming a key works
+
+`GET /api/v1/ping` requires no scope and has no side effects — use it to confirm your Authorization header is wired up correctly before pointing a real workflow at the write endpoints:
+
+```bash
+curl https://app.regentra.io/api/v1/ping \
+  -H "Authorization: Bearer rgk_..."
+```
+
+```json
+{
+  "ok": true,
+  "organizationId": "org_...",
+  "keyName": "n8n — ticket automations",
+  "scopes": ["tickets:note:write", "tickets:time:write"]
+}
+```
+
+### Adding an internal note to a ticket
+
+Requires the **Internal notes** scope.
+
+```bash
+curl -X POST https://app.regentra.io/api/v1/tickets/{ticketId}/notes \
+  -H "Authorization: Bearer rgk_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "message": "Escalated to vendor support, ticket #48213 opened on their side." }'
+```
+
+```json
+{
+  "note": {
+    "id": "cku9x...",
+    "createdAt": "2026-09-05T18:02:11.000Z"
+  }
+}
+```
+
+Notes created through the API are always internal — visible to your team only, never to the customer, and they never trigger a customer-facing email.
+
+### Logging time on a ticket
+
+Requires the **Time entries** scope.
+
+```bash
+curl -X POST https://app.regentra.io/api/v1/tickets/{ticketId}/time-entries \
+  -H "Authorization: Bearer rgk_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "minutes": 45,
+    "description": "Investigated and resolved DNS propagation delay",
+    "billable": true
+  }'
+```
+
+```json
+{
+  "entry": {
+    "id": "ckt7z...",
+    "minutes": 45,
+    "workDate": "2026-09-05T00:00:00.000Z",
+    "status": "SUBMITTED",
+    "billable": true,
+    "hourlyRate": 150,
+    "userId": "cku2a..."
+  },
+  "agreementSource": "company_default"
+}
+```
+
+Time entries created this way land in the same **Submitted** approval queue as time logged in the app — an admin still reviews them before they're billable. The hourly rate is always resolved automatically from the ticket's company agreement (or your org's default rate); you can't set a rate on the request itself.
+
+By default, time is credited to your organization's automation service account. To credit a specific technician instead, add `userEmail` to the request body — it must match an active, non-service technician in your organization, or the request is rejected rather than silently falling back to the service account.
+
+### Idempotent requests
+
+Automations retry. To make a retried request safe, send an `Idempotency-Key` header on time-entry creation:
+
+```bash
+curl -X POST https://app.regentra.io/api/v1/tickets/{ticketId}/time-entries \
+  -H "Authorization: Bearer rgk_..." \
+  -H "Idempotency-Key: n8n-run-48213-step-3" \
+  -H "Content-Type: application/json" \
+  -d '{ "minutes": 45, "description": "..." }'
+```
+
+If a request with the same key already created an entry for your organization, Regentra returns that existing entry instead of creating a duplicate, with `"idempotentReplay": true` in the response.
+
+## Attribution
+
+Every write made through an API key is audit-logged and attributed to the key, not to a person — audit log entries show the key's name so you can trace exactly which automation made a change.
+
+## Revoking a key
+
+Click **Revoke** on any key from **Settings → API Keys**. A revoked key stops working immediately. This can't be undone — create a new key if the automation needs to keep running.
+
+## Errors
+
+Every authentication failure — a missing key, a malformed key, an unknown key, a revoked key, an expired key, or a key missing the required scope — returns the same `401 Unauthorized` with no further detail in the response body. This is deliberate: it prevents anyone probing the API from learning which of those cases applies. If your automation is unexpectedly failing, check the key's status and scopes in Regentra directly rather than trying to infer the cause from the response.
