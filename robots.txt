@@ -1,0 +1,99 @@
+# docs.regentra.io — crawler policy (owner directive, 2026-09-08).
+#
+# Mintlify serves this file verbatim in place of its auto-generated one,
+# which allows every crawler and opts the site IN to AI training and AI
+# answer generation via Content-Signal. This file reverses that: search
+# engines may index the docs so customers can find them; AI crawlers,
+# AI-answer fetchers and training-data collectors may not.
+#
+# robots.txt is honoured voluntarily. Every vendor listed below states
+# that it obeys it; a crawler that ignores it can only be stopped at the
+# network edge or by putting the docs behind Mintlify authentication.
+# Review this list quarterly — new agents appear often.
+
+# Cloudflare Content Signals Policy (https://contentsignals.org):
+# search index yes; use as AI input (RAG / AI answers) no; AI training no.
+Content-Signal: search=yes, ai-input=no, ai-train=no
+
+# ── OpenAI ──────────────────────────────────────────────────────────────
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+Disallow: /
+
+# ── Anthropic ───────────────────────────────────────────────────────────
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+Disallow: /
+
+# ── Google AI (Gemini training / grounding; ordinary Googlebot search is
+#    NOT blocked — see the catch-all at the bottom) ──────────────────────
+User-agent: Google-Extended
+User-agent: Google-CloudVertexBot
+Disallow: /
+
+# ── Perplexity ──────────────────────────────────────────────────────────
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Disallow: /
+
+# ── Meta ────────────────────────────────────────────────────────────────
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: FacebookBot
+Disallow: /
+
+# ── Apple, Amazon, Microsoft AI, xAI, Mistral, DuckDuckGo AI ───────────
+User-agent: Applebot-Extended
+User-agent: Amazonbot
+User-agent: MistralAI-User
+User-agent: DuckAssistBot
+User-agent: xAI-Grok
+User-agent: Grok
+Disallow: /
+
+# ── Common Crawl and other training-corpus / scraping collectors ───────
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: TikTokSpider
+User-agent: Diffbot
+User-agent: ImagesiftBot
+User-agent: Omgilibot
+User-agent: Omgili
+User-agent: YouBot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: Timpibot
+User-agent: PetalBot
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: Kangaroo Bot
+User-agent: Webzio-Extended
+User-agent: Scrapy
+User-agent: iaskspider/2.0
+User-agent: ISSCyberRiskCrawler
+User-agent: SemrushBot-OCOB
+User-agent: Sidetrade-indexer-bot
+User-agent: VelenPublicWebCrawler
+User-agent: PanguBot
+User-agent: QuillBot
+User-agent: Brightbot 1.0
+User-agent: Crawlspace
+User-agent: Devin
+User-agent: Factset_spyderbot
+User-agent: FirecrawlAgent
+User-agent: img2dataset
+User-agent: NovaAct
+User-agent: Operator
+User-agent: Poseidon Research Crawler
+User-agent: bedrockbot
+User-agent: meta-externalads
+Disallow: /
+
+# ── Everyone else (ordinary search engines: Googlebot, Bingbot, etc.) ──
+User-agent: *
+Allow: /
+Disallow: /llms.txt
+Disallow: /llms-full.txt

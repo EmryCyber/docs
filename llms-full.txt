@@ -1,0 +1,5 @@
+# Regentra
+
+> This documentation is not licensed for AI ingestion, retrieval-augmented answering, or model training. Regentra does not publish a full-text export of its documentation for large language models.
+
+This file deliberately replaces the full-text export Mintlify would otherwise generate (see `robots.txt` at the site root for the full crawler policy). Human readers: the documentation is at https://docs.regentra.io.
