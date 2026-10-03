@@ -11,6 +11,10 @@ A running log of what's shipped on Regentra. Entries are written in the order th
 
 ## 2026-09
 
+<Card title="September 2026 release notes" icon="rocket" href="/releases/september-2026">
+  The full list of everything that shipped in September, by area.
+</Card>
+
 ### Payment processors: choose your own processor and accounting sync
 
 Payment integrations are no longer hard-coded to Stripe. Regentra now models them by role: a **processor** that actually collects payment (Stripe, or the new Alternative Payments option) and an **accounting sync** that records it (QuickBooks or Xero). Only one processor and one accounting sync can be active at a time, and QuickBooks can serve as both. Connecting a new processor while one is already active shows a confirmation dialog before switching, so you never silently lose a connection mid-billing-cycle.
