@@ -1,0 +1,188 @@
+---
+title: "September 2026 Release Notes"
+sidebarTitle: "September 2026 release"
+description: "Everything that shipped in Regentra during September 2026: ticketing, time and billing, calendar, compliance, integrations, branding, security, and fixes."
+---
+
+September was our biggest month yet. This page is a round-up of everything that shipped, grouped by area. For the week-by-week detail, including anything you need to do, see the [Changelog](/changelog).
+
+<Note>
+  **Things to check after this release**
+
+  - **Sender display name:** rename your support mailbox in the Exchange admin center to change the name customers see.
+  - **Work notes on invoices** are now off by default. Turn them on in **Settings → Tickets → Billing** if you want them.
+  - **Regentra bot in Teams** works in one-to-one chats only. Use the Teams Chat Bridge for group chats.
+</Note>
+
+## Ticketing
+
+- **Ticket types**: classify tickets. Templates, checklists and custom fields can each be tied to a type.
+- **Ticket templates**: start a new ticket from a saved template.
+- **Checklists**: optionally warn or block before a ticket with open required items is resolved.
+- **Custom fields**: grouped into sections, with optional fields on the customer portal.
+- **Recurring tickets**: create tickets automatically on a daily, weekly, monthly, quarterly or yearly schedule.
+- **Urgency × impact priority**: customers now say how urgent their issue is, and technicians set the final priority. This also applies to the Teams tab.
+- **Resolve/Close dialog**: separate boxes for an internal resolution note and a message to the customer.
+- **Me / Unassigned / Team views** for the ticket list, with a per-user default.
+- **Saved ticket list filters**: organization-wide and personal defaults. Backing out of a ticket returns you to your filtered list.
+- **Link tickets to projects**: project cards now show the time logged on their tickets.
+- **@mentions**: work in new ticket descriptions and in replies. Saved responses now show up in the reply editor.
+- **AI "Find a ticket" search**: describe a past ticket in plain words and find it.
+- **Automatic device linking**: picking a contact on a ticket links their device.
+- **CSAT drill-down**: the dashboard's satisfaction cards are clickable, and each ticket shows its survey result.
+- **Priority protection**: a priority a technician sets by hand is no longer changed by automation or AI. Priority is now edited from the ticket header.
+- **Getting Started checklist** for new organizations. Its progress comes from what's actually set up, not from boxes ticked.
+
+[Tickets guide](/psa/tickets) · [Ticket settings](/settings/tickets)
+
+## Time tracking and timesheets
+
+- **Timer and weekly timesheets**, with approval of a whole week at once.
+- **Ready to Bill** screen.
+- **Tickets close automatically once their time is billed** (can be turned off).
+- **Backdated time**: log time on past days.
+- **Time-entry presets** and a **rate card** by type of work.
+- **New Timesheets page**: weeks are shown as a list, and managers can submit, approve or reject on a technician's behalf.
+- **New time-entry panel on tickets**: an interactive timeline, editing of entries, and a better phone layout.
+- **Corrections**: submitted time can be taken back to draft and corrected. Week status stays in step with individual entries.
+
+[Time tracking guide](/psa/time-tracking)
+
+## Billing, invoices and quotes
+
+- **Products on time entries**: each time entry becomes its own invoice line.
+- **Bill straight from Timesheets.**
+- **Edit invoice lines before generating**: change hours, rates and descriptions. The form explains time that came in at $0.
+- **More detailed line items**: quantity, delivery periods, a searchable product picker and favorite products.
+- **Product CSV import and export**, with optional SKUs and better Sync from Stripe.
+- **Stripe invoices**: invoices created directly in Stripe now import into the PSA.
+- **QuickBooks**: each invoice shows whether it reached QuickBooks, and invoices can be sent there in bulk.
+- **Payment processors**: Stripe and QuickBooks each have a clear role. Payments, refunds and chargebacks are recorded.
+- **Redesigned quotes**: branded quote and invoice PDFs, plus "Bill to" details on quotes.
+- **Service agreement fixes**:
+  - Recurring charges bill once per month.
+  - Only the unbilled part of a month's charge is billed.
+  - Invoice lines always add up to the total.
+- **QuickBooks sales tax** is kept when QuickBooks collects the payment.
+- **Technicians' work notes** are left off customer invoices by default.
+
+[Invoices & quotes guide](/psa/invoices-quotes) · [Service catalog](/psa/service-catalog) · [Payment processors](/integrations/payment-processors)
+
+## Calendar
+
+- **New calendar** with reminders and a private feed you can subscribe to in Outlook, Google or Apple.
+- **Microsoft 365 connection**: technicians connect their calendar and book customer appointments with Teams meetings.
+
+## Compliance
+
+- **Incident management**:
+  - Intake form and investigation record.
+  - Notification deadlines by framework.
+  - Report ready for regulators.
+- **Monitoring**: the first scan groups its findings into one baseline ticket instead of opening many separate tickets.
+- **Microsoft Entra evidence**: 10 new automated checks and many accuracy fixes.
+- **Evidence from Regentra itself** for risk assessments, incident notifications and vendor reviews.
+- **Evidence Collection** can now be viewed by every role, and Compliance Admins can set it up.
+- **Fixes**:
+  - Compliance purchase and trial access.
+  - The client switcher lists clients while you are switched into one.
+
+[Incidents guide](/compliance/incidents) · [Evidence collection](/compliance/evidence-collection)
+
+## Import and export
+
+- **Export to Excel, PDF or CSV** for every PSA and compliance list. Large exports run in the background and are emailed to you.
+- **Bring your data from another PSA**: import companies, service agreements, tickets and ticket history.
+
+[Import & export guide](/settings/import-export)
+
+## Integrations
+
+- **Hudu**:
+  - Integration enabled.
+  - Networks, VLANs and IP addresses sync every 15 minutes.
+  - Your own edits are protected from being overwritten.
+- **Level and NinjaOne**: renames and deletions are detected, with a review queue for them.
+- **Level alerts**: open and resolved alerts are re-checked every hour, so a missed alert notification no longer leaves a ticket missing or stuck open.
+- **Stripe and QuickBooks**: customer name changes flow back into the PSA.
+- **Microsoft Entra**:
+  - Deleted users are deactivated, and can be restored.
+  - Stale devices are handled.
+  - New device import settings.
+- **Asset details**: last seen, logged-in user, security score, OS and compliance state are now real fields.
+- **Device owners**: a device's owner now follows whoever actually uses it.
+- **Company page**: shows RMM cards only for the RMM the company uses, adds a Level card, and shows "Last synced" times.
+- **Teams app** overhaul.
+- **Accurate setup guides** for every integration.
+
+[Integrations overview](/integrations/overview)
+
+## White-label branding
+
+- **Company Profile**: one place for your logo, address, tax ID and brand colour.
+- **Your own sign-in link**: branded sign-in pages, plus a branded app for your team.
+- **Your brand everywhere**: reports, PDFs and emails carry your branding, and "Powered by Regentra" can be turned off.
+- **Email appearance**: banner colour, button colour and logo background, with automatic readability checks.
+- **Support portal logo background** options.
+- **Logo handling**:
+  - Size guidelines.
+  - Automatic trimming of empty margins.
+  - A Canva template.
+  - Larger logos on sign-in pages and PDFs.
+- **Managed clients** inherit their MSP's branding correctly.
+
+[Organization profile guide](/settings/organization) · [Support portal](/psa/portal)
+
+## Account, settings and onboarding
+
+- **New "My account" area**: your profile, preferences, notifications, security and calendar in one place.
+- **Settings** is now its own area, separate from the PSA and Compliance apps.
+- **Email verification** comes before passkey setup, and the verification link works on any device.
+- **Onboarding** is now a guide rather than a requirement. Nothing is blocked while it's unfinished.
+- **Trials**:
+  - Live countdown banner.
+  - Option to extend by 7 days.
+  - Manual extensions by support.
+  - A free week offered when you cancel.
+  - Clearer messages when a trial has expired.
+- **Billing fixes**:
+  - Compliance-only organizations can buy PSA.
+  - Buying one product no longer causes problems with your other trial.
+  - Cancelled customers are no longer treated as expired trials.
+
+[MSP billing](/msp/billing) · [MFA](/settings/mfa)
+
+## Security and privacy
+
+- **Four security audits** completed and their findings fixed.
+- **Microsoft tenant connections** now require proof of admin consent.
+- **Internal notes stay private**: they are kept out of chat transcripts and AI reply drafts, and screenshots pasted into them stay off the customer portal.
+- **AI reply drafts** only use the same customer's past tickets.
+- **Device syncs** can no longer affect another client's assets.
+- **Logged time is protected**: deleting a user or project can no longer erase it.
+- **Activity feed**: visibility is based on role.
+
+## Reliability fixes
+
+- **Inbound email**:
+  - No more lost mail.
+  - A retry queue for failed messages.
+  - Attachment downloads have more time to finish.
+- **SLA timers** stay correct across daylight saving time changes.
+- **Portal links in ticket emails** work when signed out and on custom domains.
+- **Contacts**:
+  - Searching works across the whole list.
+  - Email matching ignores upper/lower case.
+  - Deactivating a contact saves immediately.
+- **Scheduled reports** work for PSA-only organizations.
+- **Layout**: fixes for phones and smaller screens across the app.
+- **Crash fixes**: Super Admin pages, and invisible buttons on sign-in pages.
+
+## Under the hood
+
+- Performance improvements.
+- Dependency and security updates.
+- A simpler production setup.
+- Stronger automated checks before every release.
+
+Questions about any of these changes? Contact [support@regentra.io](mailto:support@regentra.io).
