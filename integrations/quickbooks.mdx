@@ -151,7 +151,7 @@ If your QuickBooks connection breaks — most commonly an expired refresh token 
 
 ## Payment processor and accounting sync roles
 
-QuickBooks is the one integration in Regentra that can act as both your **payment processor** (collecting payment) and your **accounting sync** (recording it to your books) at the same time — every other processor (Stripe, Alternative Payments) only ever holds the payment-processor role. See [Payment Processors](/integrations/payment-processors) for how this works, including what happens if you connect QuickBooks while Stripe is already your active processor, and what disconnecting QuickBooks does to both roles at once.
+QuickBooks can act as both your **payment processor** (collecting payment) and your **accounting sync** (recording it to your books) at the same time — every other processor (Stripe, Alternative Payments) only ever holds the payment-processor role. See [Payment Processors](/integrations/payment-processors) for how this works, including what happens if you connect QuickBooks while Stripe is already your active processor, and what disconnecting QuickBooks does to both roles at once.
 
 ## What gets synced (per direction)
 
@@ -159,7 +159,7 @@ QuickBooks is the one integration in Regentra that can act as both your **paymen
 
 - **Customers** — Portal Companies push to QB Customers via **Sync to QuickBooks** (or auto-sync on Portal Company edit). Dedupes by primary email.
 - **Invoices** — pushed on **Send to QuickBooks** from the invoice detail page or auto-pushed when "QuickBooks" is checked as a destination on invoice generate.
-- **Payments** — created automatically on Stripe webhook + Mark Paid manual action.
+- **Payments** — created automatically for settled Stripe or direct Alternative Payments collections and the Mark Paid manual action. AP collection through its own QuickBooks connection posts to QuickBooks through AP instead.
 - **Voids** — propagated to QB invoice voids.
 - **Credit Memos** — created via the **Issue Credit Memo** button on PAID/VOID invoices.
 

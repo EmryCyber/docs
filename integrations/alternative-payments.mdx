@@ -1,0 +1,127 @@
+---
+title: "Alternative Payments"
+description: "Connect Production or Demo, choose how invoices reach Alternative Payments, and track payments and notifications in Regentra."
+---
+
+Alternative Payments (AP) collects card and ACH payments. Regentra supports two routes: AP imports invoices from your accounting system, or Regentra sends invoices to AP directly. **Use one route for each invoice.** Sending the same invoice through both routes can create two collectible copies.
+
+## Connect and keep your settings
+
+<Steps>
+  <Step title="Create credentials in AP">
+    In the AP Partner Dashboard, open **Team Preferences → API Keys** and create a **Client ID** and **Client Secret**. Demo and Production credentials are separate.
+  </Step>
+  <Step title="Select the matching environment">
+    Open **Regentra → Settings → Integrations → Alternative Payments → Configure**. Select **Production** for your live AP account, or **Demo** for testing, and enter both values. Connect one environment for the organization; having both active makes the direct connection ambiguous.
+  </Step>
+  <Step title="Test, then save">
+    **Test Connection** checks the entered credentials without saving them. The test has a timeout, and a failed or timed-out test keeps your entries available. Click **Save Credentials** to store them.
+
+    The selected environment stays visible after saving and is restored when you reopen or reload the card. Stored keys are encrypted and are not displayed again. Blank fields marked **configured** with **Saved securely — leave blank to keep** mean you can test or use that connection without entering its keys again.
+  </Step>
+  <Step title="Confirm the processor role">
+    Saving claims AP as your payment processor. If QuickBooks or Zoho Books currently collects payments, confirm the takeover; the accounting connection stays connected. Review the warning when replacing another payment processor.
+  </Step>
+</Steps>
+
+Testing and saving are separate actions. After changing a key, test it and save the replacement. A successful test verifies authentication and read access; it does not verify every permission needed to create invoices or manage notifications.
+
+## API permissions for direct invoicing
+
+Select these permissions in AP:
+
+| Permission | Used for |
+| --- | --- |
+| **Read customers** | Find existing customers and validate links. |
+| **Write customers** | Create customers that do not already exist in AP. |
+| **Read invoices** | Check invoice status and balance, and detect earlier invoice creations. |
+| **Write invoices** | Create invoices and archive AP copies when appropriate. |
+| **Read payments** | Retrieve payment records and reconciliation history. |
+| **Read webhooks** | Inspect subscriptions and delivery failures. |
+| **Manage webhooks** | Register and remove Regentra's notification subscriptions. |
+
+**Test Connection** checks Read customers, Read invoices, Read payments and Read webhooks. Enable the three write/manage permissions above separately. The test does not initiate a payment or create a sample invoice.
+
+AP's supplied permission list does not identify the permissions required by every endpoint. Confirm these mappings with AP when configuring your key:
+
+- Whether **Collect payments via hosted checkout** is required to retrieve an invoice's payment link.
+- Whether **Read refunds** is additionally required to read refund history through the payments API.
+- Whether **Manage webhooks** also permits manually resuming paused delivery.
+
+The current integration does not initiate payments, manage saved payment methods, issue refunds, query payouts, change customer tags, or manage vendors and bills. Those workflows do not require enabling Write payments, Write refunds, Read payouts, customer-tag permissions, accounts-payable permissions, or Read checkout configuration for Regentra.
+
+## Route 1: collect through your accounting system
+
+Keep **Send invoices to Alternative Payments** off in Regentra's AP **Invoice settings**.
+
+1. Connect the same accounting system in Regentra and AP.
+2. Send Regentra invoices to that accounting system.
+3. AP imports and collects those invoices through its own accounting connection.
+4. AP records payments in the accounting system. Regentra receives their status through its accounting integration.
+
+This route keeps the accounting system's tax treatment. Confirm AP's import and payment-posting setup in AP itself. Regentra supports invoice sending to QuickBooks Online, Zoho Books and Xero; it does not verify AP's connection to your books. Disable any separate accounting-system online collection option that would let the customer pay the same invoice twice, especially in Xero.
+
+The direct-invoicing AP API permissions above are not needed for the accounting route's collection. Test Connection can report missing direct-invoicing read permissions while accepting valid credentials.
+
+## Route 2: send invoices directly from Regentra
+
+<Warning>
+  Turn off AP's import of the same invoices from your accounting system before enabling direct sending. Confirm this in Regentra when prompted.
+</Warning>
+
+1. Save the AP credentials and enable the permissions above.
+2. Open **Invoice settings** on the AP integration card.
+3. Turn on **Send invoices to Alternative Payments** and confirm accounting import is off.
+4. On each company page, link the existing AP customer if one already exists. This preserves that customer's saved payment methods and autopay. A same-name match prompts you to choose rather than silently creating another customer.
+5. Send the Regentra invoice. Regentra creates its AP copy and displays the AP payment link. Direct sending supports **USD invoices**.
+
+AP receives invoices when they are sent, rather than when an ordinary draft is generated. A reviewed invoice must be approved and released. Older invoices that may already have reached AP need confirmation before direct sending. An unlinked part-paid invoice is refused because creating a full-value AP copy could collect too much.
+
+Retrying a send checks for an existing AP invoice first. If AP's search is incomplete, or an earlier matching invoice has a different or unreadable total, Regentra stops creation and shows a warning instead of risking a duplicate. Review the invoice in AP and retry when its search is available.
+
+## Payments, refunds and accounting
+
+- AP invoice and payment records determine financial updates. Notifications prompt a fresh read; their amount fields are not treated as REST dollar amounts.
+- Successful receipts are recorded before a direct invoice is marked paid. If receipt storage fails, or AP's payment listing has not caught up, Regentra retries while keeping the invoice eligible for reconciliation.
+- A settled AP invoice updates its Regentra status. Its payment is posted to the connected QuickBooks, Zoho Books or Xero invoice when available. Check invoice warnings for missing accounting copies or failed posts. Part payments are bridged at settlement, including supported split settlement with recorded accounting payments.
+- A **refund notification can mean a refund request**. Regentra waits for a successful refund record before marking the receipt Refunded. Pending or unknown reversal statuses do not establish a completed financial reversal.
+- Refunds, chargebacks and later ACH failures do not automatically reopen the invoice. Review the payment in AP and your books before collecting again. Initiate refunds and handle disputes in AP.
+- Marking an invoice paid elsewhere or voiding it in Regentra attempts to archive its AP copy. AP payments already present can require manual review; read the invoice's warning.
+
+## Notifications and recovery
+
+Regentra registers these topics automatically when direct sending is enabled:
+
+`invoice_paid`, `invoice_updated`, `invoice_archived`, `payment_succeeded`, `payment_failed`, `payment_refunded`, `payment_chargeback`.
+
+There is no webhook URL or secret to copy into AP for this setup. Regentra manages a subscription per topic and validates the Bearer secret AP sends. It saves authenticated reconciliation work before acknowledging receipt; a queue interruption is recovered by the next poll. Existing connection URLs stay the same.
+
+Payments are checked every **15 minutes**. Refunds and chargebacks are also checked daily, with saved progress so larger backlogs continue in later runs. Broad reversal checks cover successful AP receipts recorded within the last **120 days**; a notification naming an older linked invoice can request a targeted check.
+
+AP documents sequential account-wide delivery. After **five unsuccessful delivery retries**, it pauses delivery for the whole AP account, including other consumers. Pending and failed events stay queued until manual recovery. A failed-event count alone does not prove delivery is already paused.
+
+In **Invoice settings**:
+
+- **Check payments now** queues a payment and reversal check.
+- **Subscribe again** repairs Regentra's subscriptions and refreshes their shared secret.
+- **Resume notifications** asks AP to resume pending and failed delivery. Fix the underlying delivery problem first. AP processes at most ten queued notifications per retry run, so a backlog may take several cycles to drain.
+
+## Troubleshooting
+
+### Production changes back to Demo or keys look blank
+
+Reopen the card and check its saved environment. It should stay on Production after saving, closing, and reloading. Key fields intentionally remain blank after a successful save and show **configured**. Leave those fields blank to retain the saved values; Test Connection uses the stored keys for that environment.
+
+### Test Connection takes too long
+
+The AP authentication and read checks share a server time budget; the browser also ends an unanswered test. Wait for the result, then retry or save the values and test the saved connection. Entered values remain in the form after a timeout or a failed save.
+
+### Authentication succeeds but sending fails
+
+Check Write customers, Write invoices and Manage webhooks. The connection test makes read requests and cannot prove those write permissions. Also check the environment, USD currency, customer link, and the invoice's last error.
+
+### Notifications fail or an old refund is missing
+
+Use Check payments now and inspect AP's webhook delivery history. Repair failed subscriptions or endpoint availability before resuming AP delivery. For events older than the broad reversal lookback, check the payment directly in AP and review the corresponding Regentra payment record.
+
+See [Payment processors](/integrations/payment-processors) for processor switching and accounting roles.
