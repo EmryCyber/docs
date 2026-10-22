@@ -22,6 +22,12 @@ Go to **Settings → Company Profile** to manage everything about how your organ
 - **Industry**
 - **Brand color** — used as an accent color on the quote/invoice header preview and public-facing pages.
 
+### Logo and sign-in previews
+
+Use the logo uploader's size guidance, margin trimming and Canva template when preparing your artwork. Preview the portal, sign-in pages and PDF layouts rather than assuming the same wide image fits every surface. Email appearance also provides banner/button colors and logo-background controls with a readable preview.
+
+A branded staff sign-in link keeps the chosen branding through supported password and verification pages. Staff sign-in belongs on the app's sign-in flow; the customer portal custom domain is a separate surface.
+
 ### Address
 
 Address fields are structured: **Address line 1**, **Address line 2**, **City**, **State/Region**, **Postal code**, and **Country** (2-letter code). If your organization still has an address stored the old free-text way, a **Split legacy address** button appears once, to migrate it into these structured fields — after that, the structured fields are what's used everywhere.
@@ -34,7 +40,7 @@ Address fields are structured: **Address line 1**, **Address line 2**, **City**,
 
 - **Tax ID label** — defaults to "EIN," but you can change it to match what's appropriate for your country (there's no separate, fixed EIN field anymore — the label is just configurable text).
 - **Tax ID** — the number itself.
-- **Show tax ID on quotes** — off by default. Your tax ID always appears on invoices; this toggle additionally shows it on quotes.
+- **Show tax ID on quotes** and **Show tax ID on invoices** are separate controls. Configure each document type deliberately.
 
 ### Documents (PSA only)
 
@@ -48,7 +54,7 @@ Defaults applied across your quotes and invoices:
 - **Remit-to instructions** — payment instructions (check payable-to, ACH/wire details) shown on the invoice PDF only.
 
 <Note>
-  These are organization-wide defaults. A quote can carry a per-document override for **who it's addressed to** (recipient name, email, phone, address), but the memo, footer, terms, and remit-to instructions above always come from your organization defaults — there's no per-invoice override for those yet.
+  These are organization-wide defaults. A quote can carry a per-document override for **who it's addressed to** (recipient name, email, phone, address), and client financial settings or an editable review invoice can override supported terms, message/footer and presentation. See [Invoice settings](/settings/invoices).
 </Note>
 
 ### Attribution
@@ -74,7 +80,7 @@ Set your organization's timezone from the **Timezone & Display** card in **Setti
 - Date-range filters on [data exports](/settings/import-export)
 
 <Note>
-  Changing the timezone does not retroactively adjust existing SLA calculations. It applies to new tickets and future SLA evaluations.
+  SLA clocks record their hours configuration. Named-calendar and holiday edits can re-plan running clocks while preserving consumed time and breaches; do not assume every existing deadline is recreated simply from the current organization time zone. See [SLA calendars](/psa/sla-policies#business-calendars-and-holidays).
 </Note>
 
 ## Custom domain for support portal
@@ -100,9 +106,9 @@ Regentra sends email notifications for ticket updates, SLA alerts, and invoice d
 
 ## Session duration
 
-Go to **Settings → Authentication & SSO → Session Duration** and choose how long a session can stay active without re-authentication: **1 hour**, **4 hours**, or **12 hours**.
+Go to **Settings → Authentication & SSO → Session Policy**. Choose the inactivity window and a maximum session lifetime of 4, 8 or 12 hours. Administrators also control remembered-device duration and whether browsers can remember accounts. Activity does not bypass the maximum lifetime.
 
-This setting controls the **inactivity window** — how long a session can go without any activity before it expires. Regardless of what you pick, every session also has a fixed **12-hour absolute limit**: even a continuously active session is signed out after 12 hours and must sign in again. Shorter inactivity windows improve security for shared workstations; longer ones reduce login friction for trusted environments — but no session, however active, outlives the 12-hour cap.
+Your own factors, trusted devices and active sessions are in **My account → Security**. See [Sessions and sign-in security](/settings/sessions).
 
 ## Related settings
 

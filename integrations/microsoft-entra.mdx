@@ -25,7 +25,7 @@ The Microsoft Entra ID integration connects your Azure AD tenant to Regentra for
     Sign in with a Global Administrator or Privileged Role Administrator account and approve the permissions requested by the Regentra application.
   </Step>
   <Step title="Verify connection">
-    After consent, you are redirected back to Regentra. The integration status should show **Connected**.
+    After admin consent, an administrator signs in again to prove control of the same tenant. Complete that proof step before treating the connection as established; a manually supplied tenant ID is not a substitute.
   </Step>
 </Steps>
 
@@ -70,11 +70,11 @@ When Entra SSO is enabled, your team members can sign in to [app.regentra.io](ht
 
 ## SSO for portal login
 
-Portal SSO is configured separately for each client. When a client's Entra tenant is connected, their end users can sign in to the support portal using their corporate Microsoft accounts. Enable this under **PSA → Support Portal** (or the **Support Portal** Settings tile) → **Authentication** tab, within the client's context.
+Connect the client's tenant first, then enable the portal-wide **Portal Single Sign-On (Entra ID)** card in **PSA → Support Portal**. There is no separate Authentication tab or manually entered tenant ID for this toggle. See [SSO settings](/settings/sso#portal-sso).
 
 ## Device sync deduplication
 
-If you also use the [Level.io RMM integration](/integrations/level-rmm) (or NinjaOne), devices may appear from both sources. Regentra resolves this by source priority rather than merging fields: NinjaOne outranks Level, which outranks Intune, which outranks Entra. When a Level (or NinjaOne) sync matches an existing Entra/Intune asset by serial number or hostname, the Entra/Intune record is retired — its status flips to **Retired**, and the higher-priority source's record becomes the one active asset for that device.
+If you also use [Level.io](/integrations/level-rmm) or NinjaOne, source priority determines the active device record. Matching uses the supported device identifiers; correlated directory ownership and Intune compliance context are preserved rather than treating every source as an unrelated device. Automatic owner resolution is revisited on sync, while a technician's explicit owner choice is retained.
 
 <Tip>
   If you see duplicate assets after enabling both integrations, the lower-priority (Entra/Intune) record will be automatically retired on the next sync cycle once a matching serial number or hostname is found.

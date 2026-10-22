@@ -5,6 +5,8 @@ description: "Define reusable products and services for invoices; sync pricing w
 
 Build a catalog of services and products your team charges for. Catalog items appear in [Invoice](/psa/invoices-quotes) line-item pickers and sync to [Stripe](/integrations/stripe) so your pricing is consistent across all billing channels.
 
+This is the billing product catalog, not the customer-facing [Request catalog](/psa/request-catalog). Billing products can also link to QuickBooks or Zoho Books items when those workflows are enabled.
+
 ## What it does
 
 - **Item creation** — Name, description, unit price, currency, and a free-text display unit (e.g. hour, license, user/month)
@@ -20,7 +22,7 @@ Build a catalog of services and products your team charges for. Catalog items ap
     In the PSA module sidebar, click **Catalog**.
   </Step>
   <Step title="Click Add Item">
-    Enter the item name (required), description (optional), unit price (required), currency, and display unit.
+    Enter the name, optional SKU, description, price, currency and display unit. Long multiline descriptions can be edited in an expanded, movable editor; closing that editor keeps the draft, while the product's Save action persists it.
   </Step>
   <Step title="Save the item">
     Click **Create item**. The item is saved and marked **Not synced** (waiting to be pushed to Stripe).
@@ -33,7 +35,7 @@ Build a catalog of services and products your team charges for. Catalog items ap
 ## How to sync from Stripe
 
 <Note>
-  Initial Stripe sync runs **automatically** when you first connect Stripe (see [Stripe integration setup](/integrations/stripe)). Every Stripe Product + Price pulls into the catalog within seconds — you don't need to click **Sync from Stripe** for the first pull. Use this action only when you've added new products on the Stripe side and want them in the catalog now.
+  Connecting or updating Stripe queues an initial catalog sync. Use **Sync from Stripe** for a deliberate refresh or when a background dispatch did not complete. Review the import summary: unsupported or incomplete products can be skipped, and a successful connection alone does not prove every product imported.
 </Note>
 
 <Steps>
@@ -41,7 +43,7 @@ Build a catalog of services and products your team charges for. Catalog items ap
     At the top of the catalog list, click **Sync from Stripe**.
   </Step>
   <Step title="Confirm the import">
-    Confirm the browser prompt. All Products and Prices from your Stripe account are pulled into the PSA.
+    Confirm the import. Regentra reads supported Stripe products and prices; it can link an exact compatible existing product rather than create a second copy.
   </Step>
   <Step title="Review imported items">
     New items are created; items with matching Stripe IDs are updated. You'll see a summary (e.g. "Imported from Stripe: 5 new, 2 updated").
@@ -55,17 +57,33 @@ When creating or editing an [Invoice](/psa/invoices-quotes), for each line item 
 1. Click **Pick from catalog**
 2. Select an item from the dropdown
 3. The description and unit price auto-fill
-4. Edit if needed; the catalog binding is cleared if you change description or amount
+4. Review and edit the copied description and applied rate for this invoice. These snapshots do not change the product's default price or a customer's agreement.
 
 If an item is later archived, historical invoices keep referencing it; it just won't appear in the picker for new invoices.
 
 ## Pricing and currency changes
+
+Products and agreements can retain their links while using a customer-specific negotiated price. The picker shows the applied invoice rate where it differs from the catalog default. Duplicating a product creates a separate editable record rather than changing existing contracts.
 
 If you edit a catalog item's unit price or currency:
 
 - Future invoices use the new value immediately
 - Existing invoices retain the price at time of generation
 - The next Stripe sync creates a new Stripe Price (the old price remains on historical invoices)
+
+Stripe-backed line items are validated against the actual Stripe Price and currency. Zero-decimal currencies require whole-unit pricing. Do not treat a Stripe Price identifier as proof that an edited local amount is already synchronized.
+
+## CSV import and export
+
+Use product CSV import to preview each row before committing. Map name, SKU, description, price, currency and unit, then review matches, warnings and errors. SKU matching ignores case; conflicting or ambiguous matches need attention. Import limits apply before parsing oversized files.
+
+Export products to move or audit catalog data. Full descriptions retain line breaks. An import does not overwrite historical invoices or agreement prices, and linked Stripe prices have additional protections against conflicting price updates.
+
+## Accounting item links
+
+QuickBooks and Zoho Books can import or link sellable items to products. A product-master setting determines which side owns changes; differences that conflict with local edits go to review. QuickBooks hourly product sync is off until an administrator enables it.
+
+Using product-specific accounting items on invoice lines is a separate opt-in from importing products. Sending Regentra product changes to Zoho is another opt-in and requires the appropriate connection permissions. Xero invoices use the mapped sales account; this does not imply Xero product-catalog synchronization.
 
 ## Archiving items
 
@@ -75,13 +93,13 @@ Click **Archive** to hide an item from the invoice picker. The item is marked Ar
 
 <AccordionGroup>
   <Accordion title="Can I have different prices for different customers?">
-    The catalog stores one price per item. For customer-specific pricing, add manual line items to invoices instead.
+    A product has a default price. Agreements and invoice lines can carry a different negotiated price without changing that default or historical invoices.
   </Accordion>
   <Accordion title="What currencies are supported?">
     Any ISO 4217 currency code (USD, EUR, GBP, etc.). Enter the 3-letter code when creating or editing an item.
   </Accordion>
   <Accordion title="Can I import products from Stripe?">
-    Yes. **Sync from Stripe** pulls all Stripe Products and Prices. Items with matching Stripe IDs are updated; new items are created. Stripe-only changes must be re-synced.
+    Yes. **Sync from Stripe** reads supported products/prices, updates provider-linked records and can link exact compatible existing products. Review skipped items and conflicts; a sync is not a guarantee every Stripe price is suitable for an invoice line.
   </Accordion>
   <Accordion title="What if I archive a catalog item by mistake?">
     Create a new item with the same details, or contact support to restore the archived item.

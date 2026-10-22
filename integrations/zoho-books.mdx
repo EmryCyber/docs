@@ -1,0 +1,53 @@
+---
+title: "Zoho Books"
+description: "Connect your Zoho organization, map invoices and payments, and review customer and product changes."
+---
+
+Zoho Books can be Regentra's accounting system and can collect payments when no other processor holds that role. A separate Stripe or Alternative Payments processor can collect while Zoho keeps the books.
+
+<Note>
+  Zoho Books is available only where the integration has been enabled for your organization. If its card is absent, contact support. You connect through Regentra's OAuth app; you do not need to register your own Zoho application.
+</Note>
+
+## Connect the correct organization
+
+1. Open **Settings → Integrations → Accounting → Zoho Books** and choose **Connect Zoho Books**.
+2. Complete any recent-identity check, sign in to Zoho and grant access.
+3. If prompted, select the Zoho Books organization you intend to use.
+4. Open its settings, load the available lists and test the connection.
+
+Only one accounting provider can be active. If QuickBooks or Xero currently holds that role, review the replacement confirmation before disconnecting it. A cancelled or failed OAuth flow is not proof the old connection is still active; check the cards afterward.
+
+Connection errors identify the Zoho data center and likely cause. Use an administrator of the correct Zoho organization; do not substitute credentials from another region when a client/redirect configuration error needs support.
+
+## Map invoices and payment accounts
+
+Load lists from Zoho and choose the default invoice item, payment account and applicable tax settings. Review the company's currency and Zoho tax edition before sending.
+
+With Stripe or AP direct collection, the payable total must remain the Regentra-approved total. If Zoho computes a different tax or total, the invoice stays in a state requiring review rather than silently changing what the client owes. When AP collects through Zoho's own invoice import, use the accounting route and keep AP direct sending off.
+
+## Link customers and import existing work
+
+Creating a Regentra company does not create a Zoho customer. Use **Sync to Zoho Books** on the company card for the first explicit push/link. Subsequent edits can update that existing link while preserving other Zoho contact people and unsent local changes.
+
+A new connection or switch to a different Zoho organization starts a bounded import of customers, contact people and open invoices. Reconnecting the same organization does not restart it. For an older connection, or a stopped/partial import, use **Import customers and open invoices**. Imports resume in batches and reserve provider capacity for payment checks.
+
+Ambiguous customer matches and conflicting external changes go to review. Inspect each suggested link rather than creating another customer to bypass it. An imported invoice without a resolved company link offers **Link to company** before it can be sent elsewhere.
+
+## Send and reconcile invoices
+
+Select Zoho Books on invoice generation or use the invoice's Zoho card. Regentra creates its linked copy, verifies the total, and uses the supported sent transition when the local invoice is sent. The normal integration transition does not imply Zoho has emailed the customer.
+
+**Tick Zoho Books on new invoices** supplies a default destination. **Also send monthly agreement invoices** is a separate option with a future-invoice cutover. Reviewed invoices still wait for [approval and release](/psa/invoices-quotes#review-and-release).
+
+Payments are polled back, including part payments. Settled Stripe/direct AP receipts and supported offline payments can be bridged to the linked Zoho invoice. Review warnings for a missing accounting copy or a failed bridge rather than collecting the balance again automatically.
+
+An optional webhook can request an earlier payment check. Configure it using the instructions shown in the Zoho settings page; this is separate from Regentra's outbound webhooks.
+
+## Products and external changes
+
+The Products card imports or links sellable Zoho items and lets you choose a product master. Differences that would overwrite conflicting local values go to the pending-changes queue. Product-item invoice lines and sending Regentra product edits back to Zoho are separate opt-ins; the latter requires item-write permission and Regentra as product master.
+
+Zoho phone/address changes can be reviewed against the saved baseline. Email identity changes are surfaced for review rather than silently repointing a customer. Voids/deletions also require an administrator's decision; dismissing one does not recreate a new financial document.
+
+See [Payment processors](/integrations/payment-processors), [Billing products](/psa/service-catalog) and [Invoices](/psa/invoices-quotes).

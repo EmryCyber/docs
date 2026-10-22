@@ -6,23 +6,49 @@ rss: true
 
 What's shipped in Regentra, newest first. Each entry covers one week, or one month for earlier releases. Use the filters to show only the areas you care about.
 
-Every entry starts with anything you need to do, or anything that now looks different, and then lists what's **New**, **Improved** and **Fixed**. For a single overview of a whole month, see the [September 2026 release notes](/releases/september-2026).
+Every entry starts with anything you need to do, or anything that now looks different, and then lists what's **New**, **Improved** and **Fixed**. For a monthly overview, see [October 2026 updates](/releases/october-2026) or [September 2026 release notes](/releases/september-2026).
 
 <Info>
   Want product news without the marketing emails? In **My account → Notifications**, choose **Changelog only**. You can also follow this page's RSS feed.
 </Info>
 
-<Update label="Upcoming" description="Alternative Payments setup and reconciliation" tags={["PSA", "Billing", "Integrations"]}>
-  ### Fixed
+<Update label="October 21, 2026" description="October product updates: queues, requests, billing, integrations and security" tags={["PSA", "Compliance", "Billing", "Integrations", "Security"]}>
+  **What to review**
 
-  - Alternative Payments keeps the selected Production or Demo environment after saving and reopening its setup card. Saved keys show as configured; they do not need to be entered again.
-  - AP connection tests have a time limit and preserve entered values on failure. Failed saves also preserve the form.
-  - Refund requests wait for confirmation before changing payment records. Failed receipt writes remain eligible for retry, reversal scans continue across larger backlogs, and incomplete duplicate searches stop new customer/invoice creation.
-  - Authenticated AP notifications are saved before acknowledgement so queued work can recover after an interruption.
+  - First accounting-customer pushes are manual; older Xero connections need reconnecting for full sync.
+  - Invoice review/release, client financial preferences, agreement schedules and provider auto-send controls are opt-in. A due date does not enable autopay.
+  - Review technician shared-vault permissions. New API scopes must be added deliberately; existing keys do not gain them automatically.
+  - Zoho Books and vault authenticator-code availability follow their rollout settings.
+
+  ### New
+
+  - **Group queues and routing:** automatic assignment, availability, primary technicians, overflow, tiers and a distribution report. [Routing](/psa/ticket-routing)
+  - **Request catalog:** conditional forms, company/role audiences, multi-level approvals and internal fulfilment task plans. [Request workflows](/psa/request-catalog)
+  - **SLA calendars and levels:** holidays, policy matching, per-metric escalation and group targets. [SLA policies](/psa/sla-policies)
+  - **Daily reports and API reads/updates:** lifecycle history, saved/scheduled exports, ticket queues, assignment and change feeds. [Reports](/psa/reports) · [Public API](/settings/public-api)
+  - **Reviewed invoice release:** saved drafts, PDF preview, client terms, product headings and approval/release batches. [Invoices](/psa/invoices-quotes)
+  - **Accounting workflows:** Zoho Books and Xero setup, item/customer sync and provider-change review. [Zoho](/integrations/zoho-books) · [Xero](/integrations/xero)
+  - **CIS frameworks and profiles:** scoped adoption and evidence coverage. [Frameworks](/compliance/frameworks#cis-frameworks-and-profiles)
+  - **Security controls:** active sessions, backup codes, configurable vault permissions, named people and 30-day vault restore. [Sessions](/settings/sessions) · [Vault](/psa/password-management)
 
   ### Improved
 
-  - The AP integration guide now lists the required permissions, explains both invoice routes and saved credentials, and describes notification recovery. [Alternative Payments setup](/integrations/alternative-payments)
+  - Automation testing uses a selected ticket; real execution can target that ticket or preview all matches. Failed actions stop later actions. [Automations](/psa/automations-and-ai)
+  - Customer appointments support several technicians and recurrence; calendar setup is in My account. [Calendar](/psa/calendar)
+  - Webhooks support Standard Webhooks signatures, longer retries, immediate rotation and resend. [Webhooks](/settings/webhooks)
+  - Company workspaces, inline contacts, billing names, structured addresses and product descriptions carry through invoice presentation.
+  - Policy template updates can be reviewed and adopted as a new version; review-comment controls remain accessible at document edges.
+
+  ### Fixed
+
+  - AP retains Production/Demo and configured keys through Save/reopen; tests time out without losing entries. Durable notification work and confirmed reversal checks improve recovery. [AP setup](/integrations/alternative-payments)
+  - Unassigned ticket filters combine correctly; unanswered alerts can count 24/7, and bell read state no longer leaves policy/SLA alerts perpetually unread.
+  - Genuine linked customer replies consistently reopen resolved/closed tickets; automatic email replies do not reopen them.
+  - Billing and provider retries preserve payment identities, negotiated totals and collection-close warnings. Invoice PDFs retain product headings and long descriptions.
+  - Email screenshot imports, customer-scoped AI evidence, tenant proof, device ownership and read-only access have stronger boundary checks.
+  - API automation accounts no longer consume PSA seats, and MSP client plan amounts display in the correct units.
+
+  See the [October overview](/releases/october-2026) for setup impact and feature availability. These notes cover changes merged through October 21; gated features remain conditional.
 </Update>
 
 <Update label="September 30, 2026" description="Microsoft 365 calendar, invoice line items, product import, My account" tags={["PSA", "Billing", "Integrations", "Branding", "Account"]}>

@@ -1,0 +1,35 @@
+---
+title: "Invoice Settings & Client Billing Preferences"
+description: "Set invoice defaults, customer-facing billing details, PDF presentation and client review preferences."
+---
+
+Use **Settings → Invoices** for organization invoice defaults. On a company's page, use **Financial settings** for client-specific terms and presentation. These controls are separate from the accounting provider's own payment and tax configuration.
+
+## Organization defaults
+
+Set the billing email, payment-term defaults, invoice footer/instructions and invoice tax-ID visibility in the applicable invoice/company-profile settings. Invoice tax-ID visibility is independent from quote visibility. The organization's billing email is used on native invoice presentation and as the release email's Reply-To, with the existing support-email fallback.
+
+## Customer-facing details
+
+A company's customer-facing billing name can differ from its internal organizational name. Configure its billing recipient/contact and structured address, then use Preview PDF to verify the Bill to block. Designated billing details are resolved consistently for saved PDFs, draft previews and approved native-email attachments.
+
+Editing the billing name updates an already linked QuickBooks customer without replacing its customer identity. The first customer push to an accounting provider remains an explicit staff action; creating a company or completing Microsoft 365 onboarding does not create remote accounting customers automatically.
+
+## Client financial settings
+
+Enable the company's preferences before setting:
+
+- Payment terms or a third-Monday due rule, plus optional PO and reference.
+- **Review and release before sending or syncing**.
+- **Email customer on release**, which supplies the initial batch preference; confirm the final choice before approval.
+- Tax treatment, message/footer and PDF style.
+
+Existing companies remain on their previous workflow until preferences are enabled. A specific invoice due date overrides a calculated rule. Payment terms and schedules do not turn on autopay.
+
+## PDF layouts
+
+**Standard** is a simple itemized layout on A4. **Service details** uses US Letter, boxed account/billing fields, detailed service lines and separate subtotal, tax, adjustments, payments/credits and balance due.
+
+Both preserve descriptions, service periods and stored totals. Product headings appear above descriptive text without repeating an identical first line. Long descriptions continue onto later pages. A provider-hosted invoice uses that provider's own layout; these preferences affect Regentra's PDF.
+
+Use [Preview PDF and review/release](/psa/invoices-quotes#saved-drafts-and-pdf-preview) to verify the final recipient, amounts and wording. Explicit tax lines print as tax; an unexplained difference is not silently labeled as tax. Confirm non-taxable treatment only for services that are actually non-taxable.

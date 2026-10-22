@@ -1,0 +1,65 @@
+---
+title: "Request Catalog, Approvals & Fulfilment"
+description: "Build customer request forms, approval policies and task plans for onboarding and other repeatable work."
+---
+
+The request catalog lets customers choose requests such as New starter or Printer problem, each with its own form and workflow. It is separate from the [billing product catalog](/psa/service-catalog).
+
+## Enable the request catalog
+
+1. Open **PSA → Support Portal → Request catalog**.
+2. Create categories and request items. Set each item's ticket type, optional template, default group and audience.
+3. Build and preview the form for customers and technicians.
+4. Enable the portal catalog when it is ready.
+
+The catalog is off by default. When enabled, the portal's ticket-submission links open it. A **Something else** item preserves access to a general request form and cannot be retired.
+
+Technicians can raise the same items from the ticket creation catalog. Items can be offered on either surface and restricted by company, child-company inclusion or portal role. A customer sees only items available to their current company and role.
+
+## Build a form
+
+Use subject, urgency, asset, description, attachments, **Requested for**, and applicable custom fields. Set labels, help text, required fields, sections and presets. Preview both surfaces before saving.
+
+- A hidden subject needs a subject pattern. Patterns can use the item, company, contact, date and form answers.
+- Urgency can be asked or fixed for the item. Requesters describe urgency; technicians control final impact and priority. A requester alone cannot set Critical.
+- Show-when rules support groups of AND/OR conditions. Rules apply to individual fields; conditional sections and multi-step forms are not available.
+- Hidden customer answers are discarded. Technicians can inspect fields that are not currently applicable without losing existing values.
+- Technicians add attachments on the resulting ticket rather than on the catalog submission form.
+
+The resulting ticket retains the request item and submitted answers in its **Request** card. It follows the usual notification, automation and routing paths.
+
+## Approval policies
+
+Open **Request catalog → Approvals** and create a policy, then select it on a request item.
+
+Policies have up to five ordered levels. Each level can require **ANY** approver or **ALL** approvers. Approvers can come from a contact's manager, named contacts, portal roles, technicians, or an email answer in the form. Configure self-approval, expiry, a reminder and the fallback when nobody can answer.
+
+<Warning>
+  An email supplied by a requester can belong to that requester. For independent authorization, use named approvers, managed roles or a maintained manager relationship rather than a requester-controlled address.
+</Warning>
+
+The ticket waits in **Waiting Approval**, with its resolution SLA paused. Approvers decide through their emailed link, the portal's **Approvals** page, or the ticket card when a technician is the approver. Administrators can override or cancel a run with a reason.
+
+Final approval returns the request to Open. Denial either returns it to technicians or resolves it with the policy's customer message. Missing or expired approvers follow the configured fallback. Editing a policy affects future requests; a running request keeps its policy snapshot.
+
+The requester normally sees **In Progress**. An item can opt in to showing **Awaiting approval** on the portal and Teams surfaces. This does not expose internal approval discussions.
+
+### Requested for and managers
+
+Add **Requested for** when approvers or client administrators should submit for colleagues. Customers with the appropriate portal role can choose active colleagues in their company or its child companies. Technicians can also use this field.
+
+Maintain a contact's **Manager** on the contact page. Manager approvals use the Requested for colleague when present. Manager relationships are not imported automatically from Entra for this workflow.
+
+## Fulfilment blueprints
+
+Open **Request catalog → Fulfilment** and create a blueprint, optionally starting with **New starter** or **Leaver**. Attach the blueprint to a request item.
+
+For each step, configure instructions, an optional template, technician/group, dependencies, conditions, approval requirements, and release/due offsets. A date answer can anchor the schedule; dates use the organization's time zone. Review access-removal steps carefully so urgent leaver work is not held behind an unnecessary approval.
+
+When a step is ready and its release time arrives, Regentra creates an internal task ticket. Tasks appear in the parent request's **Fulfilment** card. They have no customer requester and no customer SLA, and do not appear in the customer's portal. Their logged time still counts.
+
+Resolving or closing a task completes its step. When all required steps finish, the blueprint can resolve the parent with a public completion message or notify its owner. Steps are snapshotted at submission; changing a blueprint does not rewrite a running plan.
+
+Stopping a plan, denying its approval, or manually resolving the parent cancels work not yet started. Open task tickets remain open for staff to review. Staff can skip an unstarted step or stop a plan with a reason.
+
+See [Support portal](/psa/portal), [Ticket settings](/settings/tickets), [Routing](/psa/ticket-routing) and [SLA policies](/psa/sla-policies) for the surrounding setup.

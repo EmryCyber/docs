@@ -27,7 +27,7 @@ Tickets are the core unit of work in Regentra's PSA. Every client interaction �
     The issue is fixed. The ticket auto-closes after 24 hours if the customer does not reopen it.
   </Step>
   <Step title="Closed">
-    Terminal state — work is complete and SLA timers stop accruing. A technician can manually reopen a closed ticket from the status dropdown if the customer comes back. An inbound email reply always reopens the same closed ticket; an inbound SMS reply reopens it if it arrives within 30 minutes of closing, otherwise a new ticket is created; a portal reply on a closed ticket is added without reopening it.
+    Work is complete and SLA timers stop accruing. A technician can reopen it. A genuine customer reply linked to a Resolved or Closed ticket reopens it across email, portal, Teams and SMS; SMS can create a new ticket when its conversation-matching window has expired. Automatic email replies do not reopen tickets.
   </Step>
 </Steps>
 
@@ -64,17 +64,19 @@ Each ticket includes:
   The AI draft pulls from your knowledge base using RAG. The more KB articles you maintain, the better the draft quality.
 </Tip>
 
-## Priority is customer-controlled
+<span id="priority-is-customer-controlled" />
 
-The priority chosen at ticket creation is the source of truth across the system. The AI auto-analyzer reads priority for context and may suggest a different value (visible on the ticket sidebar), but it **cannot change `ticket.priority` on its own** — not up, not down. Customer-set CRITICAL stays CRITICAL.
+## Urgency, impact and priority
 
-Priority changes after creation happen only through:
+Customers describe **urgency** on the portal and Teams surfaces. Regentra combines urgency with intake impact to derive an initial priority. A requester alone cannot set Critical. Technicians can set impact and final priority from the ticket header.
 
-- **Operator edit** on the ticket detail page
-- **Operator-authored automation rules** (Settings → Automations) using the Change Priority action
-- **Policy escalations** — VIP override, ticket-spike pattern, and AI security/frustration escalation can each bump LOW/MEDIUM → HIGH, never downgrade
+The AI analyzer can suggest a priority, but does not apply its suggestion by itself. A technician's explicit priority choice is protected from automatic priority changes. Operator-authored rules and escalation behavior follow the priority safeguards shown in [Automations & AI](/psa/automations-and-ai#ai-and-ticket-priority).
 
-See [Automations & AI](/psa/automations-and-ai#ai-and-ticket-priority) for the full matrix.
+## Types, templates and custom statuses
+
+Choose a ticket type or template to apply the appropriate defaults, checklist and custom fields. Administrators manage these in [Ticket settings](/settings/tickets). A blocking checklist must be completed before resolving when its template requires it.
+
+Custom statuses sit inside the fixed lifecycle categories. Your team might use **With Vendor** within In Progress while customers see a simpler label. The selected status can require an internal reason and control permitted SLA pausing and customer-reply behavior. Waiting Approval is still entered only through an approval workflow.
 
 ## Board view vs list view
 
@@ -91,11 +93,29 @@ See [Automations & AI](/psa/automations-and-ai#ai-and-ticket-priority) for the f
 
 Filter tickets by status, priority, assignee, client, SLA status, or date range. Combine filters to narrow results. Search (3+ characters) matches the ticket title, description, and the requester's name or email; a ticket number matches at any length.
 
+Use **Me**, **Unassigned**, **Team**, or **My groups** to choose a queue. The assignee filter also supports Unassigned, so combine it with a company or group filter. Personal and organization saved defaults determine the opening view. Custom statuses add a Status detail filter, and SLA filters can distinguish response and resolution breaches.
+
+Select rows to assign tickets, take them yourself or move them to a group. See [Ticket routing](/psa/ticket-routing) for availability, overflow and support tiers.
+
 The **All Tickets** stat card at the top of the list always shows your organization's total ticket count, regardless of any filters you have active. Clicking it clears every filter and the search box, taking you back to the fully unfiltered list. When filters are applied, a small "N matching" line under the card shows how many tickets match your current view.
 
 ## Auto-close behavior
 
 Tickets in **Resolved** status automatically transition to **Closed** after 24 hours. If a customer replies to a resolved ticket within that window, the ticket reopens to **Open**.
+
+Closed tickets also reopen on a genuine linked customer reply. Waiting-on-customer and custom-status replies follow that status's reply rule. A customer reply does not produce a second customer email merely to announce their own reopen.
+
+## Ticket history and contact method
+
+The **History** card records changes to status, priority, assignee, group, company and other tracked fields, including who made them. API changes are identified as API-key actions. Older reconstructed events are labeled; their precision differs from changes captured as they occurred.
+
+The ticket's **Contact method** identifies how the request arrived, separately from technical source details. Lifecycle information includes received, first response, resolution, closure and reopen activity. An internal note is not a customer-facing first response.
+
+## Replies, notifications and evidence
+
+Use **Add Note** for internal work and the public reply controls for customer messages. Status changes and approval discussions do not expose internal notes to customers. Inline images imported from email are retained as ticket evidence; failed attachment imports are reported rather than silently omitted.
+
+The bell acts as an inbox for assignments, mentions, customer replies and new-ticket alerts. Opening an item marks that item read; reading a policy-review or SLA alert does not dismiss its underlying issue. Sound and desktop alerts are controlled in **My account → Notifications**. Unassigned customer work can also trigger [unanswered-ticket alerts](/settings/tickets#unanswered-ticket-alerts).
 
 ## Master and child tickets
 
@@ -110,6 +130,8 @@ Use cases:
 - **Site-wide maintenance**: master for the maintenance window, children for any customer who logs an issue during it — closes the loop when the window ends.
 
 ## Ticket approvals
+
+This section describes a one-off approval requested from a ticket. Multi-level policies, portal approvals and onboarding task plans are covered in the [Request catalog guide](/psa/request-catalog). A ticket cannot run an ad-hoc approval and a catalog approval run at the same time.
 
 Some work needs a customer's sign-off before you proceed — a parts purchase, a change window, anything above a client's comfort threshold. **Request approval** on the ticket detail page opens a short form:
 

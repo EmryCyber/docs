@@ -9,8 +9,8 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
 
 **Automations:**
 - **Trigger events** — react to ticket creation, status changes, replies, assignment, SLA escalation, invoice generation, CSAT received, or a quote being accepted/declined
-- **Conditions** — match on priority, status, category, contact email, company, and more
-- **Actions** — auto-assign, change priority, update status, add internal notes, send notifications, or send a webhook
+- **Conditions** — match priority, status, category, company, ticket type, urgency, impact, technician group, source and typed custom fields
+- **Actions** — assign a technician or group, route automatically, escalate to the next tier, set custom fields, apply checklists, change priority/status, add internal notes, notify or send a webhook
 - **Rule priority** — execute rules in order; stop processing after a match if enabled
 - **Execution logs** — view every time a rule ran, whether it matched, and what it did
 
@@ -29,13 +29,13 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
     Enter a name (e.g. "Auto-assign Critical tickets to Tom") and optional description.
   </Step>
   <Step title="Choose a trigger event">
-    Ticket Created, Ticket Status Changed, Ticket Reply Added, Ticket Assigned, SLA Escalation, Invoice Generated, CSAT Received, or Quote Decided.
+    Choose a ticket event, including movement to a group, or the available SLA, invoice, CSAT and quote events. A ticket-only action is skipped when the event has no ticket.
   </Step>
   <Step title="Add conditions (optional)">
     Click **+ Add Condition**. For each, choose a field (e.g. Priority), operator (Equals), and value (CRITICAL). All conditions must match for the rule to execute.
   </Step>
   <Step title="Add actions">
-    Click **+ Add Action**. Choose: Assign Ticket, Change Priority, Change Status, Add Internal Note, Send Notification, or Send Webhook. Configure the payload (e.g. which technician).
+    Click **+ Add Action** and configure its target. Actions run in order; a failed action stops the remaining actions in that rule. Earlier successful changes are not rolled back.
   </Step>
   <Step title="Set priority and options">
     Lower Priority = executed first. Check **Enabled** to activate. Check **Stop after match** to prevent other rules from running if this one matches.
@@ -52,12 +52,30 @@ Reduce manual work with automation rules that react to ticket events. Review AI-
     Find the rule in your Automations list.
   </Step>
   <Step title="Click the test icon">
-    A dry-run executes the rule against a sample ticket. You'll see the test ticket evaluated, which conditions matched, what actions would have executed, and a "Would Execute" / "Would NOT execute" summary.
+    Select the ticket explicitly. The dry-run uses that ticket's saved values and shows each condition's expected and actual value, whether it matched, and what the rule would do. It does not silently choose the newest ticket or perform the actions.
   </Step>
   <Step title="Review and adjust">
     If the test shows unexpected behavior, edit the conditions or actions and test again.
   </Step>
 </Steps>
+
+## Execute a saved rule now
+
+After checking the preview, an administrator can use **Execute now** on the selected ticket. This is a real run, including emails and other configured side effects. It can run a disabled saved rule without enabling it.
+
+**Execute now & enable** enables future event processing after a successful run. Enabling a rule by itself never replays existing tickets.
+
+Choose **All tickets** to preview and process every matching ticket in the organization, including Resolved and Closed tickets. The run is not limited to the ticket picker's displayed results. Execution rechecks current conditions and refuses a rule edited since the preview. Pause and continue retain progress while the runner panel remains open.
+
+<Warning>
+  Review the match count and actions before an all-ticket run. This changes real tickets; assignment, status, notification and webhook actions can affect existing customer work.
+</Warning>
+
+## Execution logs
+
+Open a rule's log or a ticket's **Automation activity** card to see condition evaluations, action outcomes, source and rule version. Filters can show failed runs, a particular ticket or rules that did not match. An edited-since marker explains when the current rule differs from the one that ran.
+
+Actions later in the same rule see earlier changes. Other rules evaluate the event snapshot, so do not assume that a later rule automatically re-reads every changed field. Nested condition groups, draft backtesting and time-based rules are not part of the current rule builder.
 
 ## How a technician handles an AI draft
 
@@ -94,24 +112,15 @@ AI replies include a confidence score (0-100%) representing how sure the model i
 
 ## AI and ticket priority
 
-The AI auto-analyzer suggests, **never sets**, ticket priority. The priority chosen at ticket creation — by the customer (portal or Teams bot), by the inbound-email classifier, or by the operator (manual UI) — is the sole source of truth.
+The AI analyzer suggests a priority for a technician to review; its suggestion does not apply itself. Customers choose urgency, and the intake rules combine that with impact. Customers cannot independently request Critical.
 
 | Surface | Behavior |
 | --- | --- |
-| AI's per-ticket triage analysis | Stored in `aiAnalysis.suggestedPriority`, visible in the ticket sidebar with an Apply control |
-| Automatic write to `ticket.priority` from the AI analyzer | **Never happens.** No upgrade, no downgrade — the AI cannot mutate priority on its own |
-| Operator-authored automation rule with **Change Priority** action | Allowed. MSP rules are explicit operator policy and remain authoritative |
-| VIP override | Bumps LOW/MEDIUM → HIGH for VIP-tagged contacts (never downgrades) |
-| Ticket-spike pattern detection | Bumps LOW/MEDIUM → HIGH when 3+ tickets arrive from the same company within 2 hours (never downgrades) |
-| AI escalation step (security or high-frustration concern) | Bumps LOW/MEDIUM → HIGH AND flips status to **Escalated** with a visible audit reply explaining why. Never downgrades a customer-set CRITICAL or HIGH |
+| Analyzer suggestion | Visible for a technician to apply deliberately. |
+| Technician priority edit | Records an explicit override protected from automatic changes. |
+| Rule or policy escalation | Uses the shared priority safeguards; an automatic change cannot override a technician's explicit choice. |
 
-<Note>
-  This is a hard guarantee. A customer-submitted CRITICAL ticket will arrive in the PSA at CRITICAL regardless of what the AI's per-ticket analysis suggests. Notification rules and SLA timers keyed on customer priority always fire correctly.
-</Note>
-
-<Info>
-  The **Change Priority** automation action listed in the rule-builder above is for operator-authored MSP rules. It does not represent AI behavior. Use it freely — your rules are policy you define, not AI judgment.
-</Info>
+AI reply context is scoped to the same customer. Internal notes and private evidence are not exported into customer replies or general knowledge-base suggestions. Review drafts and attached evidence before sending; an AI draft is not sent twice merely because the background job retries.
 
 ## Automation Value
 

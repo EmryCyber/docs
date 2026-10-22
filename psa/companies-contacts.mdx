@@ -23,7 +23,7 @@ Companies are your MSP customers. Contacts are the individuals inside those comp
     Enter the company name, phone, address, and website. Click **Create**.
   </Step>
   <Step title="(Optional) Import from Microsoft 365">
-    Click **Import from Microsoft 365**. Provide the company name and tenant details. You'll be redirected to grant admin consent; sign in as a Microsoft 365 admin. Users and devices sync automatically in the background.
+    Click **Import from Microsoft 365**, provide the requested company details, and complete Microsoft's admin-consent and tenant-proof sign-in. Users and devices then sync in the background; entering a tenant ID alone does not establish a trusted connection.
   </Step>
 </Steps>
 
@@ -31,13 +31,23 @@ Companies are your MSP customers. Contacts are the individuals inside those comp
   After a company is connected to Microsoft 365, the detail page has a **Resync now** button that re-runs the per-company Entra sync on demand. Use it to pull a fresh snapshot of users + devices for that one customer without waiting for the next scheduled cycle. See [Microsoft Entra ID](/integrations/microsoft-entra#per-company-sync).
 </Tip>
 
+## Company workspace and billing details
+
+The company page groups its details, people, tickets, integrations and financial settings. Add a person inline without leaving the company, and use structured addresses for consistent invoice recipient formatting.
+
+A customer-facing billing name can differ from the internal company name. Designate the billing contact and review the Bill to preview before sending. Updating that billing name preserves an existing QuickBooks customer link rather than creating a replacement customer.
+
+First customer pushes to QuickBooks, Zoho Books and Xero are explicit actions on the relevant company card. Creating a company, importing it from Microsoft 365 or onboarding its tenant does not automatically create accounting customers. Later supported edits update existing links.
+
+The company also holds a default technician group, primary technician and business calendar for [routing](/psa/ticket-routing) and [SLA](/psa/sla-policies) inheritance. [Financial settings](/settings/invoices) opt the client into billing terms and review/release preferences.
+
 ## Company hierarchy
 
 A company can nest under a parent company — useful when a customer has multiple locations, sites, or divisions that you want to track separately but roll up under one top-level account.
 
 On the Companies list, use the **Move under…** dropdown next to any company to place it under a parent, or choose **Top level** to detach it. Nested companies are indented under their parent so the hierarchy is visible at a glance. A company can't be moved under one of its own descendants, so the hierarchy can never form a loop.
 
-Each company in the hierarchy keeps its own tickets, contacts, assets, and invoices — nesting is purely organizational and doesn't merge or share records between parent and child.
+Each company keeps its own tickets, contacts, assets and invoices. Nesting also affects explicitly enabled child-company audiences/filters and inherited business calendars. It does not merge those records or automatically expose every parent's ticket to a child company's portal contacts.
 
 ## Archiving and deleting companies
 
@@ -85,7 +95,7 @@ Before permanent delete is allowed, the system **blocks** the action when any of
 
 The confirmation modal shows the full impact:
 
-- **Records that will become unassigned** (kept in the DB but lose their company link): tickets, assets, contacts, invoices, KB articles, KB folders, quotes, projects, password folders, password entries
+- **Records that will become unassigned**: the confirmation lists retained tickets, assets, contacts, invoices, knowledge-base records, quotes and projects. Vault entries move to the MSP vault rather than losing their restore/access context.
 - **Records that will be permanently deleted** (cascade): per-customer SLA policies, and all of that company's [Networks, VLANs, VLAN zones, and IP addresses](/psa/networks) — network topology is treated as sensitive data, so it's hard-deleted rather than left unassigned
 - **QuickBooks Customer** is set to `Active=false` (best-effort soft-delete)
 
@@ -125,6 +135,8 @@ Companies appear as collapsible groups on the Contacts list. Contacts without a 
 
 When a contact is inactive, **Send Invite** and **Reset Password** are hidden. Companies show total contacts, tickets, and asset counts on the main Companies page.
 
+Use contact filters and server-backed search to find people beyond the first displayed page. A gold star identifies a company's primary contact. Contact records can also hold a manager and portal role for [catalog approvals and Requested for](/psa/request-catalog#requested-for-and-managers).
+
 ## Microsoft 365 integration
 
 The **Import from Microsoft 365** flow requires admin consent. Once granted:
@@ -132,7 +144,7 @@ The **Import from Microsoft 365** flow requires admin consent. Once granted:
 - All users in the tenant are synced as contacts
 - Devices (computers, mobile) are synced as [Assets](/psa/assets)
 - Syncs run in the background; new users and devices appear automatically
-- One sync per import request; not a live monitor
+- The initial import can be requested on demand; ongoing connected syncs refresh supported directory data on their schedule. This is not a real-time monitor.
 
 See [Microsoft Entra ID](/integrations/microsoft-entra) for full integration details.
 

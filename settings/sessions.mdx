@@ -1,0 +1,38 @@
+---
+title: "Sessions & Sign-In Security"
+description: "Review active sessions, understand inactivity and maximum-session limits, and secure a remembered browser."
+---
+
+Personal sign-in controls are in **My account → Security**. Organization-wide authentication and session policies stay in **Settings → Authentication & SSO**.
+
+## Review and end sessions
+
+The Sessions card shows your active sign-ins. End a particular session, sign out other sessions, or use **Sign out everywhere** when you need to revoke access broadly. Sensitive actions can ask you to verify your identity again.
+
+Ordinary sign-out ends the current session rather than signing out every device. Changing your password or removing a passkey ends other sessions and forgets remembered devices. Adding a new factor does not by itself sign out all your other sessions.
+
+## Inactivity and maximum lifetime
+
+Your organization sets an inactivity limit and a maximum session lifetime. Activity can keep a session from going idle, but cannot extend it indefinitely beyond the maximum. Maximum-session options are 4, 8 or 12 hours; 12 hours is the platform cap.
+
+Tabs in the same browser share activity and refresh coordination, so an idle tab should not end a session you are actively using in another tab. When a session expires or is revoked, sign in again rather than repeatedly retrying a failed save.
+
+The home organization's policy applies to MSP staff even while they are working in a managed client's context.
+
+## Remember account versus remember device
+
+**Remember my account on this browser** makes it easier to return to the same account. It does not provide a permanent signed-in session: resuming requires a passkey or password and any applicable MFA, and maximum-session limits still apply. An administrator can disallow remembering accounts across browser restarts.
+
+**Remember this device** can skip the ordinary second-factor prompt for 14 or 30 days when allowed by the organization. Administrators can disable it. It does not grant a fresh identity check for every sensitive action.
+
+## Recent identity checks
+
+Factor and session-security actions can require verification within the last 15 minutes. Organization-administration actions, such as API-key permissions, webhook secrets or integration connections, can require verification within the last hour. Follow the prompt and return to the action; remaining signed in is not proof of a recent factor check.
+
+[Vault authenticator codes](/psa/password-management#authenticator-codes) require a recent Regentra passkey or authenticator check when enabled. A remembered-device shortcut or SSO sign-in alone does not satisfy that separate requirement.
+
+## A sign-in you do not recognize
+
+A new-browser email includes the sign-in time, browser and IP address. Open My account → Security, end unfamiliar sessions and change your password if needed. Revoke unfamiliar trusted devices and keep your [backup codes](/settings/mfa#recovery) safe.
+
+Repeated staff-password failures produce increasing waits and eventually a longer lock. Use password recovery or contact support if you cannot sign in. Platform administrators have separate Sign-in Protection tools for account unlock and sign-in blocks; ordinary organization administrators do not gain those platform tools.

@@ -1,0 +1,51 @@
+---
+title: "Ticket Routing & Technician Groups"
+description: "Set up group queues, automatic assignment, availability, overflow and support tiers."
+---
+
+Technician groups give tickets a team queue as well as an individual assignee. An administrator configures groups in **Settings → Tickets → Technician groups**. Without active groups, existing assignment behavior continues.
+
+## Create a group
+
+1. Add a group and its active technicians.
+2. Choose **Queue only**, **Round robin**, or **Fewest open tickets**.
+3. Set member assignment limits and whether automatic assignment respects blocked calendar time.
+4. Choose an organization default group, or set defaults for companies, ticket types, templates and request catalog items.
+
+**Queue only** leaves work unassigned for someone to take. **Round robin** chooses the eligible member who has gone longest without an automatic assignment. **Fewest open tickets** considers each eligible member's open workload, with round robin breaking ties.
+
+For Fewest open tickets, optional priority weighting counts Critical as 3, High as 2, and Medium or Low as 1. A member's assignment limit still counts tickets rather than weighted points.
+
+## How a ticket reaches a group
+
+An explicitly selected group wins. Otherwise, intake considers the email recipient's group, the company's default, the ticket type's default, then the organization's default. Email-filter overrides and template or catalog defaults can also supply a group.
+
+On new tickets, automation rules run before automatic routing. An assignee selected by a rule is kept. Routing does not replace an existing assignee just to balance workload.
+
+## Availability and primary technicians
+
+Use the **Away** switch in your user menu when you should not receive automatic assignments. Inactive users, opted-out members, members at their limit, and applicable calendar blocks are excluded.
+
+Set a company's **Primary technician** on its Ticket routing card. A group can prefer that person when they are an eligible member; otherwise its normal strategy applies. Being a primary technician does not bypass availability or group membership.
+
+## Overflow and support tiers
+
+An automatic group can have one overflow destination for tickets nobody can take. Queue-only groups do not overflow. Overflow follows one step; it does not traverse a chain of queues.
+
+Groups can also have a support-tier label and a **Next tier**. These are escalation settings, separate from overflow. A hand-off clears the current assignee and routes within the destination group. Automation and SLA escalation actions can move a ticket to its next tier.
+
+## Work the queue
+
+On a ticket, use **Group**, **Assigned**, **Assign to me**, and **Auto-assign**. The routing **Why?** view explains who was considered and why candidates were passed over. Changing groups keeps an assignee only if they belong to the new group, unless the action explicitly hands off the ticket.
+
+The ticket list supports **My groups**, group filters, **Unassigned**, and bulk assignment or movement. A ticket can belong to a group while still having no individual assignee.
+
+If nobody is eligible, work stays queued. Automatic queues are checked again in the background. A reopened ticket keeps an active assignee; an inactive assignee is cleared so it can be routed again.
+
+## Alerts and distribution
+
+Configure **Ticket waiting in a group** [notification rules](/settings/notification-rules) for queues that need an alert. Creating a group alone does not enable that rule.
+
+In **PSA Reports → Ticket distribution**, review assignments, overflow, waiting work, and reasons members were passed over. **Release tickets** previews which open tickets will return to queues before confirmation. You can release your own work; administrators can release another technician's work. Resolved and Closed tickets are excluded, and the dialog can keep waiting tickets with their technician.
+
+Groups and routing decisions are staff-only; customers do not see internal queues or support tiers.

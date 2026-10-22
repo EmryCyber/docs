@@ -48,7 +48,13 @@ Regentra integrates with the tools MSPs already use. Each integration runs at th
     Per-org PSA invoicing and platform subscription billing.
   </Card>
   <Card title="QuickBooks Online" icon="book" href="/integrations/quickbooks">
-    Customer + invoice push with Stripe-paid bridging.
+    Explicit customer linking, invoice delivery/import, products, payment reconciliation and change review.
+  </Card>
+  <Card title="Zoho Books" icon="book" href="/integrations/zoho-books">
+    Customer and open-invoice import, mapped invoice delivery, products and payments where enabled.
+  </Card>
+  <Card title="Xero" icon="book" href="/integrations/xero">
+    Accounting contacts, mapped invoices and payment reconciliation.
   </Card>
   <Card title="Alternative Payments" icon="credit-card" href="/integrations/alternative-payments">
     Card and ACH collection through your accounting system or direct invoice sending, with payment notifications and reconciliation.
@@ -70,7 +76,7 @@ Regentra integrates with the tools MSPs already use. Each integration runs at th
 
 ## Payment processor roles
 
-Stripe, QuickBooks, and Alternative Payments are treated as a family: Regentra keeps at most one **payment processor** and one **accounting sync** active at a time, so connecting a second money-handling integration never silently overrides the one you're already using. Switching is explicit — you confirm it, and existing invoices keep working under the processor that sent them. See [Payment Processors](/integrations/payment-processors) for the full model.
+Regentra keeps at most one **payment processor** and one **accounting sync** active. QuickBooks and Zoho Books can hold both; Stripe/AP collect, and Xero holds accounting. Replacement requires confirmation. Review existing payable invoices before disconnecting: old links can remain payable while an inactive connection stops polling. See [Payment Processors](/integrations/payment-processors).
 
 ## How integrations work
 
@@ -85,10 +91,10 @@ Integrations sync data on a schedule (typically every 6 hours) and can also be t
     Go to **Settings → Integrations** to see all available integrations.
   </Step>
   <Step title="Select the integration">
-    Click on the integration you want to connect. Each one has its own setup flow.
+    Open its Configure side panel or OAuth setup. Availability can depend on your organization's enabled features.
   </Step>
   <Step title="Enter credentials">
-    Provide the required credentials — API keys, OAuth consent, or connection details depending on the integration.
+    Provide API keys, OAuth consent or connection details. A sensitive connection change can ask you to verify your identity again before continuing.
   </Step>
   <Step title="Test the connection">
     Click **Test Connection** to verify that Regentra can communicate with the external service.

@@ -35,7 +35,7 @@ The Team UI displays user-friendly labels (left column below). The right column 
 | **Approver (Privacy)** | PRIVACY_OFFICER | Same scope as Approver, signaling a privacy specialization for data-subject requests and privacy impact assessments. |
 | **Approver (Security)** | SECURITY_OFFICER | Same scope as Approver, signaling a security specialization for technical controls and incident response. |
 | **Analyst** | EMPLOYEE | Does compliance work but cannot approve. Acknowledges policies, drafts evidence, runs assessments. |
-| **Read Only** | READ_ONLY | View-only access to all modules. Cannot create, edit, or delete any data. Useful for auditors and executives. |
+| **Read Only** | READ_ONLY | View-only access on permitted surfaces; no service-desk write actions. Restricted vault and other sensitive resources retain their separate access rules. |
 | **MSP Admin** | MSP_ADMIN | Manages the MSP relationship layer — creates client tenants, assigns technicians, oversees cross-tenant operations. |
 | **MSP Technician** | MSP_TECHNICIAN | PSA-focused. Manages tickets, time tracking, assets, and the knowledge base. |
 
@@ -111,3 +111,10 @@ package ZIP download, and per-section CSV exports. The auditor cannot
 write to your data — on a request they can only approve it or flag it
 with a note back to you, leaving all other state-changing actions on
 the customer side of the relationship.
+
+
+## Deactivate without losing work
+
+Users with logged time or vault entries cannot be deleted in a way that destroys those records. Deactivate them instead. Their historical work and authorship remain; open work can be returned to queues through the supported reassignment/release flow.
+
+The API automation service account does not take a billable PSA seat and is not an assignable human technician. Read Only users can sign in to their permitted views but do not gain assignment, AI-analysis or service-desk write actions. See [Ticket routing](/psa/ticket-routing) and [Vault permissions](/psa/password-management#security-expectations).

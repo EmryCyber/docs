@@ -112,6 +112,12 @@ When a monitoring signal detects a change (e.g., MFA was disabled for a user), t
   If your organization runs both Compliance and PSA, failing monitoring findings flow into PSA as tickets by default. To avoid flooding the ticket queue, an initial wave of findings — or any later burst of five or more within an hour, such as after reconnecting an integration — is folded into a single "Compliance baseline" ticket rather than filed one ticket per finding.
 </Info>
 
+## Coverage, empty results and stale checks
+
+An automated check applies only to the resources and sign-ins it can actually read. An empty device list, an unreadable setting or a policy covering only part of the population does not establish a full pass. Review partial-coverage, truncation and stale-result labels, especially for Entra, NinjaOne, Duo and CIS Microsoft 365 checks.
+
+Evidence of presence and implementation are different. A successful check that finds nothing in scope does not automatically promote a control, and benchmark checks are scoped to the adopted framework/profile. Supply manual evidence for untested requirements rather than interpreting a green integration connection as full framework coverage.
+
 ## Evidence Expiration and Refresh Cycles
 
 Evidence does not last forever. Auditors expect to see current proof, not year-old screenshots.

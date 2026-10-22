@@ -3,7 +3,7 @@ title: "PSA Reports"
 description: "Generate technician scorecards, client service reports, and service desk overviews with on-screen preview and PDF export."
 ---
 
-Regentra provides three report types for measuring service desk performance. Each report can be previewed on screen before downloading as a PDF.
+Regentra provides service-desk reports, a daily ticket ledger and routing distribution. Preview the report and use its available export formats before sharing it.
 
 ## Report types
 
@@ -41,6 +41,24 @@ Regentra provides three report types for measuring service desk performance. Eac
     - Tickets auto-resolved by automation, and the technician hours that saved
   </Tab>
 </Tabs>
+
+## Daily ticket report
+
+Open **PSA Reports → Daily ticket report** and choose an organization-local day, normally yesterday. It shows open at the start, new, resolved, closed, reopened and open at the end, with technician/group/company/contact-method breakdowns and a ticket table.
+
+Reports distinguish recorded history from older reconstructed data. A report before lifecycle capture is not a claim that every historical transition was observed precisely. The daily PDF includes a bounded ticket table; use Excel for the complete ticket list.
+
+A daily schedule can send yesterday's report at a chosen organization-local hour to selected active staff. Recipient eligibility is checked again at send time. This is separate from the monthly client reports below.
+
+## Ticket distribution
+
+Open **PSA Reports → Ticket distribution** for group assignments, overflow, waiting work and why automatic routing passed over members. Review current open and priority-weighted load. **Release tickets** previews work that will be returned to queues before confirmation. See [Ticket routing](/psa/ticket-routing).
+
+## Lifecycle metrics and exports
+
+Response, first/full resolution, reopen, assignment/group-change, on-hold and SLA outcomes are available through ticket metrics/history surfaces and supported exports. Internal notes do not count as a customer first response. Recurring maintenance and fulfilment tasks do not inflate customer SLA performance.
+
+Under **Settings → Import / Export**, select export columns, save an export definition and optionally schedule it. Ticket history and Ticket time by technician are separate datasets. History quality labels identify reconstructed or pre-capture records. See [Import / Export](/settings/import-export#saved-and-scheduled-exports).
 
 ## Date ranges
 

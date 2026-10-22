@@ -1,0 +1,78 @@
+---
+title: "Public PSA API"
+description: "Read ticket queues and history, update tickets, and connect external automations using scoped API keys."
+---
+
+The PSA API is available under `https://app.regentra.io/api/v1`. Authenticate with an [API key](/settings/api-keys); permissions are explicit scopes, not your full signed-in account. The organization needs active PSA access.
+
+The machine-readable contract is [OpenAPI 3.1](https://app.regentra.io/api/v1/openapi.json). Use it for complete fields, query parameters and response schemas. Regentra does not currently expose OData or a dedicated Power BI endpoint.
+
+## Endpoint and scope reference
+
+Paths below are relative to `/api/v1`.
+
+| Operation | Required scope |
+| --- | --- |
+| `GET /ping` | Any valid key; no scope required. |
+| `GET /tickets` | `tickets:list` |
+| `GET /tickets/{id}` | `tickets:read` |
+| `PATCH /tickets/{id}` for status, priority, urgency, impact or type | `tickets:write` |
+| `PATCH /tickets/{id}` for assignee or group | `tickets:assign` |
+| `GET /tickets/{id}/events`, `GET /ticket-events` | `tickets:events:read` |
+| `GET /technicians`, `/groups`, `/companies`, `/contacts` | `directory:read` |
+| `GET /technicians/{id}/queue`, `/groups/{id}/queue` | `directory:read` and `tickets:read` |
+| `GET /tickets/{id}/routing-decisions` | `directory:read` and `tickets:read` |
+| `GET /time-entries` | `time:read` |
+| `POST /tickets/{id}/notes` | `tickets:note:write` |
+| `POST /tickets/{id}/time-entries` | `tickets:time:write`; also `tickets:time:write_as_user` to name a technician on a new key. |
+
+Existing keys do not gain new scopes automatically. An administrator can edit a key's scopes without changing its secret. Reading one ticket does not grant permission to list all tickets.
+
+## List tickets and queues
+
+```bash
+curl 'https://app.regentra.io/api/v1/tickets?status=OPEN&limit=50' \
+  -H 'Authorization: Bearer rgk_REPLACE_WITH_YOUR_KEY'
+```
+
+Ticket listing returns `tickets` and an opaque `nextCursor`. Send that cursor as `cursor` for the next page. The maximum page size is 100. Filters include status, status key, priority, company, assignee, group, contact method and date ranges. `none` can select unassigned tickets or tickets without a group where supported. Unknown query parameters are rejected rather than ignored.
+
+Queue endpoints return open work ordered for action. Check `truncated` on bounded queue results; do not assume a truncated result is the complete queue.
+
+Ticket reads include a summary, contact, assignee, group, type, contact method and lifecycle times. They do not include ticket descriptions, reply bodies or internal notes. Directory and time scopes expose additional customer or staff information; grant them only when needed.
+
+## Update and assign a ticket
+
+```bash
+curl -X PATCH 'https://app.regentra.io/api/v1/tickets/TICKET_ID' \
+  -H 'Authorization: Bearer rgk_REPLACE_WITH_YOUR_KEY' \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: workflow-unique-update-id' \
+  -d '{"priority":"HIGH","assigneeEmail":"technician@example.com"}'
+```
+
+This example needs both Update tickets and Assign tickets scopes. Updates use the ticket page's validation and side effects, including customer status emails, assignee notifications, SLA transitions and routing. They are attributed to the API key in ticket history.
+
+An API key is not a technician: moving an unassigned ticket to In Progress requires an assignee. Waiting Approval cannot be set directly. Use `statusKey` and a required `statusReason` for applicable custom statuses.
+
+Send the ticket's `updatedAt` as `ifUpdatedAt` to refuse an update after someone else edits it. A conflict returns `409 ticket_changed`.
+
+## Retry PATCH safely
+
+For ticket PATCH, an `Idempotency-Key` claims the request for 24 hours. A repeated identical request returns the stored response and `Idempotent-Replayed: true`. Reusing a key with another body returns `422 idempotency_key_reused`; a request still in progress returns `409 idempotency_key_in_progress`. Server failures release the claim for retry.
+
+Use a new key for a different intended change. Time-entry creation has its own idempotent-replay response, described in [API Keys](/settings/api-keys#idempotent-requests).
+
+## Read history and follow changes
+
+Per-ticket events are paged oldest first and can include reconstructed history, labeled `reconstructed`. The organization-wide feed returns committed changes, a `nextCursor` and `hasMore`. Save its cursor and supply it as `after` on the next request, including after an empty page.
+
+Do not decode or increment cursors. The feed waits for transaction ordering so a change committed late is not skipped. Older reconstructed history is available per ticket, not as a new live change-feed event.
+
+When combining API updates with [outbound webhooks](/settings/webhooks), use the event's `source` and API-key `actor` when available to recognize your own changes and avoid automation loops.
+
+## Limits and failures
+
+Read budgets are 300 requests per minute per key and 3,000 per organization. Write budgets are separate: 60 per key and 600 per organization. Other protective limits also apply. Respect `429` and retry with backoff.
+
+Invalid, expired or revoked credentials return `401`. A recognized key missing a scope returns `403 insufficient_scope`; product or subscription access can also produce a `403`. Validation responses include a readable error and, where provided, a stable `code` and field `details`. Older keys preserve their legacy validation format on the original note/time endpoints.

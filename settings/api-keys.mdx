@@ -1,12 +1,12 @@
 ---
 title: "API Keys"
-description: "Scoped API keys for external automations like n8n or Zapier to write ticket notes and time entries back into Regentra."
+description: "Create scoped API keys for ticket reads, updates, assignment, history, notes, time and directory access."
 ---
 
-API keys let an external automation — an n8n workflow, a Zapier zap, a custom script — write specific data back into Regentra. Paired with [outbound webhooks](/settings/webhooks), this closes the loop: a webhook tells your automation something happened, and an API key lets it write the result back.
+API keys let an external automation — an n8n workflow, a Zapier zap, a custom script — read or write the data its scopes allow. Paired with [outbound webhooks](/settings/webhooks), this closes the loop: a webhook tells your automation something happened, and an API key lets it read context or write the result back.
 
 <Note>
-  API keys are a PSA feature and write-scoped: they can add a ticket note or log time, and nothing else. There is no read API and no key that can act with your full account permissions.
+  API keys require PSA access and explicit scopes. They do not inherit your full account permissions. See the [Public PSA API](/settings/public-api) for endpoint, scope, pagination and update details, or the [OpenAPI document](https://app.regentra.io/api/v1/openapi.json) for the machine-readable contract.
 </Note>
 
 ## Creating a key
@@ -22,6 +22,9 @@ API keys let an external automation — an n8n workflow, a Zapier zap, a custom 
     Select the permissions this key needs:
     - **Time entries** — create time entries on tickets.
     - **Internal notes** — add internal notes to tickets.
+    - **Read tickets**, **List tickets**, **Update tickets**, **Assign tickets**, and **Read ticket history** — separate permissions for each operation.
+    - **Read time entries** and **Read technicians, groups, companies and contacts** — broader reporting and directory access.
+    - **Time entries for a named technician** — additionally permits time attribution to a person; requires Time entries too.
   </Step>
   <Step title="Set an expiration (optional)">
     Set an expiration date, or leave it open-ended.
@@ -111,7 +114,7 @@ curl -X POST https://app.regentra.io/api/v1/tickets/{ticketId}/time-entries \
 
 Time entries created this way land in the same **Submitted** approval queue as time logged in the app — an admin still reviews them before they're billable. The hourly rate is always resolved automatically from the ticket's company agreement (or your org's default rate); you can't set a rate on the request itself.
 
-By default, time is credited to your organization's automation service account. To credit a specific technician instead, add `userEmail` to the request body — it must match an active, non-service technician in your organization, or the request is rejected rather than silently falling back to the service account.
+By default, time is credited to your organization's automation service account, which does not consume a billable PSA seat. To credit a specific technician, a new key also needs **Time entries for a named technician**; add `userEmail` matching an active, non-service technician in your organization. Older keys retain their pre-existing attribution behavior. Invalid technician choices are rejected rather than silently attributed elsewhere.
 
 ### Idempotent requests
 
@@ -131,12 +134,16 @@ If a request with the same key already created an entry for your organization, R
 
 Every write made through an API key is audit-logged and attributed to the key, not to a person — audit log entries show the key's name so you can trace exactly which automation made a change.
 
+## Editing scopes
+
+Use **Edit key** to change permissions without generating a new secret. New scopes are never granted to existing keys automatically. Creating a key or adding permissions can require a recent identity check; complete it and return to the action.
+
 ## Revoking a key
 
 Click **Revoke** on any key from **Settings → API Keys**. A revoked key stops working immediately. This can't be undone — create a new key if the automation needs to keep running.
 
 ## Errors
 
-Every authentication failure — a missing key, a malformed key, an unknown key, a revoked key, an expired key, or a key missing the required scope — returns the same `401 Unauthorized` with no further detail in the response body. This is deliberate: it prevents anyone probing the API from learning which of those cases applies. If your automation is unexpectedly failing, check the key's status and scopes in Regentra directly rather than trying to infer the cause from the response.
+Missing, malformed, unknown, revoked or expired credentials return `401 Unauthorized`. Once a key is recognized, missing scope returns `403 insufficient_scope` with the required permission. Product and inactive-subscription refusals also return a specific `403`. Check the key's status and scopes in Regentra when troubleshooting.
 
-Requests are also rate-limited — per source IP before a key is even validated, and per key once it resolves — and return `429 Too Many Requests` if you exceed those limits. If your organization's plan doesn't include PSA, authenticated requests fail with `403 Forbidden` instead of `401`.
+Requests are rate-limited and can return `429 Too Many Requests`. Read and write budgets are separate; see [API limits](/settings/public-api#limits-and-failures). Request bodies are capped at 1 MiB. New note/time keys receive readable validation errors with machine codes and field details; older keys keep their legacy validation format.

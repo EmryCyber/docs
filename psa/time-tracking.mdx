@@ -58,7 +58,7 @@ Time entries move through a submit/approve cycle, with a rejection path that let
     The technician submits the entry for review. It becomes read-only for the owner and appears in a manager's approval queue.
   </Step>
   <Step title="Approved / Rejected">
-    A manager or admin (someone other than the owner) either approves the entry, making it eligible for invoicing, or rejects it with a reason. A rejected entry can be edited and resubmitted — it isn't a dead end.
+    An authorized manager/admin approves or rejects with a reason. Self-approval is allowed for an authorized approver and is audit-flagged. Rejected entries can be edited and resubmitted.
   </Step>
   <Step title="Invoiced">
     Once attached to a generated invoice, the entry is locked into the billing record and shows a link to that invoice.
@@ -82,6 +82,10 @@ The week itself has an envelope status of its own:
 - **Reject week** — sends every submitted entry in the week back to rejected with a shared reason.
 
 A rejected entry — whether rejected individually or as part of a week — can always be corrected and resubmitted. Once every entry in a previously-rejected week is resubmitted, the week's envelope automatically clears back to submitted so it's ready for approval again.
+
+Use Recall to return eligible submitted work to draft before correcting it. Week and entry statuses stay in step, and invoiced work remains locked. Managers can act on a technician's behalf where offered; the action is attributed in the audit trail.
+
+The Log Time workspace shows the day's timeline and existing entries. Confirm or adjust its proposed time window before saving; **Save & add another** supports consecutive entries. Products mapped to work types can be required for billable time, and archived products on old entries remain recognizable.
 
 ## Billing review ("Ready to Bill")
 
@@ -108,5 +112,5 @@ Under **Settings → Tickets → Billing**:
 [Service Agreements](/psa/projects-agreements) define recurring and hourly billing structure per client, and time entries roll up into them automatically. Once entries are approved and invoiced, payment is collected through whichever [payment processor your organization has active](/psa/invoices-quotes#payment-processors) — Stripe, QuickBooks, or Alternative Payments.
 
 <Warning>
-  Invoices with $0 line items for time usually mean the included entries are either not approved or not marked as billable. Check entry status on Timesheets before generating.
+    A $0 rate can mean no applicable agreement, override or organization default was available. Check the rate explanation, billable flag and approval state before generating. Do not assume unapproved time becomes a valid $0 invoice line.
 </Warning>

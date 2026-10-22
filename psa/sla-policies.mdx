@@ -1,81 +1,78 @@
 ---
 title: "SLA Policies"
-description: "Define response and resolution time targets by priority level, with business hours, breach detection, and escalation rules."
+description: "Configure response and resolution targets, business calendars, escalations and internal group targets."
 ---
 
-SLA policies define the service level commitments you make to your clients. Each policy sets response time and resolution time targets based on ticket priority, scoped to your business hours and timezone.
+SLA policies define your customer service commitments. They match tickets by priority and optional company, type, category or urgency conditions, then track response and resolution separately.
 
 ## What SLAs track
 
-Every SLA policy measures two things:
+- **Response** measures the time to the first qualifying staff reply. An internal note or simply moving a ticket to In Progress is not a customer response.
+- **Resolution** measures covered time until resolution. Reopening a ticket resumes its resolution work; it does not erase a recorded breach or invent another first response.
 
-- **Response time** — How long until a technician sends the first reply after a ticket is created.
-- **Resolution time** — How long until the ticket reaches Resolved status.
-
-Both timers respect business hours. Time outside your configured working hours does not count against the SLA.
+Coverage can be business hours, extended business plus on-call hours, or 24/7, independently for each target. Recurring maintenance tickets and internal fulfilment tasks do not receive a customer SLA.
 
 ## Creating an SLA policy
 
-Each SLA policy covers **one priority level**. To cover all four priorities (Critical, High, Medium, Low), create one policy per priority — for example, a "Critical Response SLA" policy with a 15-minute response target and a 4-hour resolution target, then a separate policy for High, and so on.
+1. Open **SLA Policies** and create a policy for a priority.
+2. Set its company scope and optional matching conditions. Include child companies when appropriate.
+3. Set response and resolution targets and their coverage.
+4. Choose a named business calendar, inherited hours, or the policy's existing hours.
+5. Set the at-risk threshold and any escalation levels, then save.
 
-<Steps>
-  <Step title="Navigate to SLA Policies">
-    In the PSA module sidebar, click **SLA Policies**, then click **New Policy**.
-  </Step>
-  <Step title="Name the policy and pick its priority">
-    Give it a name (e.g. "Critical Response SLA") and choose the single ticket priority it applies to.
-  </Step>
-  <Step title="Set response and resolution targets">
-    Enter the response time and resolution time, both in minutes.
-  </Step>
-  <Step title="Choose scope and At-Risk threshold">
-    Under **Applies To**, leave it as "All customers (generic fallback)" or pick one client to scope this policy to just that client's tickets at the matching priority — a per-customer policy wins over the generic default. Set the **At-Risk Threshold** percentage (default 80%) that determines when a ticket flips to the At Risk status. A generic (non-customer-scoped) policy can also be marked **Default Policy** to auto-apply to new tickets at that priority.
-  </Step>
-  <Step title="Configure business hours">
-    Toggle **24x7x365** for a round-the-clock SLA, or set start/end times, business days, and a timezone. SLA timers only run during these hours unless 24x7x365 is on.
-  </Step>
-  <Step title="Save">
-    Click **Create Policy**.
-  </Step>
-</Steps>
+Policies are evaluated in configured order; the first active matching policy wins. Review ordering when several policies could match the same ticket. Customer-specific and general policies retain their ordering bands.
+
+Existing policies keep their legacy hours unless you change their configuration. A policy already used by tickets is retired rather than removing its historical meaning.
+
+## Business calendars and holidays
+
+A business calendar holds a time zone and working windows for each weekday, including optional on-call windows. Holiday sets can close business hours, close all coverage, or substitute another weekday's hours for a full or partial day. Presets are available for supported national holiday sets and years.
+
+Assign a calendar on a company's page or set an organization default. An inheriting policy uses the company's calendar, then a parent's, then the organization default; if none applies, it uses the policy's own hours. A named-calendar policy uses the selected calendar directly.
+
+Calendar and holiday edits re-plan running clocks in the background, preserving time already used and recorded breaches. Calendar coverage is separate from appointment scheduling and technician availability.
 
 ## SLA statuses
 
 | Status | Meaning |
 | --- | --- |
-| **On Track** | Within the target time window |
-| **At Risk** | Approaching the target deadline (configurable threshold) |
-| **Breached** | Target time has been exceeded |
-| **Met** | Ticket was resolved within the SLA target |
+| **On Track** | The running target has time remaining. |
+| **At Risk** | The configured warning threshold has been reached. |
+| **Breached** | The deadline was exceeded. |
+| **Met** | The completed target was satisfied in time. |
 
-<Warning>
-  A breached SLA cannot be reversed. Even if the ticket is later resolved, the breach is recorded permanently for reporting purposes.
-</Warning>
+Response and resolution can have different outcomes. The ticket's **SLA details** card explains the selected policy, hours, targets, pauses, escalation activity and group-target segments. The list can filter At risk, Response breached, and Resolution breached separately.
+
+A later resolution does not erase a recorded breach. Reports score response and resolution against their own targets; review the metric rather than treating every reopened ticket as a new SLA.
 
 ## SLA pausing
 
-The SLA resolution timer **pauses** in two situations:
+The built-in **Waiting on Customer** and **Waiting Approval** states pause the resolution clock. Custom statuses can have an allowed pause rule; changing between two custom statuses in the same category can therefore pause or resume it.
 
-- **Waiting on Customer** — the technician has replied and is waiting on the client. The timer resumes when the customer responds or the technician moves the ticket back to In Progress.
-- **Waiting Approval** — the ticket is on hold for an [approval decision](/psa/tickets#ticket-approvals). The timer resumes when the approver responds, or when a technician manually moves the ticket to a different status. The approval link expires after 7 days; an expired, undecided request does not automatically resume the timer — a technician needs to change the ticket's status manually, or send a new approval request.
+Open, Escalated, Resolved and Closed categories do not gain arbitrary pause behavior. Waiting Approval is controlled by approval workflows and always pauses. Response is measured to the first qualifying reply rather than paused whenever a ticket waits.
 
-Both pauses only skip time outside your resolution target that isn't the technician's to control — time spent waiting on someone outside your team never counts against you.
-
-Response time is not paused — it is measured only once (time from creation to first reply).
+For an ad-hoc approval, an expired undecided link does not by itself move the ticket out of Waiting Approval. A catalog approval follows its configured expiry fallback. See [Ticket approvals](/psa/tickets#ticket-approvals) and [Request catalog approvals](/psa/request-catalog#approval-policies).
 
 ## Escalation notifications
 
-An hourly job checks every open ticket's SLA status. When a ticket first becomes **At Risk** or **Breached**, Regentra automatically notifies the assigned technician by email and in-app notification; if the ticket is unassigned, or the status is Breached, every admin/MSP admin on the org is notified too. This escalation notification is automatic and isn't configured per policy — the **At-Risk Threshold** on each SLA policy is what controls how early the At Risk notification fires.
+Configure escalation levels for each response or resolution target. A level can run before or after its deadline, using covered time or elapsed time. Actions include notifications, reassignment, movement to a group, escalation to the next tier, raising priority, and supported status changes.
+
+The SLA clock checker runs every minute; an hourly check remains as a backstop. When multiple levels have already passed at evaluation, the highest eligible level fires and lower ones are superseded. A configured level runs once for its clock.
+
+When a metric has custom escalation levels, its default SLA email is suppressed to avoid sending both paths. Otherwise the default at-risk/breach audience applies. Personal notification settings and explicitly selected recipients affect delivery; the ticket's SLA details show what fired.
+
+## Recalculation and policy edits
+
+Changing a ticket's priority, type, category, company or urgency can select a new matching policy. Running targets carry forward time already consumed. An unchanged match leaves the deadline alone, and recorded breaches are retained.
+
+Policy edits do not silently rewrite every running ticket. Administrators can use **Re-apply** to preview and apply the policy to existing tickets, or **Recalculate** on an individual ticket. Review the preview before applying a change that could affect deadlines.
+
+## Group targets (OLA)
+
+Under **SLA Policies → Group targets (OLA)**, set internal pick-up and resolution targets for [technician groups](/psa/ticket-routing), with their own calendar and escalation levels.
+
+Each period a group holds a ticket is a separate segment. Moving the ticket away or resolving it ends that segment; reopening or entering another group can start another. OLA targets describe internal hand-offs and do not replace the customer's SLA. OLA reporting and outbound OLA events are not provided by the current workflow.
 
 ## SLA compliance reporting
 
-View SLA performance across clients and time periods in **PSA → PSA Reports**. The Service Desk Overview report includes:
-
-- SLA compliance percentage (met vs breached)
-- Average response and resolution times
-- Breach trends over time
-- Per-client SLA performance breakdown
-
-<Info>
-  SLA data is also visible on individual tickets via the SLA badge, and on the PSA dashboard as an aggregate metric.
-</Info>
+Use **PSA Reports** to review response and resolution outcomes across clients and technicians. Tickets without an SLA are excluded from SLA compliance scoring. [Daily ticket reports and exports](/psa/reports) also provide lifecycle and history context; older reconstructed history is labeled rather than presented as exact recorded activity.
