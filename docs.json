@@ -107,6 +107,7 @@
               "integrations/jira",
               "integrations/stripe",
               "integrations/quickbooks",
+              "integrations/alternative-payments",
               "integrations/payment-processors"
             ]
           },

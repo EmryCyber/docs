@@ -12,6 +12,19 @@ Every entry starts with anything you need to do, or anything that now looks diff
   Want product news without the marketing emails? In **My account → Notifications**, choose **Changelog only**. You can also follow this page's RSS feed.
 </Info>
 
+<Update label="Upcoming" description="Alternative Payments setup and reconciliation" tags={["PSA", "Billing", "Integrations"]}>
+  ### Fixed
+
+  - Alternative Payments keeps the selected Production or Demo environment after saving and reopening its setup card. Saved keys show as configured; they do not need to be entered again.
+  - AP connection tests have a time limit and preserve entered values on failure. Failed saves also preserve the form.
+  - Refund requests wait for confirmation before changing payment records. Failed receipt writes remain eligible for retry, reversal scans continue across larger backlogs, and incomplete duplicate searches stop new customer/invoice creation.
+  - Authenticated AP notifications are saved before acknowledgement so queued work can recover after an interruption.
+
+  ### Improved
+
+  - The AP integration guide now lists the required permissions, explains both invoice routes and saved credentials, and describes notification recovery. [Alternative Payments setup](/integrations/alternative-payments)
+</Update>
+
 <Update label="September 30, 2026" description="Microsoft 365 calendar, invoice line items, product import, My account" tags={["PSA", "Billing", "Integrations", "Branding", "Account"]}>
   **What looks different**
 

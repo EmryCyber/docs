@@ -1,71 +1,66 @@
 ---
 title: "Payment Processors"
-description: "How Regentra keeps one active payment processor and one active accounting sync at a time, and what happens when you switch."
+description: "Choose one active payment processor and one accounting sync, and understand what changes when you switch."
 ---
 
-Stripe, QuickBooks, and Alternative Payments can all connect to your organization, but Regentra keeps them from stepping on each other with a simple rule: **at most one active payment processor, and at most one active accounting sync, at any time.**
+Regentra keeps **at most one active payment processor and one active accounting sync** for your organization. The processor collects money; the accounting sync records invoices and payments in your books.
 
-This page explains the model. For setup steps, see [Stripe](/integrations/stripe) and [QuickBooks](/integrations/quickbooks).
+For setup, see [Stripe](/integrations/stripe), [QuickBooks](/integrations/quickbooks), and [Alternative Payments](/integrations/alternative-payments).
 
 ## The two roles
 
-| Role | What it means | Who can hold it |
+| Role | What it does | Supported connections |
 | --- | --- | --- |
-| **Payment processor** | Collects money from your clients — the integration your invoices' payment links actually charge through. | Stripe, QuickBooks, or Alternative Payments |
-| **Accounting sync** | Records invoices and payments to your books of record. | QuickBooks only, today |
+| **Payment processor** | Collects customer payments. | Stripe, Alternative Payments, QuickBooks, Zoho Books |
+| **Accounting sync** | Records invoices and payments in your books. | QuickBooks Online, Zoho Books, Xero |
 
-QuickBooks is the one integration that can hold **both** roles at once — it can be your books of record and your payment processor at the same time, the same way it always has been. Stripe and Alternative Payments only ever hold the payment-processor role.
+QuickBooks and Zoho Books can hold both roles. Stripe and Alternative Payments hold the processor role. Xero holds the accounting role. Availability of an integration can depend on your organization's enabled features.
 
-A typical setup is one of:
+Typical setups include Stripe alone; Stripe with QuickBooks, Zoho Books or Xero; QuickBooks or Zoho Books handling collection and accounting; and AP collecting with a separate accounting connection.
 
-- **Stripe alone** — Stripe collects payment; no accounting sync.
-- **Stripe + QuickBooks** — Stripe collects the payment; QuickBooks records it to your books.
-- **QuickBooks alone** — QuickBooks both collects payment (via QuickBooks Payments) and records it.
-- **Alternative Payments + QuickBooks** — Alternative Payments collects the payment; QuickBooks records it to your books. Same shape as Stripe + QuickBooks, with a different processor.
+## See which connection is active
 
-## Seeing which one is active
+In **Settings → Integrations**, the connected cards show **Active payment processor** and **Active accounting sync** badges. One connection can show both when it holds both roles.
 
-On **Settings → Integrations**, each connected processor's card shows a badge when it holds a role:
+## Connect a second processor
 
-- **Active payment processor**
-- **Active accounting sync**
+Regentra asks before replacing an active payment processor. Canceling leaves the current connection in place.
 
-QuickBooks can show both badges at once. Stripe and Alternative Payments only ever show the processor badge.
+If your accounting system currently holds the processor role, confirming a Stripe or AP takeover moves collection to the new processor while keeping that accounting connection. If a different dedicated processor is active, review the disconnect warning before confirming its replacement.
 
-## Connecting a second processor
+Connecting an accounting system does not replace an already active dedicated processor. A conflict with another accounting connection requires its own replacement flow.
 
-If you try to connect a payment processor while a different one is already active, Regentra doesn't silently override it. Saving the new processor's credentials returns a conflict, and you're asked to confirm:
+## Review existing invoices before switching
 
-> **\{Current processor\}** is your active payment processor. Switching to **\{new processor\}** will disconnect **\{current processor\}** for new invoices; existing **\{current processor\}** invoices keep their hosted links and continue to reconcile.
+Disconnecting a processor does not close invoices at that provider. Existing hosted links may remain payable, including AP autopay. Regentra stops polling an inactive provider connection, so payments made there after disconnecting may need to be recorded manually.
 
-Confirming disconnects the previous processor and connects the new one in a single step. If you cancel, nothing changes — your original processor stays active and the new one's credentials aren't saved.
-
-<Warning>
-  Switching away from QuickBooks disconnects it entirely — both invoicing **and** your QuickBooks accounting sync — because QuickBooks is the one integration that can hold both roles. Switching between Stripe and Alternative Payments only affects invoicing; neither one touches an accounting sync.
-</Warning>
-
-QuickBooks itself never gets refused this way for the accounting-sync role: connecting QuickBooks always claims the accounting-sync slot (unless a different accounting integration already holds it), and separately claims the payment-processor slot only if it's free — it never bumps an already-active Stripe or Alternative Payments connection.
-
-## Existing invoices are never disrupted
-
-Switching processors only changes where **new** invoices go. Invoices already sent through the processor you disconnected keep their hosted payment links and continue to reconcile normally — the switch doesn't rewrite invoice history or break a link a client already has open.
+Before switching, review open invoices at the previous provider. Archive or otherwise stop collection there when appropriate, and reconcile any payments already taken. Read the switch warning and verify which connections remain active afterward.
 
 ## Alternative Payments
 
-Alternative Payments is available as a payment-processor option alongside Stripe. You can connect it today from **Settings → Integrations → Alternative Payments**:
+Alternative Payments supports Demo and Production connections, connection testing, and direct invoice sending in Regentra. You can also use AP to collect invoices imported through your accounting system.
 
-<Steps>
-  <Step title="Pick your environment">
-    Choose **Demo** or **Production** — Alternative Payments issues separate credentials for each, and a Demo credential won't work against Production or vice versa.
-  </Step>
-  <Step title="Generate credentials">
-    In your Alternative Payments Partner Dashboard, generate a **Client ID** and **Client Secret** for the environment you picked.
-  </Step>
-  <Step title="Save in Regentra">
-    Paste both values into the Client ID and Client Secret fields and save. This claims Alternative Payments as your active payment processor, with the same switch-and-confirm flow described above if another processor is currently active.
-  </Step>
-</Steps>
+### Connect and test
 
-<Warning>
-  Connecting Alternative Payments saves your credentials and claims the processor role, but invoicing through it isn't live yet: **Test Connection** returns "not yet implemented," and generating an invoice with Alternative Payments as the collection method is refused with "Alternative Payments invoicing is not available yet." Connect it to reserve the processor slot and be ready, but keep Stripe or QuickBooks as your active processor for invoices you need paid today.
-</Warning>
+1. Open **Settings → Integrations → Alternative Payments → Configure**.
+2. Select **Production** or **Demo** and enter the Client ID and Client Secret issued for that environment in AP's **Partner Dashboard → Team Preferences → API Keys**.
+3. Click **Test Connection**, then **Save Credentials**. Testing does not save the values. A timed-out test or failed save keeps your entries available.
+
+The saved environment stays selected after saving, reopening and reloading. Saved keys are encrypted and are not shown again; blank fields marked **configured** mean the keys are stored. Leave them blank to keep the saved keys. Test Connection can use those saved values.
+
+Test Connection verifies authentication and read access. Direct sending also needs write and webhook-management permissions; see the [API permissions checklist](/integrations/alternative-payments#api-permissions-for-direct-invoicing).
+
+### Choose the invoice route
+
+AP can import invoices through its own accounting-system connection, or Regentra can send them directly. **Use one route for the same invoices** to avoid duplicate collection.
+
+- **Through accounting:** keep direct sending off, send invoices to your accounting system, and configure AP to import them and record payments there. Regentra learns payment status from the accounting integration.
+- **Direct:** enable **Send invoices to Alternative Payments** in AP's **Invoice settings**, after turning off the overlapping accounting import in AP. Regentra sends USD invoices on Send, registers payment notifications, reconciles receipts, and records settled payments in the connected books when possible.
+
+### Payments and notifications
+
+Regentra checks direct AP invoice payments every **15 minutes** and uses authenticated notifications to request fresh AP API reads. Refund requests must be confirmed successful before their payment records are marked Refunded; refunds, disputes and later ACH failures do not automatically reopen invoices.
+
+In **Invoice settings**, use **Check payments now** for a payment/reversal check, **Subscribe again** to repair subscriptions, or **Resume notifications** after fixing a delivery problem. AP can pause notifications for the entire account after delivery retries are exhausted.
+
+The [Alternative Payments guide](/integrations/alternative-payments) includes the complete permissions checklist, existing-customer linking, both invoice routes, refund confirmation, and notification troubleshooting.

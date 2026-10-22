@@ -72,17 +72,17 @@ Fill in name, email, phone, and address directly, or click **Use company details
 
 Regentra separates payment integrations into two roles, and enforces **at most one active provider per role** for your organization:
 
-- **Processor** — collects payment from the customer. Stripe or Alternative Payments.
-- **Accounting** — records the invoice to your books. QuickBooks or Xero.
+- **Processor** — collects payment from the customer. Stripe, Alternative Payments, QuickBooks or Zoho Books.
+- **Accounting** — records the invoice to your books. QuickBooks Online, Zoho Books or Xero.
 
-QuickBooks is the one provider that can hold both roles at once — connecting it claims the Accounting slot automatically, and also claims the Processor slot if nothing else already holds it.
+QuickBooks and Zoho Books can hold both roles at once — connecting one claims the Accounting slot and claims the Processor slot only if it is free. Xero holds the Accounting role.
 
 Connect a processor or accounting integration under **Settings → Integrations**. If you try to connect a second provider for a role that's already occupied, Regentra shows a confirmation naming the current holder and what switching means for existing invoices, rather than silently overriding it — you have to confirm the switch explicitly.
 
 Whichever processor is active drives the invoice generation form: the checkbox reads **"Collect payment via `<your processor>`"** instead of a hard-coded provider name, and Stripe-specific options (customer picker, payment method selection) only appear when Stripe itself holds the Processor role.
 
 <Note>
-  Alternative Payments can be connected from Settings → Integrations, but its payment-collection adapter isn't live yet — it can hold the Processor role slot, but invoices can't currently be sent through it. Use Stripe for online payment collection today.
+  [Alternative Payments](/integrations/alternative-payments) can collect through its accounting-system connection or receive invoices directly from Regentra when direct sending is enabled. Use one route for the same invoices. Direct sending supports USD and sends the AP copy on Send or an approved review release.
 </Note>
 
 ## Importing invoices from Stripe
