@@ -1,15 +1,15 @@
 ---
 title: "Invoices & Quotes"
-description: "Draft quotes, generate invoices, collect payment through your active processor, and sync to QuickBooks — with white-label branding throughout."
+description: "Draft quotes, generate invoices, collect payment through your active processor, and sync to your connected accounting system, with branded PDFs and optional review before release."
 ---
 
-Create and manage customer quotes and invoices. Pull line items from your [Service Catalog](/psa/service-catalog), set payment terms, and send via your organization's active payment processor for hosted online payment or QuickBooks for accounting sync.
+Create and manage customer quotes and invoices. Pull line items from your [Service Catalog](/psa/service-catalog), set payment terms, and send via your organization's active payment processor for hosted online payment or QuickBooks Online, Zoho Books or Xero for accounting sync.
 
 ## What it does
 
 - **Quote drafting** — Build multi-line quotes with custom descriptions, quantities, and pricing
 - **Invoice generation** — Convert service agreements, logged time, or manual line items into invoices
-- **Multiple destinations** — Send invoices to your active payment processor (for online payment) and/or QuickBooks (for accounting)
+- **Multiple destinations** — Send invoices to your active payment processor (for online payment) and/or your connected accounting system
 - **Catalog integration** — Pick from your [Service Catalog](/psa/service-catalog) or enter free-text items
 - **Payment options** — Card, ACH, bank transfer, SEPA debit, and more per invoice
 - **Tax & due date control** — Set tax rate and override the default 30-day due window
@@ -52,21 +52,51 @@ Fill in name, email, phone, and address directly, or click **Use company details
     In the PSA module sidebar, click **Invoices**, then click **Generate Invoice**.
   </Step>
   <Step title="Choose destination(s)">
-    Check **Collect payment via `<your active processor>`** (for hosted online payment) and/or **QuickBooks** (for accounting sync). If QuickBooks is checked, link a Portal Company; click **Sync now** if not yet synced.
+    Choose from the connected destinations shown. A selected accounting destination needs a linked company/customer. Use the company card to initiate its first customer sync explicitly; creating a company does not create an accounting customer in the background.
   </Step>
   <Step title="Select a client and agreement (optional)">
-    For your payment processor, pick a customer from your connected account. Optionally link a [Service Agreement](/psa/projects-agreements) to auto-populate recurring charges, or pull in [approved unbilled time](/psa/time-tracking#billing-review-ready-to-bill).
+    Select the company and the appropriate linked provider customer. Optionally link a [Service Agreement](/psa/projects-agreements) to auto-populate recurring charges, or pull in [approved unbilled time](/psa/time-tracking#billing-review-ready-to-bill).
   </Step>
   <Step title="Set period and line items">
-    Define the billing period. Add manual line items by picking from your [Service Catalog](/psa/service-catalog) or entering free-text descriptions and amounts. Catalog items sync to your processor automatically.
+    Define the billing period. Add manual line items by picking from your [Service Catalog](/psa/service-catalog) or entering free-text descriptions and amounts. Product descriptions, quantities, rates and periods are copied into editable invoice lines. Review customer-specific rates rather than assuming the catalog default is the agreed price.
   </Step>
   <Step title="Configure payment options">
-    Set a custom due date (default: 30 days from invoice date). If Stripe is your active processor, enable payment methods: Card, ACH, Link, Bank Transfer, SEPA Debit. If none selected, Card and ACH are used.
+    Use the organization or client payment terms, or set a specific due date. If Stripe is your active processor, enable payment methods: Card, ACH, Link, Bank Transfer, SEPA Debit. If none selected, Card and ACH are used.
   </Step>
   <Step title="Generate the invoice">
-    Click **Generate**. The invoice is created and synced to your chosen destination(s).
+    Use **Preview PDF** to inspect the current draft, then click **Generate**. If review is enabled, this creates a local invoice awaiting approval; otherwise the selected destination workflow runs. Read each destination result instead of assuming a failed provider send succeeded.
   </Step>
 </Steps>
+
+## Saved drafts and PDF preview
+
+The generation form supports saved drafts so you can return to unfinished work. Resolve a failed autosave or use its retry before leaving the page. Draft editing, duplicate-line controls and product selection do not change historical invoices.
+
+Use **Preview PDF** on the live draft to review current lines, periods, recipient, terms and totals without issuing a number or marking time billed. Products can be created inline, and their long descriptions can be edited in an expanded, movable editor. Product headings print above the description; saved invoice lines preserve their heading snapshot.
+
+## Review and release
+
+Enable a company's **Financial settings** and select **Review and release before sending or syncing** to opt new invoices into review. Existing companies keep their current flow until opted in.
+
+1. Generate a local Draft invoice. No customer email or provider invoice is created by that generation step.
+2. Open it, edit permitted draft details and preview its PDF. Review invoices keep a revision so an approval cannot silently use stale edits.
+3. In **Invoice review and release**, select up to 25 invoices and confirm the batch's customer-email choice.
+4. **Approve and release** freezes those versions and sends them through the selected provider checks.
+5. Use **Resume batch** after a partial failure. Review the invoice's release error; completed work is retained.
+
+Approved invoices cannot be edited. If a replacement is needed, review voiding and any one-time agreement charges before preparing it. Recurring agreement quantities/prices are not repriced by editing the review invoice: change the agreement and regenerate where appropriate.
+
+Regentra's native release email attaches its PDF and a payment link when available after provider validation. AP handles its own delivery. Provider-hosted invoices keep the provider's layout. A failed or uncertain send must be investigated before sending another copy manually.
+
+<Warning>
+  Review release can refuse accounting-managed tax totals or unsupported credit handling rather than email an unverified payable amount. Confirm tax in the issuing system. Choose Confirmed non-taxable services only when that is true; do not change tax treatment merely to bypass a release error. No new autopay or automatic-charge scheduler is enabled by this workflow.
+</Warning>
+
+## Payment terms and service periods
+
+Client financial settings can override payment terms, a third-Monday due rule, PO/reference, message/footer, PDF layout and review defaults. A specific due date overrides its calculated rule. Service periods must end on or after their start date and print with the line details.
+
+**Standard** and **Service details** PDFs share stored billing preferences. Service details provides boxed recipient/account fields and a detailed balance summary. A due date schedules when payment is owed; it does not authorize a charge. See [Invoice settings](/settings/invoices).
 
 ## Payment processors
 
@@ -106,6 +136,20 @@ To see what still needs attention:
 - **Send to QuickBooks**, available to admin roles, lets you select up to 50 not-yet-synced invoices at once and push them in a single action, rather than one at a time.
 - A connection-health banner appears on the Invoices list itself (not just the Integrations page) if your QuickBooks connection needs to be reconnected.
 
+## Accounting imports and review
+
+QuickBooks invoice import is opt-in. A new Zoho organization connection starts a bounded customer/open-invoice import; older connections can start it with **Import customers and open invoices**. Imported invoices retain their source ownership; link an unmatched invoice to the correct company before attempting a new destination. Do not push a provider's imported invoice back to that same provider as a new copy.
+
+The list shows provider status and combined **Not in** filters for connected accounting systems. Bulk sends report per-invoice errors and skip ineligible orphaned imports. Existing provider settings control whether new manual or monthly agreement invoices are sent automatically; turning on a new option does not send historical invoices indiscriminately.
+
+Accounting-side voids and deletions enter a review queue. Administrators can apply or dismiss them after inspecting local invoices and payments. Review independent accounting receipts before deciding whether a status or payment should change.
+
+## Payments recorded elsewhere
+
+Recording a full or partial payment in the books can update Regentra and close overlapping Stripe/AP collection when appropriate. Split receipts from an accounting system and a processor can settle the same linked invoice; those reads keep provider identities separate.
+
+Bridges are best effort. A local Paid status is not proof every accounting entry or remote collection-close succeeded. Inspect warnings and the provider's current state before manually collecting again. Refunds, disputes and later failed receipts do not automatically reopen invoices.
+
 ## White-label branding
 
 Your organization's logo, legal name, address, tax ID, and remit-to details — configured once under **Settings → Company Profile** — appear automatically on:
@@ -118,7 +162,7 @@ You can also set default footer/memo text for quotes and invoices, and choose wh
 
 ## Supply dates & tax compliance
 
-When adding manual line items, optionally enable **Supply date** to specify a single date or date range (e.g. "Service period: 2026-05-01 — 2026-05-31"). This is rendered on the invoice and helps satisfy UK/EU tax-point rules.
+When adding manual line items, optionally enable **Supply date** to specify a single date or date range (e.g. "Service period: 2026-05-01 — 2026-05-31"). The saved service date or period is rendered on the invoice.
 
 ## Frequently asked questions
 
@@ -130,7 +174,7 @@ When adding manual line items, optionally enable **Supply date** to specify a si
     The invoice retains the price and description at the time of generation. Historical invoices are unaffected. A new price is created on the next sync if the unit amount or currency changed.
   </Accordion>
   <Accordion title="Can I send an invoice to both my payment processor and QuickBooks?">
-    Yes. Check both destinations, link a Portal Company for QuickBooks, and generate. The invoice is created in both systems independently.
+    Yes, when both routes are supported and connected. Link the correct company/customer and review the selected destinations. With review enabled, delivery waits for approval and release. AP must not also import the same invoice through its accounting connection.
   </Accordion>
   <Accordion title="What's the difference between Line Items and Service Agreements?">
     **Line Items** are one-off charges on a single invoice. **Service Agreements** ([Projects & Agreements](/psa/projects-agreements)) define recurring billing built from their own line items. You can link an agreement and still add extra line items.

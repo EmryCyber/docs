@@ -61,3 +61,8 @@ SSO does not blanket-skip Regentra's own MFA — Regentra checks whether Azure A
 ## Account lockout
 
 Repeated failed sign-in attempts on the email/password path lock an account for a short cooldown period regardless of whether SSO is also enabled for your organization — see [Account lockout](/settings/mfa#account-lockout). SSO sign-ins go through Microsoft's own login flow and aren't subject to Regentra's lockout, since Regentra never sees the password attempt.
+
+
+## Personal security and session policy
+
+Manage your own passkeys, authenticator, backup codes, trusted devices and sessions in **My account → Security**. Administrators set session limits and remembered-device policy under Authentication & SSO. A successful SSO sign-in does not extend the session indefinitely or automatically satisfy every recent-factor check. See [Sessions](/settings/sessions) and [MFA](/settings/mfa).

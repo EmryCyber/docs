@@ -27,26 +27,31 @@ Webhooks let external systems react to what happens in Regentra the moment it ha
 | Event | Fires when |
 | --- | --- |
 | `ticket.created` | A new ticket is created, from any channel (portal, email, SMS, Teams, or manual). |
-| `ticket.status_changed` | A ticket's status changes, for any reason. |
+| `ticket.status_changed` | A supported ticket status transition occurs, including API edits and linked customer-reply reopens. |
 | `ticket.reply_added` | A customer-visible reply is added to a ticket. Internal notes are never sent. |
 | `ticket.assigned` | A ticket is assigned to a technician. |
+| `ticket.group_changed` | An existing ticket moves between technician groups. |
 | `ticket.resolved` | A ticket's status changes to Resolved. |
 | `ticket.approval_decided` | A customer approves or denies a ticket approval request. |
 | `sla.escalation` | A ticket's SLA status moves to At Risk. |
 | `sla.breached` | A ticket's SLA status moves to Breached. |
-| `invoice.generated` | A new invoice is generated for a client. |
+| `sla.metric_at_risk` | A response or resolution target becomes at risk. |
+| `sla.metric_breached` | A response or resolution target breaches. |
+| `sla.escalated` | A configured SLA escalation level fires. |
+| `invoice.generated` | A new invoice is generated, including manual and quote-converted invoices. |
+| `fulfillment.step_released` | An internal fulfilment task is released for a request. |
 | `quote.sent` | A quote is sent to a customer. |
 | `quote.decided` | A customer accepts or declines a quote. |
 | `csat.received` | A customer submits a satisfaction rating for a resolved ticket. |
 | `automation.rule_fired` | The generic envelope an [automation rule's](/psa/automations-and-ai) **Send Webhook** action sends when its trigger has no more specific event above. Delivery for this one is driven by the automation rule's own endpoint selection, not by subscribing an endpoint to it — checking this box on an endpoint has no effect on its own. |
 
 <Note>
-  `ticket.status_changed` includes a `source` field on system-initiated transitions (for example, `"billing-auto-close"`, `"resolved-timeout"`, `"approval-decision"`) so you can distinguish an automated status change from one an operator made. `ticket.resolved` and `ticket.approval_decided` are narrower views of the same underlying status change — a ticket resolving as part of an approval decision fires both.
+  Status events can include `source` and an `actor` identifying a user or API key. Use them to recognize your own API updates and avoid feedback loops. Narrower events can describe the same underlying transition, so subscribing to several event types can produce more than one relevant event. The event catalog in Settings describes exclusions; internal-only transitions do not all produce a public event.
 </Note>
 
 ## Verifying deliveries
 
-Every request carries three headers:
+Every request carries the legacy Regentra headers below, plus Standard Webhooks headers:
 
 | Header | Contains |
 | --- | --- |
@@ -65,40 +70,48 @@ t=1725984000,sha256=5a8f3c...
 To verify a delivery:
 
 ```js
-const header = req.headers["x-regentra-signature"]; // "t=...,sha256=...[,sha256_prev=...]"
-const parts = Object.fromEntries(
-  header.split(",").map((kv) => {
-    const i = kv.indexOf("=");
-    return [kv.slice(0, i), kv.slice(i + 1)];
-  }),
-);
+import crypto from "node:crypto";
 
-const ts = Number(parts.t);
-if (!Number.isFinite(ts) || Math.abs(Date.now() / 1000 - ts) > 300) {
-  reject("stale or invalid timestamp");
+function verifyRegentra(header, rawBody, secret) {
+  if (typeof header !== "string") return false;
+  const parts = Object.fromEntries(header.split(",").map((part) => {
+    const i = part.indexOf("=");
+    return [part.slice(0, i), part.slice(i + 1)];
+  }));
+  const ts = Number(parts.t);
+  if (!Number.isInteger(ts) || Math.abs(Date.now() / 1000 - ts) > 300) return false;
+  const expected = crypto.createHmac("sha256", secret)
+    .update(`${ts}.${rawBody}`, "utf8").digest();
+  return [parts.sha256, parts.sha256_prev].some((signature) => {
+    if (typeof signature !== "string" || !/^[a-f0-9]{64}$/i.test(signature)) return false;
+    return crypto.timingSafeEqual(expected, Buffer.from(signature, "hex"));
+  });
 }
-
-const expected = crypto
-  .createHmac("sha256", secret)
-  .update(`${ts}.${rawBody}`, "utf8")
-  .digest("hex");
-
-const ok =
-  timingSafeEqual(expected, parts.sha256) ||
-  (parts.sha256_prev && timingSafeEqual(expected, parts.sha256_prev));
-
-if (!ok) reject("signature mismatch");
 ```
 
 <Tip>
   We recommend a **±5 minute** tolerance on the timestamp, and always compare signatures in constant time (e.g. Node's `crypto.timingSafeEqual`) rather than with `===`.
 </Tip>
 
+### Standard Webhooks
+
+You can instead use a Standard Webhooks-compatible verifier with the same signing secret:
+
+- `webhook-id` is the stable event ID.
+- `webhook-timestamp` is the signing timestamp in Unix seconds.
+- `webhook-signature` contains one or more `v1,<base64 signature>` values.
+
+This signature covers `id.timestamp.rawBody`; it is different from the legacy Regentra signature above. Use the verifier's normal `whsec_` secret handling rather than treating a Standard Webhooks signature as a legacy hex digest. During overlap rotation both valid signing keys are represented.
+
+Verify the exact raw body before parsing or changing JSON whitespace. Check timestamp freshness, persist event IDs to deduplicate, and acknowledge only after saving the work durably. Return a 2xx quickly and perform lengthy processing asynchronously.
+
 ## Secret rotation
 
 Click **Rotate** on an endpoint to generate a new signing secret. Regentra shows you the new secret once, the same way it did at creation.
 
 For **24 hours** after rotation, every delivery is signed with both the new secret and the old one — the header carries an extra `sha256_prev=<hex>` computed with the previous secret, alongside the primary `sha256` computed with the new one. This gives you a window to update the secret on your receiving end without dropping any deliveries: verify against `sha256` first, and fall back to `sha256_prev` if that fails.
+
+If a secret has leaked, choose immediate rotation to invalidate the previous secret without the overlap. Update your receiver at once; deliveries signed only with the new key will fail until it has that key.
 
 ## Testing an endpoint
 
@@ -108,10 +121,14 @@ Click **Test** on any endpoint to fire a sample delivery immediately, signed exa
 
 Each endpoint's delivery log shows every attempt: event, status, HTTP response code, duration, and a snippet of the response body (useful for seeing exactly why your receiver rejected a request).
 
-A failed delivery (a non-2xx response, a timeout, or a network error) is retried automatically up to 3 times. Redirects are never followed — a 3xx response is treated as a failure, the same as any other non-2xx code, so make sure your endpoint URL doesn't redirect.
+A failed delivery is attempted immediately, then retried after 1 minute, 5 minutes, 30 minutes, 2 hours, 5 hours, 10 hours and another 10 hours: up to eight attempts over roughly 28 hours. Valid Retry-After values on 429/503 can lengthen a wait within the retry limits. Redirects are not followed.
+
+A failing receiver can enter a temporary circuit-open state that limits probes rather than occupying every delivery slot. Pending retries stop when the endpoint is disabled or unsubscribed from that event.
+
+Use **Resend** in the delivery log to queue another attempt for an eligible delivery after fixing its receiver. Resend acknowledges that it was queued, not that the receiver accepted it. A success resets the failure streak.
 
 <Warning>
-  An endpoint that keeps failing is automatically disabled after 50 consecutive failed delivery attempts (counting retries), and you'll get an email when that happens. Re-enable it from the endpoint's row once you've fixed whatever was rejecting deliveries.
+  Automatic disable requires both at least 50 consecutive failed attempts and a failure streak lasting at least three days. A `410 Gone` response disables the endpoint immediately. A Failing badge alone does not mean it has already been disabled. Repair the receiver before re-enabling it.
 </Warning>
 
 ## Payload contents
@@ -122,12 +139,20 @@ Every delivery is a JSON body:
 {
   "id": "evt_ticket.created_ckx1a2b3c4",
   "event": "ticket.created",
+  "apiVersion": "2026-10-01",
   "occurredAt": "2026-09-05T14:32:10.000Z",
   "organizationId": "org_...",
-  "data": { ... }
+  "data": {}
 }
 ```
 
 `id` is the same deterministic value sent in the `X-Regentra-Delivery` header — use it as your idempotency key, since a redelivered event carries the same `id` as the original.
 
 Payloads are built fresh from your data at send time, not forwarded from internal state — internal note content, full ticket descriptions, and email bodies are never included. A `ticket.reply_added` payload carries only customer-visible reply text, truncated to a short preview.
+
+
+Money payloads provide integer minor-unit fields with currency, such as `totalAmountCents` and `currency`; use these rather than assuming a decimal field is in dollars. Event IDs are opaque and remain stable on retry. Payloads are summaries built when dispatched, not a complete historical snapshot of every ticket field.
+
+Endpoint creation and secret rotation can require a recent identity check. An organization can have up to 25 endpoints; subscribe an existing endpoint to more events when that is more appropriate than adding another URL.
+
+These are **Regentra outbound webhooks**. [Alternative Payments notifications](/integrations/alternative-payments#notifications-and-recovery) use AP's separate Bearer authentication and account-wide retry rules.

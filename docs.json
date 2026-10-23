@@ -49,8 +49,11 @@
             "pages": [
               "psa/overview",
               "psa/tickets",
+              "psa/ticket-routing",
+              "psa/request-catalog",
               "psa/sla-policies",
               "psa/time-tracking",
+              "psa/calendar",
               "psa/companies-contacts",
               "psa/projects-agreements",
               "psa/invoices-quotes",
@@ -107,6 +110,8 @@
               "integrations/jira",
               "integrations/stripe",
               "integrations/quickbooks",
+              "integrations/zoho-books",
+              "integrations/xero",
               "integrations/alternative-payments",
               "integrations/payment-processors"
             ]
@@ -115,13 +120,16 @@
             "group": "Settings & Security",
             "pages": [
               "settings/organization",
+              "settings/invoices",
               "settings/team-management",
               "settings/notification-rules",
               "settings/tickets",
               "settings/webhooks",
               "settings/api-keys",
+              "settings/public-api",
               "settings/import-export",
               "settings/mfa",
+              "settings/sessions",
               "settings/sso"
             ]
           },
@@ -131,7 +139,8 @@
               "troubleshooting",
               "faq",
               "changelog",
-              "releases/september-2026"
+              "releases/september-2026",
+              "releases/october-2026"
             ]
           },
           {

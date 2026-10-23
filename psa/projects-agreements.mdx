@@ -49,7 +49,7 @@ When creating an [Invoice](/psa/invoices-quotes), optionally link a Service Agre
 Each agreement is built from individual line items rather than a single flat monthly fee. For each line item you set a description, quantity, unit price, and **billing cadence**:
 
 - **Monthly** — recurs every billing cycle.
-- **Annual** — recurs once a year (shown pro-rated per month in the agreement's rollup so you can compare it against monthly items).
+- **Annual** — an annual-priced line with a monthly equivalent used in the rollup and monthly billing; it does not create a separate anniversary-charge scheduler.
 - **One-time** — bills exactly once. After it's charged on an invoice, its cadence can no longer be changed.
 
 Line items can be picked from your [Service Catalog](/psa/service-catalog) — which pre-fills the description and price — or entered as a custom description. The agreement shows a running rollup of monthly, annual, and one-time totals, plus an **effective monthly** figure that combines them for easy comparison across agreements.
@@ -57,6 +57,22 @@ Line items can be picked from your [Service Catalog](/psa/service-catalog) — w
 <Note>
   Agreements created before line items existed still work — they fall back to their original flat monthly recurring amount until you add line items of your own.
 </Note>
+
+### Edit, pause and cancel
+
+Edit agreement details and line items without recreating them. A line keeps its product link and customer-specific negotiated price; changing a catalog default does not rewrite that agreement or its invoices. A consumed one-time line cannot be changed into another cadence to charge it again.
+
+Pause or cancel stops future automatic billing while the agreement is inactive. Resume/reactivate considers the applicable billing period; it does not automatically catch up every missed month. To bill a final month before cancellation, review the agreement end date and the confirmation text. Existing invoices, logged time and documents remain.
+
+### Monthly billing and schedules
+
+The normal monthly run bills only periods inside an active agreement's effective/end dates and only the recurring amount still unbilled for that month. An annual line's monthly equivalent contributes to the monthly billing calculation; its annual label is not a separate yearly charge scheduler.
+
+An optional agreement billing schedule supports a day or weekday, service-month selection and due terms, including advance billing. It queues drafts rather than emailing or charging customers. Enabling it does not create a historical catch-up batch. [Review and release](/psa/invoices-quotes#review-and-release) and the selected accounting integration's opt-in delivery settings still apply.
+
+### Import recurring items
+
+Use the recurring-item CSV preview/import workflow to add agreement lines in batches. Review company/agreement matches, product references, quantities, negotiated unit prices and cadence before committing. The import is additive; it does not rewrite existing lines or reset consumed one-time charges. If the preview becomes stale, refresh it instead of retrying an outdated plan.
 
 ### SOW and contract attachments
 
@@ -108,3 +124,8 @@ Results update in real time.
     No. A Service Agreement is a customer contract defining rates and terms. A Project Budget is an internal estimate of hours for a specific piece of work. They can be linked but serve different purposes.
   </Accordion>
 </AccordionGroup>
+
+
+## Projects with recorded work
+
+Projects with logged time cannot be deleted in a way that erases their work history. Complete or cancel the project instead. Tickets linked to project work show their logged-time contribution; review billable entries through the normal approval and invoice workflow.

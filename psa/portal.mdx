@@ -9,7 +9,7 @@ Each client gets a dedicated support portal — a white-label interface where th
 
 <CardGroup cols={2}>
   <Card title="Submit tickets" icon="ticket">
-    End users create support requests with title, description, priority, an optional asset link (from their organization's inventory), and file attachments.
+    End users create support requests with title, description, urgency, an optional asset link (from their organization's inventory), and file attachments.
   </Card>
   <Card title="View ticket status" icon="list-check">
     Customers see real-time status updates on their open and resolved tickets.
@@ -36,6 +36,20 @@ Customize the portal appearance under **PSA → Support Portal** (also reachable
 <Tip>
   There is one support portal per MSP organization — every one of your clients signs in to the same branded portal (differentiated by their own login, not by separate per-client branding). Branding fields live on your organization, not per client.
 </Tip>
+
+## Request catalog and approvals
+
+Enable the optional [Request catalog](/psa/request-catalog) to offer focused forms instead of only the general ticket form. Items can vary by company and portal role. Approver and Client admin contacts can use supported Requested for fields to raise work for colleagues; manager and role relationships determine approval audiences.
+
+The **Approvals** portal page lets eligible contacts decide requests addressed to them. Requesters normally see In Progress while approval is pending, or Awaiting approval when the item opts in. Internal fulfilment task tickets remain staff-only.
+
+## Home page and urgency wording
+
+Under Support Portal settings, customize the home headline, supporting text, tiles, counters and recent tickets. Tiles can link to visible catalog categories/items or HTTPS destinations; customers do not gain access to another company's request item through a tile.
+
+Customize the three urgency answers to language customers understand. This changes wording rather than the urgency/impact priority matrix; customers still cannot set Critical directly. Labels that masquerade as a priority are refused.
+
+Logo backgrounds can use system, white, black or transparent presentation. Preview narrow screens as well as desktop; the portal is shared across your MSP's client companies, not a separate branding configuration for each one.
 
 ## Custom domain setup
 
@@ -69,6 +83,8 @@ Host your portal on your own domain (e.g., `support.yourmspname.com`), used by a
 </Tabs>
 
 ## Contact management
+
+Customer access follows the contact's current company and role. A retained session does not give access to a company the contact has left. Internal notes, routing decisions and fulfilment task tickets remain staff-only.
 
 Portal contacts are the end users who can access the portal. Contacts can be:
 

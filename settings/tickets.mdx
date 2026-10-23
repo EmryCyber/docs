@@ -1,9 +1,39 @@
 ---
 title: "Tickets Settings"
-description: "Configure ticket numbering and the time-tracking-to-invoice billing behavior for your service desk."
+description: "Configure ticket types, templates, statuses, groups, custom fields, unanswered alerts and billing behavior."
 ---
 
-Go to **Settings → Tickets** to configure organization-wide ticket behavior: how ticket numbers are formatted, and how billed time interacts with ticket status.
+Go to **Settings → Tickets** to configure organization-wide ticket behavior. Administrators manage these settings; ticket users see the resulting types, queues, fields and status choices.
+
+## Types, templates and checklists
+
+Create ticket types to classify work, attach default checklists, and choose default groups. Templates provide reusable ticket defaults and can also be used by recurring schedules and request catalog items. Review defaults when changing a template used in several workflows.
+
+Checklist templates can warn or block before resolution. Custom fields can be scoped to ticket types and exposed as editable or read-only fields on the customer portal. AND/OR show-when rules make individual fields conditional; retired fields stop appearing on new forms.
+
+## Ticket statuses
+
+Add organization-specific statuses inside the fixed Open, In Progress, Waiting on Customer, Escalated, Resolved and Closed categories. Configure the technician label, optional customer label, allowed SLA pause behavior, customer notifications, required reason and customer-reply behavior.
+
+Built-in defaults preserve the standard category behavior. Retire custom statuses rather than deleting ticket history; built-ins and the current category default cannot be retired. **Waiting Approval** is managed by approval workflows and is not a manual status choice.
+
+Customers see the configured customer label or the category's normal wording, not an internal-only status name. See [Ticket lifecycle](/psa/tickets#ticket-lifecycle) and [SLA pausing](/psa/sla-policies#sla-pausing).
+
+## Technician groups and assignment
+
+Create groups, select queue-only or automatic assignment, manage members and limits, and set an organization default group. Companies, ticket types, templates and catalog items can override that default. Configure overflow and tier hand-offs where needed. See [Ticket routing](/psa/ticket-routing).
+
+## Recurring tickets
+
+Create daily, weekly, monthly, quarterly or yearly schedules using ticket templates and optional group defaults. These are maintenance work, so they do not receive a customer SLA or enter customer SLA compliance scoring.
+
+## Unanswered-ticket alerts
+
+Choose **Alert after** and **Count waiting time**: business hours or **24/7 (elapsed time)**. Off disables the alert. Changing the clock also applies to existing waiting tickets.
+
+The alert covers recent customer tickets that have neither an assignee nor a staff reply/note. It excludes monitoring, RMM, imports, recurring work and staff-created tickets. Group members receive the first bell/email alert; at twice the threshold, they and administrators receive one reminder. Tickets with no active group members alert administrators first.
+
+Checks run every five minutes, so delivery can follow the threshold by a few minutes. Business time uses the ticket's SLA policy, or Monday–Friday 08:00–17:00 in the organization time zone when none applies. The 24/7 option counts nights and weekends independently of the SLA.
 
 ## Ticket numbering
 

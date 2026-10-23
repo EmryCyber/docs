@@ -27,6 +27,12 @@ Open an asset from the Asset Inventory list to reach its detail page. From there
 
 All syncs preserve historical data; archiving a device in an RMM or in Entra updates its status without deleting the record.
 
+## Device owners and source data
+
+Automatic owner resolution is revisited on sync using directory/RMM signals, while a technician's explicit owner choice is retained. A device present in both NinjaOne and Intune keeps its joined owner/compliance context rather than becoming unrelated twins.
+
+Selecting a contact on a ticket can link their associated device. Verify the company and asset before changing an automatic choice. Operator notes and manually maintained fields are distinct from provider-owned telemetry.
+
 ## Filtering by company
 
 Each asset card shows the [company](/psa/companies-contacts) it belongs to. Use the **Company** filter on the Asset Inventory page to narrow the list to a single client — handy when you're reviewing one customer's environment or preparing for a site visit.

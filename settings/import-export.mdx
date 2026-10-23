@@ -14,6 +14,8 @@ Every dataset below is available in CSV, Excel (XLSX), and PDF:
 | Companies | Client companies with contact, agreement, and billing-link info |
 | Contacts | Portal contacts with company, portal access, and last login |
 | Tickets | Tickets with company, assignee, SLA state, and time logged |
+| Ticket history | Recorded changes with actor, time and reconstructed-history labels |
+| Ticket time by technician | Total and billable minutes per ticket and technician |
 | Time Entries | Billable and non-billable time entries with approval state |
 | Invoices | Invoices with amounts, status, and QuickBooks/Stripe link flags |
 | Quotes | Quotes with one-time/monthly/annual totals and acceptance state |
@@ -50,6 +52,8 @@ A small export downloads immediately. A large one is queued as a background job 
 
 ## Formats
 
+Use **Columns** to choose supported fields and their order. Ticket exports can include type, group, contact method, status detail, lifecycle durations, reopens, SLA outcomes and history quality. A PDF with no explicit column selection uses its readable default column set rather than every field.
+
 <Tabs>
   <Tab title="CSV">
     Plain comma-separated values — the most portable option, good for importing into another system or a spreadsheet.
@@ -78,6 +82,14 @@ The **Recent Exports** section on this page lists your jobs — dataset, format,
 
 Any date-range filter you set (for example, on Time Entries or the Audit Log) is applied using your organization's configured timezone, and the boundaries are inclusive of the full start and end days you pick — not a UTC midnight cutoff that clips off part of the first or last day.
 
+## Saved and scheduled exports
+
+Save a name, dataset, filters, format and chosen columns. Run it on demand or add a daily, weekly or monthly schedule at an organization-local hour. Scheduled date-based datasets need a relative date preset so each run calculates the right period.
+
+Choose active staff whose roles can access the dataset. Eligibility is checked at creation, execution and file delivery. Export-ready emails contain a signed-in download link, not the exported file attachment. Pause/resume or delete a schedule from **Saved exports**.
+
+Schedules do not replay every missed period. A missing dataset or no eligible recipient pauses the schedule; an organization at its running-job limit waits for another check. Dataset role and product gates still apply to saved exports.
+
 ## What's never exported
 
 Passwords, integration credentials, API keys, webhook secrets, and the contents of the Networks module's notes field are never included in any export, regardless of dataset or format — these stay inside Regentra even when you export everything else about a record.
@@ -92,9 +104,14 @@ The Import tab supports bulk-creating or updating a handful of record types from
 | Assets | Creates new asset records | Name (required), Type (required), Status, Serial Number, Manufacturer, Model, Location, Assigned To |
 | Control Updates | Updates existing controls by IC Code | IC Code (required), Status, Assigned To, Due Date, Implementation Notes |
 | Policies | Creates new policy records (content is added afterward) | Title (required), Category (required), Status, Version, Effective Date, Review Date |
+| Companies | Import company records using the provided mapping/template | Use the company import template and preview. |
+| Agreements | Import customer agreements | Use the agreement import template and resolve company matches. |
+| Tickets and ticket history | Import prior PSA work and conversation history | Use the ticket import mapping, including ServiceDesk Plus-compatible columns where applicable. |
 
 Upload a CSV, and Regentra reports how many rows were created, updated, or skipped, along with a row-by-row list of any errors.
 
 <Tip>
-  These CSV imports are separate from the dataset-registry exports above — they cover only the record types listed in the table, not every exportable dataset. A couple of the others have their own bulk-import path elsewhere instead of on this page: Networks imports from **PSA → Networks**, and Contacts import from **PSA → Contacts**. Companies and the remaining datasets have no bulk-import path today.
+  Import and export capabilities are separate. Contacts import from PSA → Contacts; products from the billing catalog; networks from PSA → Networks; recurring agreement items use their own preview/import flow. Use the appropriate template rather than assuming every exported dataset can be uploaded back unchanged.
 </Tip>
+
+Ticket migration preserves supported source identifiers and distinguishes imported history from newly recorded events. Review warnings for unreadable lifecycle dates and check row-by-row errors before continuing a partial import. Retrying compatible files should not duplicate previously imported replies. File, row and column limits protect the importer before expensive parsing.

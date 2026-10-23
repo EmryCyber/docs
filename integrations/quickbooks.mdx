@@ -76,7 +76,7 @@ When both are connected:
 | Customer action | Stripe side | QuickBooks side |
 | --- | --- | --- |
 | Pays via Stripe checkout link | Invoice closes, deposit lands in your bank | Regentra automatically creates a QB Payment so the QB ledger reflects the receipt |
-| Pays via QB Pay Now (if enabled) | Regentra automatically voids the linked Stripe invoice so they can't double-pay | Payment lands, ledger updates |
+| Pays via QB Pay Now (if enabled) | Regentra attempts to close the linked Stripe collection; inspect any warning | Payment lands, ledger updates |
 | Pays you offline (cash, wire) | — | Click Mark Paid in Regentra → QB Payment created |
 
 The bridges are best-effort and idempotent — webhook redeliveries and double-clicks can't double-book.
@@ -85,7 +85,7 @@ The bridges are best-effort and idempotent — webhook redeliveries and double-c
 
 When both Stripe and QB are connected, Regentra defaults the **QB Pay Now toggles to OFF**. The customer sees only the Stripe checkout link. This prevents the parallel-payment-path failure mode where the customer might use both channels and end up double-charged.
 
-You can override this — turn the QB Pay Now toggles back on under **Settings → Integrations → QuickBooks Mapping → Online Payment Methods**. The bridges still keep it safe, but a single payment path is simpler for customers and bookkeeping.
+You can override this under **Settings → Integrations → QuickBooks Mapping → Online Payment Methods**, but overlapping collection paths can still race before a best-effort bridge closes one. Prefer one payable path and inspect existing open links before changing it.
 
 ### Stripe processing fee + bank deposit reconciliation
 
@@ -95,7 +95,7 @@ When a customer pays $100 via Stripe, Stripe deposits ~$97 into your bank and ke
 2. $97 net deposit hitting your bank account.
 3. $3 expense recorded against a "Stripe Fees" account.
 
-**Regentra creates all three natively** when you configure two account mappings — no third-party reconciliation tool required.
+Regentra records the gross payment and, when configured, a fee expense against the mapped bank account. Reconcile those entries against actual Stripe settlements in the books; this does not replace checking the bank deposit or every accounting adjustment.
 
 <Steps>
   <Step title="Open the QuickBooks mapping page">
@@ -151,13 +151,13 @@ If your QuickBooks connection breaks — most commonly an expired refresh token 
 
 ## Payment processor and accounting sync roles
 
-QuickBooks can act as both your **payment processor** (collecting payment) and your **accounting sync** (recording it to your books) at the same time — every other processor (Stripe, Alternative Payments) only ever holds the payment-processor role. See [Payment Processors](/integrations/payment-processors) for how this works, including what happens if you connect QuickBooks while Stripe is already your active processor, and what disconnecting QuickBooks does to both roles at once.
+QuickBooks and Zoho Books can hold collection and accounting roles. Stripe/AP can take over collection while keeping QuickBooks as the books. See [Payment Processors](/integrations/payment-processors) for role replacement and what happens to existing invoices when a connection is disconnected.
 
 ## What gets synced (per direction)
 
 ### Regentra → QuickBooks
 
-- **Customers** — Portal Companies push to QB Customers via **Sync to QuickBooks** (or auto-sync on Portal Company edit). Dedupes by primary email.
+- **Customers** — the first create/link is an explicit **Sync to QuickBooks** on the company card. Creating a company or Microsoft 365 onboarding does not create a remote customer. Later edits update an existing link; customer-facing billing-name changes keep the linked QuickBooks customer identity.
 - **Invoices** — pushed on **Send to QuickBooks** from the invoice detail page or auto-pushed when "QuickBooks" is checked as a destination on invoice generate.
 - **Payments** — created automatically for settled Stripe or direct Alternative Payments collections and the Mark Paid manual action. AP collection through its own QuickBooks connection posts to QuickBooks through AP instead.
 - **Voids** — propagated to QB invoice voids.
@@ -168,6 +168,16 @@ QuickBooks can act as both your **payment processor** (collecting payment) and y
 - **Invoice paid (full)** — local invoice flips to PAID; if linked to Stripe, Stripe invoice auto-voided.
 - **Invoice paid (partial)** — local invoice flips to PARTIAL with remaining balance shown in the UI. Flips to PAID once the rest lands.
 - **Payment received** — walks `LinkedTxn[]` to find the affected invoice and reconciles balance.
+
+## Products, invoice imports and provider changes
+
+The Products card supports an explicit item sync, product-master selection and a review queue for conflicting changes. **Keep products in step with QuickBooks every hour** is off until enabled. Using a product's linked accounting item on invoice lines is another opt-in; existing default-item mapping continues otherwise.
+
+**Import invoices created in QuickBooks** is off by default. Once enabled, new provider-created invoices can be linked/imported; use the explicit backfill for older invoices and continue partial runs as instructed. Unmatched customers need linking rather than a second invoice pushed back into QuickBooks.
+
+Voids and deletions from the books enter an administrator review queue. Apply or dismiss them after checking local payments. Switching QuickBooks companies clears old accounting identities; review links and mappings before sending into the new company.
+
+**Also send monthly agreement invoices** is separate from the main auto-push option and applies from its enablement cutover. Reviewed invoices wait for approval and release. See [Invoices](/psa/invoices-quotes).
 
 ## Troubleshooting
 
@@ -181,11 +191,11 @@ Refresh tokens last ~100 days. If yours expired, the connection-status banner on
 
 ### Customer paid via Stripe but QB still shows the invoice as outstanding
 
-The auto-bridge runs when the Stripe payment completes. If it failed (network blip, expired QB token, etc.), the local invoice is PAID but the QB ledger isn't. Click **Mark Paid** on the invoice detail page — same idempotency key, so it retries the QB Payment creation. The audit log captures both the failed attempt and the manual retry.
+The bridge can fail after the local receipt is recorded. Inspect the invoice's QuickBooks warning and actual payment history, repair a broken connection, then use the supported recovery action or contact support. Do not record a second receipt merely to make both status badges agree.
 
 ### Stripe invoice still shows "open" after customer paid via QB
 
-Same situation in reverse. The QB-paid → Stripe void bridge is best-effort. Manually void the Stripe invoice from the Stripe dashboard, OR click **Void** on the Regentra invoice detail page (which fires both the local + Stripe + QB voids in one action).
+The collection-close bridge is best effort. Verify the actual QuickBooks receipt and inspect the linked Stripe invoice before closing that payable Stripe copy. Do not void the paid accounting invoice merely to stop an old payment link; investigate any displayed warning or contact support.
 
 ### Realm-already-connected error
 

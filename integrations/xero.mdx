@@ -1,0 +1,51 @@
+---
+title: "Xero"
+description: "Connect a Xero organization for customer, invoice and payment synchronization with explicit account mappings."
+---
+
+Xero holds Regentra's accounting role. Collection can use another connected processor, such as Stripe or Alternative Payments. Xero does not take Regentra's payment-processor slot.
+
+## Connect or reconnect
+
+1. Open **Settings → Integrations → Xero** and connect through OAuth.
+2. Complete the recent-identity check when prompted.
+3. Select the correct Xero organization if your account has more than one available connection.
+4. Open Xero's settings and configure its account mappings.
+
+Only one accounting provider can be active, and a Xero organization cannot be linked to two Regentra organizations at once. Review a replacement confirmation before disconnecting your current books. After a failed connection attempt, verify which provider remains connected.
+
+<Note>
+  Xero connections made before the full-sync change on October 17, 2026 stay inactive for the new sync until reconnected. Reconnect and confirm the intended Xero organization before using invoice delivery. A connection card alone is not proof an older connection is ready for the new workflow.
+</Note>
+
+## Account mappings
+
+Select the **sales account** used for invoice lines. Select a **bank/payment account** for receipts recorded from Regentra. The payment account is identified by Xero's account ID, including bank accounts with no account code.
+
+Choose whether Xero is checked on new invoices, and separately whether monthly agreement invoices are sent there. These options do not bulk-send all historical invoices. Existing review/release preferences still gate reviewed invoices.
+
+## Customers
+
+The company's Xero card provides the first explicit customer sync. Creating a company or importing it from Microsoft 365 does not create a Xero contact in the background. After linking, supported name and billing-contact edits update that link.
+
+An exact compatible existing contact can be adopted; a conflicting identity must not silently attach the wrong customer. Unlinking from Regentra removes the local link rather than deleting the Xero contact.
+
+## Invoices and payments
+
+Select Xero as an invoice destination or send from the invoice's Xero card. Regentra uses the mapped sales account, preserves its provider link and reference, and verifies the returned total. A draft is authorized through the supported local Send/release workflow.
+
+Xero-only invoices are supported when the required customer/account setup is complete. With another processor collecting, review tax and disable overlapping online collection that would let a customer pay a second copy. [Reviewed invoices](/psa/invoices-quotes#review-and-release) can be blocked when tax or credit handling cannot establish the approved payable total.
+
+Payment polling reads full and partial receipts back into Regentra. Supported processor receipts and offline payments can be recorded against the linked Xero invoice. A failed payment bridge or collection-close produces a warning to investigate; it is not proof the books or payment link are already correct.
+
+## Review provider changes
+
+Accounting voids and deletions enter a review queue. Apply or dismiss them only after checking the local invoice and payment history. Changes made in the accounting system do not justify silently dropping an independent receipt.
+
+Xero invoices use the mapped sales account; the current integration does not provide a Xero-to-Regentra product-catalog sync.
+
+## Broken connections and switching organizations
+
+An expired/revoked authorization shows **Xero connection is broken** with **Reconnect**. Reconnect to repair access, then verify mappings and the selected organization. Provider rate limits can defer background work; repeatedly retrying does not bypass them.
+
+Disconnect removes this Regentra connection to the selected organization. Changing organizations is an accounting-identity change: inspect old links and pending work before sending further invoices. See [Payment processors](/integrations/payment-processors) for switching behavior.

@@ -3,7 +3,7 @@ title: "Managing Compliance Frameworks"
 description: "Adopt compliance frameworks, understand control seeding, and manage multi-framework programs with the Common Control Framework."
 ---
 
-Frameworks are the foundation of your compliance program in Regentra. Each framework represents a compliance standard — HIPAA, NIST CSF 2.0, SOC 2, ISO 27001, CMMC Level 1 and Level 2, PCI DSS, GDPR, FTC Safeguards, SEC Regulation S-P, or FINRA — with its own set of controls, requirements, and structure. Regentra supports 11 frameworks in total.
+Frameworks are the foundation of your compliance program in Regentra. Regentra supports 13 frameworks, including HIPAA, NIST CSF 2.0, SOC 2, ISO 27001, CMMC Levels 1 and 2, PCI DSS, GDPR, FTC Safeguards, SEC Regulation S-P, FINRA, CIS Controls and the CIS Microsoft 365 Foundations Benchmark.
 
 ## Adopting a Framework
 
@@ -34,6 +34,14 @@ When you adopt a framework, Regentra performs several actions automatically:
 <Info>
   Controls seeded by framework adoption belong to your organization. You can edit their descriptions, add implementation notes, and customize them to fit your environment.
 </Info>
+
+## CIS frameworks and profiles
+
+**CIS Controls v8.1.2** supports Implementation Groups IG1, IG2 and IG3. **CIS Microsoft 365 Foundations Benchmark v7.0.0** supports E3/E5 and Level 1/Level 2 profiles. Choose a profile at adoption or change it on the framework page when your scope changes.
+
+Requirements outside the selected profile are treated as not applicable for the scoped gap view. Changing a profile preserves existing controls, evidence and history. Some newly needed controls are added only when an adopted framework/profile requires them; adding support for CIS does not automatically expand every organization's control set.
+
+Automated evidence covers only part of the benchmark. Review each requirement's evidence/coverage labels and supply manual evidence where needed. An adopted profile is not proof that every recommendation was automatically tested.
 
 ## Switching Between Frameworks
 
