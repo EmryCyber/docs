@@ -25,15 +25,23 @@ Create and manage customer quotes and invoices. Pull line items from your [Servi
     Enter a title (e.g. "Managed IT Services Proposal"), select a [company and contact](/psa/companies-contacts) (optional), and set a validity date.
   </Step>
   <Step title="Add line items">
-    Click **Add Item**. For each row, enter description, quantity, and unit price. Total calculates automatically.
+    Click **Add Item**. Pick a USD product to prefill description, price and cadence, or enter the line yourself. Review quantity, unit price and cadence; totals calculate automatically.
   </Step>
   <Step title="Set tax and review totals">
     Enter a tax rate (%). Subtotal, tax amount, and grand total update in real time.
   </Step>
   <Step title="Create the quote">
-    Click **Create Quote**. The detail page lets you review, send, or edit before acceptance.
+    Review Notes and Terms, then use **Preview** to inspect the PDF without saving or sending. Click **Create Quote** to save the draft. Send remains a separate action.
   </Step>
 </Steps>
+
+## Quote preview and products
+
+Use **Preview** beside Create Quote, or beside Save on an editable quote, to inspect the PDF with the current unsaved changes. **Back to editing** returns to the form. Preview does not create a quote, send an email or save typed company/contact records.
+
+The creation form includes Notes and Terms. Terms start from the organization's default for new quotes; existing quotes are not rewritten. Notes print on the customer's quote. Eligible unsigned PDFs include signature, date, printed-name and title lines; accepted PDFs show the recorded acceptance details.
+
+Picking a product copies its description, price and default quote cadence. You can edit the copied line without changing the catalog item. **Save to Products** explicitly creates a product from a new line; it does not happen automatically. Product links survive cloning and conversion to an invoice, while quoted amounts remain the agreed amounts. The quote picker offers USD products; the catalog itself supports other currencies.
 
 ## Quote recipient (Bill to)
 
@@ -86,7 +94,7 @@ Enable a company's **Financial settings** and select **Review and release before
 
 Approved invoices cannot be edited. If a replacement is needed, review voiding and any one-time agreement charges before preparing it. Recurring agreement quantities/prices are not repriced by editing the review invoice: change the agreement and regenerate where appropriate.
 
-Regentra's native release email attaches its PDF and a payment link when available after provider validation. AP handles its own delivery. Provider-hosted invoices keep the provider's layout. A failed or uncertain send must be investigated before sending another copy manually.
+Reviewed releases use the delivery owner configured in [Invoice email settings](/settings/invoices#invoice-email-delivery): Regentra, Microsoft 365, Stripe or QuickBooks. Native-email PDF and payment-link inclusion are configurable. Check the approval preview's sender, recipient, Reply-To and subject. AP handles its own delivery. Provider-generated PDFs keep the provider's layout. A failed or uncertain send must be investigated before sending another copy manually.
 
 <Warning>
   Review release can refuse accounting-managed tax totals or unsupported credit handling rather than email an unverified payable amount. Confirm tax in the issuing system. Choose Confirmed non-taxable services only when that is true; do not change tax treatment merely to bypass a release error. No new autopay or automatic-charge scheduler is enabled by this workflow.
@@ -96,7 +104,7 @@ Regentra's native release email attaches its PDF and a payment link when availab
 
 Client financial settings can override payment terms, a third-Monday due rule, PO/reference, message/footer, PDF layout and review defaults. A specific due date overrides its calculated rule. Service periods must end on or after their start date and print with the line details.
 
-**Standard** and **Service details** PDFs share stored billing preferences. Service details provides boxed recipient/account fields and a detailed balance summary. A due date schedules when payment is owed; it does not authorize a charge. See [Invoice settings](/settings/invoices).
+Choose **Organization default**, **Classic** (formerly Service details), **Modern**, **Minimal**, **Bold** or **Standard** for the PDF layout. Classic provides boxed recipient/account fields and a detailed balance summary. Organization design controls can affect later PDF downloads, including older invoices. A due date schedules when payment is owed; it does not authorize a charge. See [Invoice settings](/settings/invoices).
 
 ## Payment processors
 

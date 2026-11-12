@@ -4,15 +4,70 @@ description: "Product updates, new features, improvements and fixes in Regentra,
 rss: true
 ---
 
-What's shipped in Regentra, newest first. Each entry covers one week, or one month for earlier releases. Use the filters to show only the areas you care about.
+What's shipped in Regentra, newest first. Entries group related releases by date or period, with monthly summaries for earlier releases. Use the filters to show only the areas you care about.
 
-Every entry starts with anything you need to do, or anything that now looks different, and then lists what's **New**, **Improved** and **Fixed**. For a monthly overview, see [October 2026 updates](/releases/october-2026) or [September 2026 release notes](/releases/september-2026).
+Every entry starts with anything you need to do, or anything that now looks different, and then lists what's **New**, **Improved** and **Fixed**. For a monthly overview, see [October 2026 release notes](/releases/october-2026) or [September 2026 release notes](/releases/september-2026).
 
 <Info>
   Want product news without the marketing emails? In **My account → Notifications**, choose **Changelog only**. You can also follow this page's RSS feed.
 </Info>
 
-<Update label="October 21, 2026" description="October product updates: queues, requests, billing, integrations and security" tags={["PSA", "Compliance", "Billing", "Integrations", "Security"]}>
+<Update label="October 30, 2026" description="Invoice designs, quote previews and Regentra PDFs in Alternative Payments" tags={["PSA", "Billing", "Integrations", "Branding", "Account"]}>
+  **What to review**
+
+  - **AP direct sending:** check invoices voided or marked paid from October 20 until this fix for part payments in AP and missing receipts in Regentra. Open invoices are reconciled by the next eligible poll, but those historical cases may need manual repair. [AP recovery](/integrations/alternative-payments#october-part-payment-correction)
+  - **Invoice appearance:** Service details is now called **Classic**. Its payment instructions sit beside the totals; one-page invoices no longer print a page number. Saving organization design controls affects later PDF renders, including older invoices that use them.
+  - **AP PDFs are opt-in:** this workflow requires the QuickBooks accounting route, direct AP sending off, and Read/Write invoices permissions. Delay AP's creation email so its first email can include the uploaded PDF. [Setup](/integrations/alternative-payments#use-regentras-pdf-in-ap)
+
+  ### New
+
+  - **Invoice designs:** Classic, Modern, Minimal, Bold and Standard; organization defaults, client layout choice, accent colour, A4/Letter, wording, visible columns and a sample preview. A configurable page footer adds contact details and an optional text line. [Invoice settings](/settings/invoices)
+  - **Quote preview before saving:** inspect the PDF before Create Quote or preview unsaved edits. Notes and Terms are available on the creation form; eligible unsigned PDFs include signature lines and accepted quotes show recorded acceptance. [Quotes](/psa/invoices-quotes#quote-preview-and-products)
+  - **Products on quotes:** pick a USD product to fill description, price and default cadence, or explicitly save a new line to Products. Links carry through cloning and invoice conversion; CSV import/export includes Quote cadence. [Products](/psa/service-catalog#products-on-quotes)
+  - **Regentra PDFs in AP:** replace the PDF on an existing AP invoice using verified QuickBooks tax and totals, with individual upload/retry controls. Older invoices are not bulk-uploaded automatically. [AP PDFs](/integrations/alternative-payments#use-regentras-pdf-in-ap)
+
+  ### Improved
+
+  - Invoice instructions, closing text and page-footer controls have clearer placement. AP customer PDFs show an issued invoice even if the local record is still a draft.
+  - Microsoft sign-in offers an account chooser on retry when the previous account lookup failed.
+
+  ### Fixed
+
+  - AP uses the provider's current outstanding balance field, restoring part-payment detection, split settlement and correct archive warnings after AP's API change.
+  - New quotes apply the organization's default terms; previews use the customer's resolved branding and do not create or send a quote.
+  - Security dependency updates and release checks keep the production runtime patched.
+  - Former-MSP integrations, portal routing and scheduled feeds stop reaching clients they no longer manage.
+
+  The complete [October 2026 release notes](/releases/october-2026) now cover the full month.
+</Update>
+
+<Update label="October 26, 2026" description="October 22–26: invoice email controls, authenticator choice, vault QR import and security fixes" tags={["PSA", "Compliance", "Billing", "Integrations", "Security", "Account"]}>
+  **What to review**
+
+  - **Reviewed invoice emails:** choose one delivery owner and inspect the preview before release. Microsoft 365 needs mailbox authorization; provider emails use their own settings. When syncing to QuickBooks, disable its **Automatically send imported invoices** option to avoid an additional email.
+  - **Authenticator apps:** adding Regentra codes to an app is separate from **Continue with Microsoft**. Standard codes need no Microsoft directory connection. Keep your sign-in recovery factors outside the vault.
+
+  ### New
+
+  - **Invoice email settings:** choose Regentra, Microsoft 365, Stripe or QuickBooks for reviewed releases; configure native-email subjects, Reply-To, PDF/payment-link inclusion and Microsoft 365 Sent Items. Settings and approval previews show the resolved delivery details. [Email delivery](/settings/invoices#invoice-email-delivery)
+  - **Authenticator choice and recovery:** setup offers an authenticator app or passkey. Eligible password sign-ins can use verified Microsoft MFA even with SSO disabled; platform support has a verified reset path for tenant lockouts. [MFA](/settings/mfa)
+  - **Vault enrollment**, where enabled: import a TOTP QR image on the device, preview a code, save, then complete confirmation at the protected service. Saved setup keys remain write-only. [Vault](/psa/password-management#authenticator-codes)
+  - **End MSP management:** client administrators can confirm unlinking with a recent identity check. Eligible MSP-provided products receive a 14-day transition window. [Managing clients](/msp/clients#ending-msp-management)
+
+  ### Improved
+
+  - Invoice forms have clearer alignment, month defaults and sender-address handling.
+  - Attachment authorization, Microsoft identity verification, integration-secret controls and request-abuse protections are stronger.
+
+  ### Fixed
+
+  - Policy images and links render through review, signing, printing and export; the compliance client switcher works after moving from PSA.
+  - Inbound email threads replies more reliably and gives organizations a fair share of processing; chat bridges avoid loops.
+  - Quote sends handle duplicate clicks and retries without invalidating newer links. Password sign-in no longer substitutes for email verification.
+  - Removed MSPs lose managed access to former clients' data. Further tenant-isolation, seat-count and transfer work remains subject to separate rollout controls.
+</Update>
+
+<Update label="October 21, 2026" description="October 1–21: queues, requests, billing, integrations and security" tags={["PSA", "Compliance", "Billing", "Integrations", "Security"]}>
   **What to review**
 
   - First accounting-customer pushes are manual; older Xero connections need reconnecting for full sync.
@@ -47,6 +102,7 @@ Every entry starts with anything you need to do, or anything that now looks diff
   - Billing and provider retries preserve payment identities, negotiated totals and collection-close warnings. Invoice PDFs retain product headings and long descriptions.
   - Email screenshot imports, customer-scoped AI evidence, tenant proof, device ownership and read-only access have stronger boundary checks.
   - API automation accounts no longer consume PSA seats, and MSP client plan amounts display in the correct units.
+  - Deliberately selected default time windows can be saved; certification reminders and staff ticket links open the right page, and SMS retries do not duplicate replies or reopen notifications.
 
   See the [October overview](/releases/october-2026) for setup impact and feature availability. These notes cover changes merged through October 21; gated features remain conditional.
 </Update>
