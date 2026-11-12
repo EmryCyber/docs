@@ -61,6 +61,12 @@ When creating or editing an [Invoice](/psa/invoices-quotes), for each line item 
 
 If an item is later archived, historical invoices keep referencing it; it just won't appear in the picker for new invoices.
 
+## Products on quotes
+
+Products also appear in the [quote line picker](/psa/invoices-quotes#quote-preview-and-products). Set a product's **Quote cadence** to prefill a quote line alongside its description and price. This is a quote default, separate from the free-text display unit; it does not create an agreement or start recurring charges.
+
+Quote lines can explicitly **Save to Products**. Product links carry through cloning and invoice conversion while preserving quoted amounts. The quote picker offers USD products only. Product CSV import/export includes a **Quote cadence** column; older files without that column remain supported.
+
 ## Pricing and currency changes
 
 Products and agreements can retain their links while using a customer-specific negotiated price. The picker shows the applied invoice rate where it differs from the catalog default. Duplicating a product creates a separate editable record rather than changing existing contracts.

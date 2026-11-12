@@ -7,7 +7,21 @@ Use **Settings → Invoices** for organization invoice defaults. On a company's 
 
 ## Organization defaults
 
-Set the billing email, payment-term defaults, invoice footer/instructions and invoice tax-ID visibility in the applicable invoice/company-profile settings. Invoice tax-ID visibility is independent from quote visibility. The organization's billing email is used on native invoice presentation and as the release email's Reply-To, with the existing support-email fallback.
+Set the billing email, payment-term defaults, invoice footer/instructions and invoice tax-ID visibility in the applicable invoice/company-profile settings. Invoice tax-ID visibility is independent from quote visibility. The billing email appears on native invoice presentation and supplies the release email's default Reply-To, before the support-email fallback. It does not grant permission to send from that address.
+
+## Invoice email delivery
+
+In **Settings → Invoices → Invoice email delivery**, choose the delivery owner used when approving and releasing reviewed invoices:
+
+- **Regentra email service** uses the platform sender.
+- **Microsoft 365 mailbox** uses an authorized connected mailbox. Leave the mailbox blank to use the connected default; Microsoft controls the From display name and Send As permissions.
+- **Stripe** or **QuickBooks** sends through that provider, which must be an invoice destination. Its own sender, subject, PDF and reply settings apply.
+
+Regentra and Microsoft 365 delivery support a Reply-To override, PDF attachment and available payment-link options. The subject accepts only `{msp_name}` and `{invoice_number}` placeholders; leave it blank for the default. Microsoft 365 also supports saving a copy in Sent Items.
+
+The settings preview and review-batch approval show the resolved delivery details. Check them before release. Direct provider-send actions keep their provider workflow, and AP controls its own delivery. When syncing QuickBooks, disable its **Automatically send imported invoices** setting if it would send an additional copy.
+
+For Microsoft 365, choose whether a missing connection stops delivery or uses Regentra instead. This fallback applies before an attempt when no connection is configured. Permission errors and uncertain delivery results stop for review; they do not silently switch senders. Investigate an uncertain attempt before sending another copy.
 
 ## Customer-facing details
 
@@ -28,8 +42,12 @@ Existing companies remain on their previous workflow until preferences are enabl
 
 ## PDF layouts
 
-**Standard** is a simple itemized layout on A4. **Service details** uses US Letter, boxed account/billing fields, detailed service lines and separate subtotal, tax, adjustments, payments/credits and balance due.
+Choose **Classic** (formerly **Service details**), **Modern**, **Minimal**, **Bold**, or the original **Standard** in **Settings → Invoices → Invoice design**. Standard defaults to A4; the other designs default to US Letter. You can choose A4 or Letter explicitly, set an accent colour, change the document/customer/items/amount-due labels, and show or hide quantity/rate columns and service periods. Use the sample preview before saving.
 
-Both preserve descriptions, service periods and stored totals. Product headings appear above descriptive text without repeating an identical first line. Long descriptions continue onto later pages. A provider-hosted invoice uses that provider's own layout; these preferences affect Regentra's PDF.
+Client financial settings and the invoice form can select a particular layout or **Organization default**. The client's layout is copied onto a new invoice. Organization design controls are read whenever a PDF is rendered, so saving them also affects later downloads of older invoices that use those controls. An untouched organization retains its previous appearance.
+
+Classic has boxed account/billing fields, detailed service lines and an itemized balance summary. Its message, client billing instructions and applicable Remit-To instructions print beside the totals; the organization's invoice footer supplies the closing text. The separate **Invoice page footer** card controls company name, phone, website and an optional text line. Page numbers print only on multi-page invoices.
+
+Designs preserve stored totals and product headings. Long descriptions continue onto later pages. Provider-generated PDFs use their own layouts. An existing PDF uploaded to AP is not refreshed solely by a design change; use **Upload again** on the invoice when needed. See [Regentra PDFs in AP](/integrations/alternative-payments#use-regentras-pdf-in-ap).
 
 Use [Preview PDF and review/release](/psa/invoices-quotes#saved-drafts-and-pdf-preview) to verify the final recipient, amounts and wording. Explicit tax lines print as tax; an unexplained difference is not silently labeled as tax. Confirm non-taxable treatment only for services that are actually non-taxable.

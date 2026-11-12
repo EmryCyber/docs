@@ -1,64 +1,142 @@
 ---
-title: "October 2026 Product Updates"
-description: "Ticket operations, request workflows, billing, integrations and security changes merged through October 21."
+title: "October 2026 Release Notes"
+sidebarTitle: "October 2026 release"
+description: "Everything that shipped in Regentra during October 2026: ticket queues, requests, SLAs, reporting, billing, quotes, integrations, compliance, sign-in and security."
 ---
 
-This overview covers product changes merged through **October 21, 2026**, reviewed against the previous 30 days of PSA work. Setup guides describe the resulting workflows. Availability follows your products, permissions, connected providers and rollout settings; an opt-in feature is not enabled for every organization by this release note.
+October brought new ways to route tickets, approve customer requests and review invoices before sending them. This page rounds up the month's releases, grouped by area. For dated changes and anything you need to do, see the [Changelog](/changelog).
 
-For September changes already documented during the review period, see [September release notes](/releases/september-2026) and the dated [changelog](/changelog).
+<Note>
+  **Things to check after this release**
 
-## What to review first
+  - **Accounting customers:** the first push is manual. Confirm the company/provider link before invoicing. Reconnect older Xero connections to use full sync.
+  - **Invoice delivery:** review who sends the email before releasing a batch. Microsoft 365 needs permission to send from the selected mailbox; a billing email address alone does not provide that permission.
+  - **Alternative Payments:** use one route for each invoice. If direct sending was enabled and an invoice was voided or marked paid from October 20 until the October 30 fix, check AP for part payments and missing receipts; those historical cases are not all repaired automatically.
+  - **Permissions:** review technician shared-vault access and add new API scopes deliberately. Existing API keys do not gain the new scopes automatically.
+</Note>
 
-- **Accounting:** first customer pushes are manual. Review the correct company/provider link before invoicing. Older Xero connections need reconnecting to use the October 17 full-sync workflow.
-- **Billing:** client financial preferences, invoice review/release, agreement schedules and accounting auto-send options are opt-in. Payment terms do not enable autopay. Confirm tax and provider totals before release.
-- **Vault permissions:** administrators can choose which shared-vault actions technicians may perform. Review **Settings → Password Vault**; an organization without a custom technician policy allows the supported actions, including add/edit/delete.
-- **Integrations:** API keys do not automatically gain the new scopes. Check a workflow's required permissions before using ticket listing, updates, assignment or history.
-- **Policies:** template changes are reviewed rather than silently applied. Material updates to approved/active policies create a new draft version for approval; acknowledgment campaigns remain a separate step.
+Request catalogs, billing review, agreement schedules and provider auto-send options remain opt-in. Zoho Books and vault authenticator codes follow their rollout settings. Availability also depends on your products, role and connected providers.
 
-## Ticket queues, statuses and service levels
+## Ticketing and routing
 
-[Technician groups](/psa/ticket-routing) add queue-only, round-robin and fewest-open assignment, availability, primary-technician preference, overflow and tier hand-offs. Tickets can be in a group without an individual assignee. The distribution report explains assignment decisions and offers a confirmed release-back-to-queue action.
+- **Technician groups and queues**: keep work in a group without assigning an individual, or use round-robin and fewest-open assignment.
+- **Routing controls**: technician availability, primary-technician preference, overflow groups and support tiers.
+- **Distribution report**: see why assignments were made and release selected work back to its queue after confirmation.
+- **Custom ticket statuses**: define statuses within the fixed lifecycle categories, with customer-facing labels, required reasons, pause behavior and reply rules.
+- **Unassigned filters**: combine unassigned work with company and group views.
+- **Notifications**: group targeting and an inbox of unread assignments, mentions, customer replies and ticket alerts. Unanswered-work alerts can use business time or 24/7 thresholds.
+- **Reply handling**: genuine linked customer replies reopen resolved or closed work across supported channels; automatic replies do not reopen tickets.
+- **Fixes**: changing a ticket's contact updates its requester, technician pickers work for the appropriate roles, and policy/SLA notifications no longer remain unread after being read.
 
-[Ticket settings](/settings/tickets) now cover custom statuses within fixed lifecycle categories, customer-safe labels, permitted SLA pause behavior, required reasons and customer-reply rules. Unassigned filters combine with company/group views. Genuine linked customer replies reopen resolved/closed work across supported channels; automatic email replies do not.
+[Tickets](/psa/tickets) · [Ticket routing](/psa/ticket-routing) · [Notification rules](/settings/notification-rules)
 
-[SLA policies](/psa/sla-policies) support business/on-call calendars, holidays, policy order and conditions, response/resolution coverage, escalation levels and internal group targets. Evaluation runs every minute with a backstop. Recorded breaches are retained; unchanged policy matches do not shift deadlines. The ticket's SLA details explain the clocks and actions.
+## Service levels
 
-[Notification rules](/settings/notification-rules) include group targeting. The bell retains unread assignments, mentions, replies and ticket alerts. Unanswered customer work can use business-time or 24/7 thresholds; reading a notification does not resolve the underlying issue.
+- **Business and on-call calendars**, holidays, ordered policy matching and separate response/resolution coverage.
+- **Escalation levels**: per-metric actions, events and automation conditions, checked every minute with a backstop.
+- **Internal group targets**: track pickup and resolution within a technician group.
+- **SLA details on tickets**: inspect clocks, targets and escalation actions.
+- **More accurate reporting**: corrected reopened-ticket scoring, pause time and business-hours calculations. Recorded breaches are retained, and unchanged policy matches do not move deadlines.
+- **Intake fixes**: eligible tickets receive their SLA through the shared creation path; recurring tickets stay out of client SLA reports. Bot intake asks urgency rather than allowing requesters to choose Critical priority.
 
-## Customer request workflows
+[SLA policies](/psa/sla-policies) · [Ticket settings](/settings/tickets)
 
-The optional [Request catalog](/psa/request-catalog) provides targeted forms, company/role visibility, conditional fields, urgency wording and Requested for colleagues. Approval policies support several levels and ANY/ALL decisions, expiry/fallbacks and portal approvals.
+## Customer requests and automations
 
-Fulfilment blueprints create internal task tickets with dependencies, date-based release and approval gates. The parent request shows progress; customers do not see internal task tickets. These workflows are separate from the billing product catalog.
+- **Request catalog**: customer forms with company/role audiences, conditional fields, urgency wording and requests on behalf of colleagues.
+- **Multi-level approvals**: ANY/ALL decisions, expiry and fallback handling, including portal approvals.
+- **Fulfilment plans**: internal task tickets with dependencies, date-based release and approval gates. Customers see parent-request progress while internal tasks stay private.
+- **Portal home**: configurable tiles and wording. The catalog stays off until enabled.
+- **Automation rules**: typed custom-field conditions, group assignment, routing, tier escalation and checklists.
+- **Test and execute**: select a ticket explicitly for testing, execute a saved rule now, or preview and run it against all matching tickets. Enabling a rule does not replay existing tickets. A failed action stops later actions without undoing earlier successes.
 
-Portal home tiles and wording are configurable. The catalog remains off until enabled.
+[Request workflows](/psa/request-catalog) · [Automations](/psa/automations-and-ai)
 
-## Automations, reporting and the API
+## Reporting, import and the API
 
-[Automation rules](/psa/automations-and-ai) use typed custom-field conditions and add group assignment, routing, tier escalation and checklists. Test requires an explicitly selected ticket. Administrators can execute a saved rule now, or preview and run it against all matching tickets. Enabling alone does not replay existing work. A failed action stops later actions in that rule without rolling back earlier successes.
+- **Daily ticket ledger and lifecycle history**, with recorded history distinguished from older reconstructed data.
+- **Exports**: choose columns, save definitions and schedule repeat exports.
+- **Public PSA API**: ticket lists, reads, updates and assignment; history and change feeds; directory, queue and time reads alongside note/time writes.
+- **API reliability**: clearer validation, idempotency behavior and permission errors while preserving existing-key compatibility.
+- **Outbound webhooks**: Standard Webhooks signatures, longer retries, immediate secret rotation and delivery resend controls. Delivery tracking avoids repeating work for endpoints that already received it.
+- **Import fixes**: improved ServiceDesk Plus ticket/history compatibility and bounded product imports.
+- **API service accounts** no longer consume a PSA seat.
 
-[Reports](/psa/reports) add a daily ticket ledger and routing distribution. [Exports](/settings/import-export) support column choice, saved definitions, schedules and history-quality labels. Recorded history and older reconstructed data remain distinguishable.
+[Reports](/psa/reports) · [Import & export](/settings/import-export) · [Public API](/settings/public-api) · [Webhooks](/settings/webhooks)
 
-The [Public PSA API](/settings/public-api) supports ticket lists/reads/updates/assignment, history/change feeds, directory and queue reads, and time reads alongside the original note/time writes. [Outbound webhooks](/settings/webhooks) add metric, group and fulfilment events, Standard Webhooks signatures, longer retries, immediate secret rotation and resend controls.
+## Billing, invoices and agreements
 
-## Billing and accounting
+- **Saved invoice drafts**: return to unfinished work and preview the current PDF before issuing an invoice.
+- **Review and release**: opt clients into approval before sending or syncing, release batches of up to 25 invoices, and resume partial failures with individual errors preserved.
+- **Client financial preferences**: billing names, structured addresses, payment terms, due-date rules, PO/reference and presentation defaults. A due date does not enable autopay.
+- **Product descriptions**: create products inline, edit long descriptions in an expanded editor, and preserve headings and negotiated rates on invoice lines.
+- **Invoice email controls**: choose Regentra, a Microsoft 365 mailbox, Stripe or QuickBooks as the delivery owner for reviewed releases. Preview the sender, recipient and subject; configure Reply-To, PDF attachment and payment-link options for native email.
+- **Invoice designs**: Classic (formerly Service details), Modern, Minimal, Bold and the original Standard layout. Choose an organization default, client layout, accent colour, paper size, wording and visible columns, with a sample preview.
+- **PDF presentation**: payment instructions beside totals in Classic, a configurable page footer, and page numbers only on multi-page invoices. Saved organization design controls also affect later downloads of older invoices that use them.
+- **Agreements**: preserved product links and negotiated prices, validated service periods, recurring-item imports and optional billing schedules. Only applicable uncovered charges are billed; resuming does not bill every missed month automatically.
+- **Settlement fixes**: provider identities, split payments, retry handling and collection-close warnings stay consistent. A local Paid status does not prove every remote action succeeded.
 
-[Invoices](/psa/invoices-quotes) gain saved drafts, live PDF preview, product creation and long descriptions, preserved product headings, client billing names, payment terms and optional approval/release batches. Service details and Standard PDFs use consistent saved billing preferences. Release errors remain actionable rather than claiming every provider step succeeded.
+[Invoices & quotes](/psa/invoices-quotes) · [Invoice settings](/settings/invoices) · [Agreements](/psa/projects-agreements)
 
-[Agreements](/psa/projects-agreements) preserve product links and negotiated rates, validate service periods, bill only uncovered applicable charges and support recurring-item imports and opt-in schedules. Pausing/resuming does not automatically bill every missed month.
+## Quotes and products
 
-[QuickBooks](/integrations/quickbooks), [Zoho Books](/integrations/zoho-books) and [Xero](/integrations/xero) have explicit customer-linking/mapping guides. Item synchronization, provider invoice import, change-review queues and monthly-invoice delivery have separate controls. Zoho is offered where enabled for the organization.
+- **Preview before saving**: inspect the quote PDF before Create Quote, or preview unsaved edits on an existing quote, without creating or sending it.
+- **Notes and terms** on the creation form, with the organization's default terms prefilled for new quotes. Notes print on the customer's quote.
+- **Acceptance block**: signature lines on eligible unsigned quotes and recorded acceptance details after acceptance.
+- **Products on quote lines**: pick a USD product to fill description, price and default cadence, or explicitly save a new line to Products. Product links carry through cloning and invoice conversion.
+- **Quote cadence** on products and CSV import/export. It prefills a quote line; it does not start recurring billing.
+- **Safer sends**: duplicate clicks and retries no longer create competing quote sends or invalidate a newer resend link.
 
-[Alternative Payments](/integrations/alternative-payments) supports accounting collection or direct sending. Production/Demo selection persists, tests finish with a timeout if needed, saved keys remain write-only, and receipt/reversal/notification recovery is more robust. Use one route for the same invoice.
+[Quotes](/psa/invoices-quotes#quote-preview-and-products) · [Service catalog](/psa/service-catalog)
 
-## Sign-in, vaults and customer data
+## Accounting and payment integrations
 
-[My account → Security](/settings/sessions) brings session review/sign-out, backup codes for passkey-only accounts, new-browser emails and recent identity checks. Staff password failures use increasing waits rather than the old fixed five-failure lock. Organization policies control maximum lifetime and remembered accounts/devices.
+- **Zoho Books**: customer and item linking, invoice import and company matching, with explicit controls for product ownership and invoice sending where the integration is enabled.
+- **Xero**: full-sync setup and mapping, with reconnection needed for older connections.
+- **QuickBooks**: optional item and invoice import, product-specific invoice items, customer billing-name updates and clearer mapping behavior.
+- **Provider-change review**: inspect accounting-side voids and deletions before applying them locally. Monthly-agreement delivery and other automatic sends have separate controls.
+- **Connection setup**: settings open in a side panel, errors explain the cause, and switching accounting providers requires confirmation.
+- **Alternative Payments setup**: Production/Demo selection persists, saved keys remain write-only, and connection tests time out without losing entered values.
+- **AP payments**: corrected balance handling after AP changed its API, restoring part-payment detection and split settlement. Refund and notification recovery checks use confirmed provider records.
+- **Regentra PDFs in AP**: an optional QuickBooks accounting-route workflow replaces the PDF on AP's existing invoice using verified QuickBooks tax and totals. It starts with new eligible invoices; older open invoices can be uploaded individually. Direct sending, Xero and Zoho are outside this PDF workflow.
 
-[Password Vault](/psa/password-management) adds configurable technician actions, named-person visibility, password-change share revocation and a 30-day restore window. Where platform rollout enables vault TOTP, code generation requires recent factor verification; merging that capability does not enable it everywhere.
+[QuickBooks](/integrations/quickbooks) · [Zoho Books](/integrations/zoho-books) · [Xero](/integrations/xero) · [Alternative Payments](/integrations/alternative-payments)
 
-[Companies and contacts](/psa/companies-contacts) provide reorganized workspaces, inline people, primary-contact filters, billing names, structured addresses, managers and portal roles. Connected device ownership keeps explicit technician choices and correlated RMM/directory context. Email screenshot imports and customer-scoped AI context have stronger privacy and recovery behavior.
+## Calendar, companies and branding
 
-## Compliance
+- **Customer appointments**: invite several technicians, schedule repeating meetings, and open or edit an existing appointment.
+- **Company workspaces**: reorganized details, inline contacts, managers, portal roles, primary-contact filters and a star for primary contacts.
+- **Branded sign-in**: password pages keep the sign-in link's address and use readable brand colours.
+- **Trials**: the seven-day extension is offered with two days remaining, with clearer billing-start wording when buying during a trial.
+- **MSP plan prices** display in the correct units.
 
-[Frameworks](/compliance/frameworks#cis-frameworks-and-profiles) add CIS Controls and Microsoft 365 Benchmark profiles. Automated evidence remains partial where resources or settings cannot be fully assessed; empty results do not establish a full pass. [Policy template updates and review comments](/compliance/policies#review-template-updates) preserve adopted content until reviewed, with new-version approval where required.
+[Calendar](/psa/calendar) · [Companies & contacts](/psa/companies-contacts) · [Organization profile](/settings/organization)
+
+## Sign-in and password vault
+
+- **Active sessions**: review sign-ins and end one session, other sessions or all sessions.
+- **Session policies**: inactivity and maximum lifetimes, remembered-account/device controls and coordination across tabs.
+- **Recovery and alerts**: backup codes for passkey-only accounts, new-browser sign-in emails and increasing waits after repeated password failures.
+- **Authenticator choice**: setup prominently offers an authenticator app or a passkey. Standard authenticator codes work independently of a Microsoft directory connection.
+- **Continue with Microsoft** can complete eligible password sign-ins even with organization SSO off, when the account's trusted directory and Microsoft's MFA proof match. A failed account lookup offers the account chooser on retry.
+- **Tenant lockout recovery**: platform support has a verified reset path when the only tenant account cannot reach its factors.
+- **Vault access**: separate technician permissions, named-person visibility, visible notes, share revocation after a password change and a 30-day restore window.
+- **Vault authenticator codes**, where enabled: setup-key or QR-image import, code preview before saving, and a recent identity check before code generation. QR images are read on the device. Keep Regentra's own sign-in factor and backup codes separate from the vault.
+
+[MFA](/settings/mfa) · [Sessions](/settings/sessions) · [Password Vault](/psa/password-management)
+
+## Compliance, security and reliability
+
+- **CIS Controls and Microsoft 365 Benchmark profiles**, with scoped adoption and partial evidence coverage where a full assessment is not possible.
+- **Policy template review**: compare and adopt updates deliberately. Material changes to approved/active policies create a new draft for approval; acknowledgment campaigns remain separate.
+- **Policy documents**: repaired images and links across editing, review, signing, printing and PDF export.
+- **Client switching**: compliance clients remain listed after moving from PSA.
+- **MSP separation**: a client administrator can end management with confirmation and a recent identity check. Eligible MSP-provided products receive a 14-day transition window; former-MSP access and feeds are cut off.
+- **Security fixes**: stronger attachment and tenant authorization, Microsoft identity checks, private customer AI evidence, integration-secret handling and protection against abusive requests.
+- **Email and chat**: improved screenshot imports, reply threading, fairer inbound processing across organizations and prevention of chat-bridge loops.
+- **Everyday fixes**: a deliberately selected 09:00–09:30 time entry can be saved; certification reminders and staff ticket emails open the right destination; SMS retries do not duplicate replies or reopen notifications.
+- **Under the hood**: patched dependencies and runtime, stronger release checks and migration validation, and further tenant-isolation groundwork. Features still behind disabled rollout controls are not enabled by these notes.
+
+[Frameworks](/compliance/frameworks#cis-frameworks-and-profiles) · [Policies](/compliance/policies) · [Managing clients](/msp/clients)
+
+Questions about any of these changes? Contact [support@regentra.io](mailto:support@regentra.io).

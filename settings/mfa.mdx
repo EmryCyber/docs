@@ -20,7 +20,7 @@ MFA is **mandatory for Admin, Super Admin, and MSP Admin roles**, regardless of 
     Open your user menu, then **My account → Security**.
   </Step>
   <Step title="Choose a method">
-    Set up a passkey under the **Passkeys** card, or a TOTP app under the **Multi-Factor Authentication** card. You can set up both if you like.
+    Choose **Set up an authenticator app** or **Set up a passkey** on the setup screen. From My account, use the **Multi-Factor Authentication** or **Passkeys** card. You can set up both; after enrolling a passkey, setup also offers an authenticator app for other devices.
   </Step>
   <Step title="Confirm the factor">
     A passkey confirms itself the moment your device creates it (Face ID, Touch ID, Windows Hello, or your security key's own prompt). A TOTP app confirms by scanning a QR code and entering the 6-digit code it generates.
@@ -58,6 +58,8 @@ If you lose access to your authenticator device and have a passkey enrolled, sig
 1. **Use a backup code** at the MFA prompt to sign in.
 2. **Ask an admin to reset your MFA** from **Settings → Team Members**, if you're out of backup codes too. This clears your enrolled factors so you can set up a new one on your next login.
 
+If the only administrator is locked out and no enrolled factor or backup code is reachable, contact [support@regentra.io](mailto:support@regentra.io). Platform support can verify the account owner's identity and use the tenant's **Reset sign-in** action. This is separate from an ordinary organization-admin reset and requires verified operator access. A passkey stored on one device is not guaranteed to be available on another device or in another password-manager ecosystem.
+
 ## Password requirements
 
 Regentra requires a minimum password length of **12 characters** with no other composition rule — no forced mix of uppercase, numbers, or symbols. Every password is checked against a breach database at signup, reset, and change; a password that's appeared in a known breach is rejected even if it meets the length requirement.
@@ -78,6 +80,12 @@ If your organization uses [Entra ID SSO](/settings/sso) for authentication, Rege
   Regentra doesn't duplicate MFA unnecessarily, but it also never blanket-trusts SSO as a substitute for MFA. Admin-tier roles always require MFA regardless of SSO — signing in via SSO satisfies that requirement only when Azure AD's own proof is strong enough; otherwise Regentra still prompts them.
 </Info>
 
+
+## Microsoft verification after a password sign-in
+
+Where offered, **Continue with Microsoft** can complete the MFA step after a password sign-in even when organization SSO is disabled. It requires a configured trusted work/school directory, the matching account and tenant, and proof that Microsoft performed MFA. If those checks cannot be satisfied, use a Regentra passkey, authenticator code or backup code instead. A failed account lookup offers the account chooser on retry.
+
+This differs from enrolling Microsoft Authenticator to generate Regentra codes: standard TOTP setup adds Regentra as a separate account in the app and needs no Microsoft directory connection. Having a Microsoft work account in the app alone does not enroll Regentra codes.
 
 ## Sessions and new-browser alerts
 

@@ -63,6 +63,17 @@ This route keeps the accounting system's tax treatment. Confirm AP's import and 
 
 The direct-invoicing AP API permissions above are not needed for the accounting route's collection. Test Connection can report missing direct-invoicing read permissions while accepting valid credentials.
 
+## Use Regentra's PDF in AP
+
+For the **QuickBooks Online accounting route**, the optional **Use Regentra's PDF on Alternative Payments invoices** setting replaces the PDF on invoices AP already imported. It does not create a second AP invoice. This setting is off by default and cannot be combined with direct AP sending; Xero and Zoho Books are not supported by this PDF workflow.
+
+1. Confirm the AP key has **Read invoices** and **Write invoices** permissions.
+2. In AP's email automations, move any **On creation** invoice reminder to **After creation** with enough delay for the PDF upload, such as one day.
+3. Keep **Send invoices to Alternative Payments** off, then enable **Use Regentra's PDF on Alternative Payments invoices** on the AP integration settings.
+4. Send a new invoice to QuickBooks and check **Invoice PDF in Alternative Payments** on the invoice page after the scheduled check, normally within about 15 minutes. Confirm the PDF and sales tax in AP's portal before relying on its emails.
+
+Only eligible invoices sent to QuickBooks after enabling the setting are picked up automatically. Use the invoice card to upload an older open invoice or **Upload again** after a failure or design change. Regentra checks QuickBooks tax and totals before uploading; mismatches leave the existing AP PDF in place with a reason to review. The PDF and later Regentra downloads use the verified QuickBooks figures. Paid invoices are refreshed to show Paid. Uploading a PDF does not send an email.
+
 ## Route 2: send invoices directly from Regentra
 
 <Warning>
@@ -87,6 +98,12 @@ Retrying a send checks for an existing AP invoice first. If AP's search is incom
 - A **refund notification can mean a refund request**. Regentra waits for a successful refund record before marking the receipt Refunded. Pending or unknown reversal statuses do not establish a completed financial reversal.
 - Refunds, chargebacks and later ACH failures do not automatically reopen the invoice. Review the payment in AP and your books before collecting again. Initiate refunds and handle disputes in AP.
 - Marking an invoice paid elsewhere or voiding it in Regentra attempts to archive its AP copy. AP payments already present can require manual review; read the invoice's warning.
+
+### October part-payment correction
+
+The October 30 release corrected direct-invoicing balance reads after AP changed its API on October 20. Regentra now uses AP's outstanding balance rather than treating its pre-tax subtotal as the amount still owed. Open linked invoices are corrected as the existing payment poll visits them, including part-payment records and eligible split settlement.
+
+**If an invoice was voided or marked paid from October 20 until the fix**, check its payments in AP against Regentra's receipts and the accounting system. An AP copy archived during that period may have held a part payment without the expected receipt or refund warning; those historical cases are not all repaired automatically. Confirm the payment before refunding or collecting again. The correction requires no reconnect or setting change.
 
 ## Notifications and recovery
 
