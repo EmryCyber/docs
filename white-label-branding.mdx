@@ -1,0 +1,89 @@
+---
+title: "White-label Branding"
+description: "Put your own logo, colours and name on the sign-in page, the app, the customer portal, every email, every report and PDF, and the public links you send out."
+---
+
+Everything a client or technician sees can carry your brand instead of Regentra's. It is configured once under **Settings → Company Profile**; the [Organization Settings](/settings/organization) page describes each field.
+
+## Five-minute setup
+
+<Steps>
+  <Step title="Upload your logo">
+    **Company Profile → Logo.** The ideal file is 1200×400 pixels (3:1), a PNG with a transparent background, with the logo filling the frame edge to edge. A Canva template is linked next to the upload button: make a copy, place your logo inside the box without resizing the design, and download it as a PNG.
+
+    Empty space around the image is trimmed on upload so the logo fills its space; untick **Trim empty space** if the padding is part of your design. A print and email version (at most 800×240) is generated for you.
+  </Step>
+  <Step title="Upload a square icon">
+    **Company Profile → Icon.** 512×512 is ideal, 256×256 the minimum. This becomes the browser-tab icon for the app, the sign-in page and the customer portal.
+  </Step>
+  <Step title="Pick your brand colour">
+    **Company Profile → Brand colour.** One hex value drives buttons, links, headers, PDF rules and table headers everywhere. The customer portal can override it with its own accent under **Settings → Support Portal → Appearance**; leave that blank to inherit.
+  </Step>
+  <Step title="Set your support email">
+    **Company Profile → Contact.** It becomes the reply-to on customer emails and the address your technicians reach from the in-app Help menu. This is contact information only; the mailbox that sends and receives ticket email is set separately under [Email](/settings/email).
+  </Step>
+  <Step title="Turn off &quot;Powered by Regentra&quot;">
+    **Company Profile → Attribution.** With the toggle off, Regentra is not named on any of the surfaces listed below.
+  </Step>
+  <Step title="Create your sign-in link">
+    **Company Profile → Sign-in link.** Hand it to your technicians and clients. See the next section.
+  </Step>
+</Steps>
+
+## Your sign-in link
+
+Choose a short name under **Company Profile → Sign-in link**. Your link becomes `app.regentra.io/login/<your-name>`, and anyone who opens it sees your logo, colours and name on the sign-in page, the forgotten-password page, the MFA pages and the account-setup page.
+
+- **It sticks.** Your link stays in the address bar, so people can bookmark it. A browser that has opened it once keeps showing your brand on later visits to the plain sign-in page, including after sign-out and after a session expires. Capital letters in the link go to the same page.
+- **It lives on the app's address, not your portal domain.** A custom portal domain is for your customers. If someone opens a sign-in, password or invitation link on that domain, they are taken to the same page on the app's address, still branded.
+- **Invites and resets are branded too.** The account-setup and password-reset pages a person reaches from an email recognise which organisation the link belongs to, so a new technician's first page says "Welcome to *your company*", and its **Sign in** button opens your branded sign-in link. This works once you have added a logo or colour, even before you set up a sign-in link; until you do, **Sign in** opens the standard sign-in page.
+- **No logo or colour yet?** Your sign-in link still works. Until you add them, its pages use Regentra's standard logo and colours with your company's name in the heading. If you have turned off "Powered by Regentra", your company name takes the logo's place.
+- **No self-service sign-up.** The "New to Regentra?" registration card is hidden on a branded sign-in page. Nobody can register a new account from your link.
+- **Names are first come, first served.** 3 to 40 characters: lowercase letters, digits and hyphens. Product route names (`login`, `portal`, `admin` and so on) are reserved.
+
+<Note>
+  The address bar still shows `app.regentra.io`. Serving the whole app on your own domain is a separate tier; contact us if you need it.
+</Note>
+
+## Inside the app
+
+Once signed in, your technicians see your logo in the sidebar, your icon and company name in the browser tab, module names without the Regentra prefix ("Compliance", "PSA"), and a Help menu that emails your support address instead of ours. The customer portal follows your brand colour on every page, and its favicon is your icon.
+
+Clients you manage inherit your branding automatically. A managed client with no logo or colour of its own uses yours, and your attribution setting always applies to them: in the app, emails, reports and every page their staff, auditors and vendors open. On a client's Company Profile the brand colour field stays blank until the client sets its own, and the "Powered by" switch shows your setting, read-only. When you switch into a client, the sidebar shows that client's logo next to its name.
+
+## Emails
+
+Every email a client or technician receives carries your logo on a header in your brand colour, and replies go to your support address. That includes ticket updates, satisfaction surveys, portal invitations and password resets, quotes, invoices and monthly client reports, policy acknowledgements, approval requests, vendor questionnaires, auditor invitations, credential shares, calendar and renewal reminders, staff invitations and staff password resets.
+
+<Warning>
+  **Sending address.** Ticket emails are sent from your own Microsoft 365 mailbox once you connect one under [Settings → Email](/settings/email); the sender name customers see is that mailbox's display name in Microsoft 365. Other emails are sent from the platform address with your name and reply-to; the address itself is not yet yours. Your own signup verification email, sent before an organisation exists, is always platform-branded.
+</Warning>
+
+Emails have their own appearance settings under **Settings → Email → Appearance**: banner colour, button and link colour, and logo background, with a live preview. Until you upload a logo or set colours, emails use the Regentra default; each part switches to yours as you set it.
+
+## Reports, PDFs and public links
+
+- **Compliance reports, PSA client and overview reports, risk register, incident reports, data exports**: your logo on the cover, your colour on rules and table headers, no Regentra credit unless attribution is on. A report about a managed client shows that client's logo on the cover and names you as the preparer.
+- **Quotes and invoices**: your logo, address, tax ID and payment terms from Company Profile, on the PDF and on the public quote page.
+- **Public links**: policy signing, the ticket tracker and survey, approvals and reviews, the trust centre, the auditor portal, shared credentials and the Teams helpdesk tab all show your logo and colour.
+
+## Logo and colour guidance
+
+| Asset | Best shape | Where it appears |
+| --- | --- | --- |
+| **Logo** | 1200×400 (3:1) transparent PNG, logo filling the frame. Wide logos of 3:1 to 5:1 fit best; at least 600 pixels wide stays sharp. Anything from 32 to 6000 pixels a side is accepted; empty margins are trimmed. | Sign-in page, sidebar, portal header, email header, PDF covers and headers, public pages. |
+| **Icon** | Square, 512×512 ideal (256×256 minimum). Non-square icons are padded, not stretched. | Browser tab for the app, sign-in page and portal; small marks. |
+| **Brand colour** | A mid-tone works everywhere. Text on it flips to dark automatically for a pale colour. | Buttons, links, header bands, PDF rules and table headers, portal accent. |
+
+Logos are never stretched: every surface scales them to fit a height and a maximum width. A very tall or square logo renders small in wide header slots; a wide mark gives the best result.
+
+- **Portal logo background** (**Support Portal → Portal Branding**): *System* follows the visitor's light or dark theme, *White* and *Black* stay fixed, and *Transparent* shows the page through transparent image pixels. Check both previews; dark logos can be hard to read on dark backgrounds.
+- **Email logo background** (**Settings → Email → Appearance**): choose *Transparent* so a transparent PNG sits directly on the email banner, then set the banner colour to one your logo reads on. A button colour too light to read on the email's white background is refused.
+- *Transparent* cannot remove a background saved in the image file. Upload a PNG with transparent pixels.
+
+## What still says Regentra
+
+- The web address (`app.regentra.io`) and the sending address on non-ticket emails, as above.
+- The public self-service registration page, which is Regentra's own sign-up path and is never reached from your sign-in link.
+- The Teams app's store listing name and icon. The bot's messages and the helpdesk tab itself use your brand.
+- Some descriptive copy inside settings pages and product help text that names the product.

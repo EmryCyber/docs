@@ -23,7 +23,7 @@ Solutions for the most common issues encountered in Regentra. If your problem is
   </Accordion>
 
   <Accordion title="Email notifications are not sending">
-    Verify your email configuration in **Settings → Email Integration**. Regentra requires either Azure Communication Services or Microsoft Graph to be configured for outbound email. Send a test email from the settings page to confirm delivery. If using Microsoft Graph, ensure the Entra ID integration has mail send permissions.
+    Ticket emails to customers are sent from your connected Microsoft 365 support mailbox. Check **Settings → Email**: the tenant should show as connected and a support mailbox address should be saved. Use **Send Test Email** to confirm delivery. The address must be a user or shared mailbox in the connected tenant; a Microsoft 365 group or distribution list does not work. See [Email](/settings/email).
   </Accordion>
 
   <Accordion title="Portal login is not working">

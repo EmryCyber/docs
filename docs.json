@@ -120,17 +120,24 @@
             "group": "Settings & Security",
             "pages": [
               "settings/organization",
+              "white-label-branding",
+              "settings/email",
               "settings/invoices",
               "settings/team-management",
               "settings/notification-rules",
               "settings/tickets",
-              "settings/webhooks",
-              "settings/api-keys",
-              "settings/public-api",
               "settings/import-export",
               "settings/mfa",
               "settings/sessions",
               "settings/sso"
+            ]
+          },
+          {
+            "group": "API & Webhooks",
+            "pages": [
+              "settings/public-api",
+              "settings/api-keys",
+              "settings/webhooks"
             ]
           },
           {
