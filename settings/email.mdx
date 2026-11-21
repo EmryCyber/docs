@@ -1,0 +1,75 @@
+---
+title: "Email"
+description: "Connect the Microsoft 365 support mailbox that receives and sends ticket email, and see which kinds of mailbox work."
+---
+
+Go to **Settings → Email** (the **Email Integration** page). It has three tabs: **Mailbox Connection**, **Filtering** and **Appearance**.
+
+## How Regentra sends email
+
+| Email | Sent from |
+| --- | --- |
+| Ticket emails to your customers (replies, status updates, approvals) | Your connected Microsoft 365 support mailbox |
+| Most alerts to your own team (new-ticket and assignment alerts, notification rules) | Regentra's platform address |
+| Other emails (invitations, password resets, reports, policy and vendor emails) | Regentra's platform address, with your name and reply-to |
+| Invoice emails | The delivery owner you choose in [Invoice settings](/settings/invoices) |
+
+The same support mailbox is also your inbound address: email sent to it creates or updates tickets.
+
+<Note>
+  Microsoft 365 is the only mailbox connection available today. Regentra does not accept custom SMTP or IMAP server details, and there is nothing to configure for the platform address.
+</Note>
+
+## Connect your support mailbox
+
+Connecting the mailbox needs a Regentra administrator who can manage integrations, and a Microsoft 365 administrator who can grant admin consent in your tenant.
+
+<Steps>
+  <Step title="Connect Microsoft 365">
+    On the **Mailbox Connection** tab, click **Connect to Microsoft 365** and sign in with a Microsoft 365 admin account. You are asked to grant the Regentra email app permission to read and send mail in your tenant.
+  </Step>
+  <Step title="Enter the support mailbox address">
+    Under **Support Mailbox Email Address (Inbound & Outbound)**, enter the address, for example `support@yourdomain.com`, and click **Save**. Regentra checks that it can open that mailbox in your connected tenant before saving. No mail is read or sent by this check.
+  </Step>
+  <Step title="Send a test email">
+    Click **Send Test Email** to confirm that mail leaves from the mailbox and that the sender name looks right.
+  </Step>
+</Steps>
+
+## Which kind of mailbox works
+
+Regentra opens the mailbox as a Microsoft 365 user mailbox, so the address must be a real mailbox in the tenant you connected.
+
+| Type | Works? | Notes |
+| --- | --- | --- |
+| **Dedicated user mailbox** (its own account, such as `support@`) | Yes | The simplest choice. The account needs an Exchange Online mailbox. |
+| **Shared mailbox** | Yes | A shared mailbox is a mailbox in its own right. Enter its address, not the address of a member. |
+| **A person's own mailbox** | Yes, but not recommended | All of that person's unread mail would be treated as ticket mail, and the connection depends on the account staying in place. |
+| **Microsoft 365 group** | No | A group is not a user mailbox. Saving the address fails. |
+| **Distribution list or mail-enabled security group** | No | These forward mail and have no mailbox to read or send from. |
+| **Mailbox in another tenant, or outside Microsoft 365** | No | The mailbox must belong to the connected tenant. |
+
+Other things to know:
+
+- Enter the mailbox's primary address, not an alias.
+- One mailbox serves one Regentra organization. An address already used by another organization is refused.
+- If you want customers to keep writing to a group or distribution-list address, have that address deliver to the support mailbox (for example, by adding the support mailbox as a member) and connect the support mailbox here.
+
+## Sender display name
+
+Microsoft 365 sets the **From** name on these emails from the mailbox's own display name and ignores any name an app supplies. To change what customers see, rename the mailbox in Microsoft 365: **Exchange admin center → Recipients → Mailboxes → select the mailbox → Display name**. The change can take a while to reach outgoing mail; use **Send Test Email** to check it.
+
+## Disconnecting
+
+**Disconnect and release mailbox** stops incoming and outgoing ticket email through the mailbox and releases the address from your organization. Your mailbox settings are kept and are restored when you reconnect the same Microsoft 365 tenant.
+
+## Filtering and appearance
+
+- **Filtering** controls which inbound emails create tickets.
+- **Appearance** sets the banner colour, button and link colour and logo background on the emails your customers receive, with a live preview. See [White-label Branding](/white-label-branding).
+
+## Troubleshooting
+
+- **The mailbox address will not save.** Check that the address is a user or shared mailbox in the connected tenant, that it is the primary address, and that admin consent was granted for the Regentra email app.
+- **The test email is rejected.** Microsoft refused the send. Confirm the consent is still in place and that no application access policy or Conditional Access policy in your tenant blocks the app from this mailbox.
+- **Customers see the wrong sender name.** Rename the mailbox in the Exchange admin center, as above.
